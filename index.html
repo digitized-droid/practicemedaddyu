@@ -556,6 +556,17 @@ td strong { font-size:11px; }
 .cloud-dialog .cloud-status { margin-top:12px; min-height:18px; font-size:11px; color:var(--muted); }
 .cloud-dialog .close-cloud { float:right; border:0; background:transparent; color:var(--muted); font-size:20px; cursor:pointer; }
 #cloudAccountSummary { font-size:11px; color:var(--muted); overflow-wrap:anywhere; margin:10px 0; }
+.category-delete-modal { position:fixed; inset:0; z-index:40; display:grid; place-items:center; padding:18px; background:rgba(15,25,20,.62); }
+.category-delete-modal[hidden] { display:none!important; }
+.category-delete-dialog { width:min(100%,480px); max-height:min(90vh,720px); overflow:auto; background:var(--surface); color:var(--text); border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 24px 70px rgba(0,0,0,.25); }
+.category-delete-dialog h3 { margin:0 0 7px; font-family:var(--site-font-heading); font-size:23px; }
+.category-delete-dialog p { color:var(--muted); font-size:12px; line-height:1.6; margin:0 0 14px; }
+.category-transfer-summary { padding:12px 14px; border:1px solid var(--line); border-radius:12px; background:var(--surface-soft); margin:12px 0 16px; }
+.category-transfer-summary strong { display:block; font-size:19px; margin-top:3px; }
+.category-delete-actions { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:16px; }
+.category-delete-dialog .field { margin:12px 0; }
+.category-delete-dialog input, .category-delete-dialog select { width:100%; }
+
 @media(max-width:600px) { .cloud-account-btn { padding:7px 9px; font-size:10px; } }
 </style>
 <style>
@@ -733,6 +744,24 @@ td strong { font-size:11px; }
     </section>
     <div class="footer">PesoPlan · A simple way to keep your pesos organized</div>
   </main>
+</div>
+
+<div class="category-delete-modal" id="categoryDeleteModal" hidden>
+  <div class="category-delete-dialog" role="dialog" aria-modal="true" aria-labelledby="categoryDeleteTitle">
+    <h3 id="categoryDeleteTitle">Transfer and delete category</h3>
+    <p id="categoryDeleteDescription">Move the remaining balance and all linked records before deleting this category.</p>
+    <div class="category-transfer-summary">
+      <span class="panel-desc">Remaining balance to transfer</span>
+      <strong id="categoryDeleteBalance">₱0.00</strong>
+      <span class="panel-desc" id="categoryDeleteSource"></span>
+    </div>
+    <div class="field"><label for="categoryDeleteDestinationName">Type the destination category name</label><input id="categoryDeleteDestinationName" type="text" list="categoryDeleteDestinationOptions" autocomplete="off" placeholder="Type the category that will receive everything" required><datalist id="categoryDeleteDestinationOptions"></datalist><small class="panel-desc">Enter the name of an existing category, for example Food.</small></div>
+    <p>Its current balance, unpaid bills, paid-bill records, wishlist items, reminder lists, and transaction records will be reassigned to the destination category. Your records will be kept.</p>
+    <div class="category-delete-actions">
+      <button class="btn btn-quiet" id="cancelCategoryDelete" type="button">Cancel</button>
+      <button class="btn btn-danger" id="confirmCategoryDelete" type="button">Transfer &amp; delete</button>
+    </div>
+  </div>
 </div>
 
 <div class="cloud-modal" id="cloudModal" hidden>
@@ -1751,37 +1780,92 @@ td strong { font-size:11px; }
     state.deletedCategoryIds = (state.deletedCategoryIds || []).filter(deletedId => String(deletedId) !== String(id));
     state.balances[id] = 0; save(); render(); renderCategorySettings(); e.target.reset(); document.getElementById('newCategoryIcon').value='✦';
   });
-  document.getElementById('categorySettingsRows').addEventListener('click', e => {
-    const btn = e.target.closest('[data-delete-category]'); if (!btn) return;
-    const id = btn.dataset.deleteCategory; const c = category(id); if (!c) return;
+  let pendingCategoryDeletionId = null;
+  const categoryDeleteModal = document.getElementById('categoryDeleteModal');
+  function openCategoryDeleteModal(id) {
+    const source = category(id);
+    if (!source) return;
     if (CATEGORIES.length <= 1) return toast('At least one category must remain.');
-    const destinations = CATEGORIES.filter(x => x.id !== id);
-    const balance = Number(state.balances[id] || 0);
-    const choices = destinations.map((item, index) => `${index + 1}. ${item.name}`).join('\\n');
-    const selection = prompt(
-      `Before deleting "${c.name}", choose where its remaining balance (${peso(balance)}) and linked items should go:\\n\\n${choices}\\n\\nEnter the destination number:`
-    );
-    if (selection === null) return;
-    const destinationIndex = Number(selection.trim()) - 1;
-    if (!Number.isInteger(destinationIndex) || destinationIndex < 0 || destinationIndex >= destinations.length) {
-      return toast('Please enter a valid destination number. Nothing was deleted.');
-    }
-    const destination = destinations[destinationIndex];
-    if (!confirm(`Transfer ${peso(balance)} from "${c.name}" to "${destination.name}" and delete "${c.name}"? Historical transactions will remain in your records.`)) return;
-
-    // Move the complete remaining balance (including a negative balance, if any).
-    state.balances[destination.id] = Number(state.balances[destination.id] || 0) + balance;
-    delete state.balances[id];
-    CATEGORIES = CATEGORIES.filter(x => x.id !== id);
-    // Keep active lists connected to a valid category; historical transactions stay untouched.
-    state.wishes.forEach(w => { if (w.category === id) w.category = destination.id; });
-    (state.bills || []).forEach(b => { if (b.category === id) b.category = destination.id; });
-    (state.paidBills || []).forEach(b => { if (b.category === id) b.category = destination.id; });
-    (state.reminderGroups || []).forEach(g => { if (g.category === id) g.category = destination.id; });
-    renderCategorySettings(); render(); save();
-    toast(`Balance transferred to ${destination.name}. Category deleted.`);
-
+    pendingCategoryDeletionId = id;
+    const destinations = CATEGORIES.filter(item => String(item.id) !== String(id));
+    document.getElementById('categoryDeleteTitle').textContent = `Delete “${source.name}”?`;
+    document.getElementById('categoryDeleteDescription').textContent = `Choose where to transfer the balance and all records currently connected to “${source.name}”.`;
+    document.getElementById('categoryDeleteBalance').textContent = peso(Number(state.balances[id] || 0));
+    document.getElementById('categoryDeleteSource').textContent = `From: ${source.name}`;
+    const destinationInput = document.getElementById('categoryDeleteDestinationName');
+    document.getElementById('categoryDeleteDestinationOptions').innerHTML = destinations.map(item => `<option value="${escapeHTML(item.name)}"></option>`).join('');
+    destinationInput.value = '';
+    destinationInput.setCustomValidity('');
+    categoryDeleteModal.hidden = false;
+    setTimeout(() => destinationInput.focus(), 0);
+  }
+  function closeCategoryDeleteModal() {
+    categoryDeleteModal.hidden = true;
+    pendingCategoryDeletionId = null;
+    const destinationInput = document.getElementById('categoryDeleteDestinationName');
+    if (destinationInput) { destinationInput.value = ''; destinationInput.setCustomValidity(''); }
+  }
+  document.getElementById('categorySettingsRows').addEventListener('click', e => {
+    const btn = e.target.closest('[data-delete-category]');
+    if (!btn) return;
+    openCategoryDeleteModal(btn.dataset.deleteCategory);
   });
+  document.getElementById('cancelCategoryDelete').addEventListener('click', closeCategoryDeleteModal);
+  categoryDeleteModal.addEventListener('click', e => { if (e.target === categoryDeleteModal) closeCategoryDeleteModal(); });
+  document.getElementById('confirmCategoryDelete').addEventListener('click', () => {
+    const id = pendingCategoryDeletionId;
+    const source = category(id);
+    if (!source) return closeCategoryDeleteModal();
+    if (CATEGORIES.length <= 1) return toast('At least one category must remain.');
+    const destinationInput = document.getElementById('categoryDeleteDestinationName');
+    const typedDestinationName = destinationInput.value.trim();
+    const destination = CATEGORIES.find(item => String(item.id) !== String(id) && String(item.name || '').trim().toLocaleLowerCase() === typedDestinationName.toLocaleLowerCase());
+    if (!destination) {
+      destinationInput.setCustomValidity('Enter the name of another existing category that will receive the money and records.');
+      destinationInput.reportValidity();
+      destinationInput.addEventListener('input', function clearDestinationError(){ this.setCustomValidity(''); this.removeEventListener('input', clearDestinationError); }, {once:true});
+      return;
+    }
+    const destinationId = destination.id;
+
+    // Transfer the full live balance first; no money is discarded.
+    const balance = Number(state.balances[id] || 0);
+    state.balances[destinationId] = Number(state.balances[destinationId] || 0) + balance;
+    delete state.balances[id];
+
+    // Reassign every live record and historical reference so no item points to a deleted category.
+    const moveCategory = item => { if (item && String(item.category) === String(id)) item.category = destinationId; };
+    (state.wishes || []).forEach(moveCategory);
+    (state.bills || []).forEach(moveCategory);
+    (state.paidBills || []).forEach(moveCategory);
+    (state.reminderGroups || []).forEach(moveCategory);
+    (state.transactions || []).forEach(tx => {
+      moveCategory(tx);
+      if (Array.isArray(tx.allocations)) {
+        const mergedAllocations = new Map();
+        tx.allocations.forEach(allocation => {
+          const categoryId = String(allocation.category) === String(id) ? destinationId : allocation.category;
+          const key = String(categoryId);
+          const current = mergedAllocations.get(key) || {...allocation, category:categoryId, amount:0};
+          current.amount += Number(allocation.amount || 0);
+          mergedAllocations.set(key, current);
+        });
+        tx.allocations = [...mergedAllocations.values()];
+      }
+    });
+
+    CATEGORIES = CATEGORIES.filter(item => String(item.id) !== String(id));
+    state.categories = CATEGORIES;
+    // Remove any stale balance key and persist the category tombstone through save().
+    delete state.balances[id];
+    closeCategoryDeleteModal();
+    refreshCategorySelects();
+    renderCategorySettings();
+    render();
+    save();
+    toast(`Transferred ${peso(balance)} and all linked records to ${destination.name}. “${source.name}” was deleted.`);
+  });
+
   document.getElementById('saveCategorySettings').addEventListener('click', () => {
     const updated = CATEGORIES.map(c => ({...c,
       name:document.querySelector(`[data-category-name="${CSS.escape(c.id)}"]`)?.value.trim() || c.name,
