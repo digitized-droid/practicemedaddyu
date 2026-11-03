@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PesoPlan — Personal Budget Tracker</title>
+<style>
+:root {
+  --site-primary: #315c4c;
+  --site-on-primary: #ffffff;
+  --site-secondary: #e8bd72;
+  --site-on-secondary: #332719;
+  --site-background: #f4f2e9;
+  --site-on-background: #24332d;
+  --site-font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-font-heading: Georgia, "Times New Roman", serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+  color-scheme: light dark;
+  --surface: light-dark(#fffefa, #202a26);
+  --surface-soft: light-dark(#eeeee5, #293630);
+  --text: light-dark(#24332d, #edf2ed);
+  --muted: light-dark(#718078, #aab8af);
+  --line: light-dark(#e2e5dc, #3b4941);
+  --good: #287a55;
+  --bad: #b64d45;
+  --shadow: 0 12px 34px rgba(32, 48, 39, .07);
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--site-font-body); background: var(--site-background); color: var(--text); }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+#app { min-height: 100vh; width: 100%; background-color: var(--site-background); color: var(--site-on-background); border-radius: 0; }
+.topbar { background: var(--site-primary); color: var(--site-on-primary); padding: calc(18px * var(--site-spacing-scale)) max(22px, calc((100vw - 1180px)/2)); display:flex; justify-content:space-between; align-items:center; gap:16px; }
+.brand { display:flex; align-items:center; gap:12px; }
+.brand-mark { width:42px; height:42px; border-radius:14px; background:var(--site-secondary); color:var(--site-on-secondary); display:grid; place-items:center; font-size:22px; font-weight:800; }
+.brand h1 { margin:0; font-family:var(--site-font-heading); font-size:calc(25px * var(--site-heading-scale)); letter-spacing:-.5px; }
+.brand small { display:block; color:rgba(255,255,255,.72); font-size:11px; letter-spacing:1.5px; text-transform:uppercase; margin-top:2px; }
+.top-actions { display:flex; align-items:center; gap:10px; color:rgba(255,255,255,.82); font-size:12px; }
+.pill { border:1px solid rgba(255,255,255,.28); border-radius:999px; padding:8px 12px; }
+main { max-width:1180px; margin:0 auto; padding:30px 22px 60px; }
+.welcome { display:flex; justify-content:space-between; align-items:end; gap:18px; margin-bottom:23px; }
+.eyebrow { color:var(--good); text-transform:uppercase; letter-spacing:1.7px; font-weight:800; font-size:10px; }
+h2 { font-family:var(--site-font-heading); font-size:calc(30px * var(--site-heading-scale)); font-weight:600; margin:5px 0 4px; color:var(--text); }
+.sub { color:var(--muted); font-size:13px; margin:0; }
+.date-label { color:var(--muted); font-size:12px; }
+.summary-grid { display:grid; grid-template-columns:1.35fr 1fr 1fr; gap:14px; margin-bottom:18px; }
+.summary-card { background:var(--surface); border:1px solid var(--line); border-radius:calc(18px * var(--site-radius-scale)); padding:20px; box-shadow:var(--shadow); }
+.summary-card.primary { background:var(--site-primary); color:var(--site-on-primary); border-color:transparent; }
+.card-label { font-size:11px; text-transform:uppercase; letter-spacing:1.2px; opacity:.72; font-weight:700; }
+.amount { font-size:clamp(25px, 3vw, 36px); font-weight:750; letter-spacing:-1.4px; margin:9px 0 5px; font-variant-numeric:tabular-nums; }
+.card-note { font-size:11px; opacity:.72; }
+.summary-icon { float:right; font-size:22px; opacity:.8; }
+.actions-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:18px; }
+.panel { background:var(--surface); border:1px solid var(--line); border-radius:calc(18px * var(--site-radius-scale)); padding:21px; box-shadow:var(--shadow); min-width:0; }
+.panel-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:16px; }
+.panel h3 { font-size:15px; margin:0; color:var(--text); }
+.panel-desc { color:var(--muted); font-size:11px; margin-top:4px; }
+.tag { background:var(--surface-soft); color:var(--muted); padding:6px 9px; border-radius:999px; font-size:10px; white-space:nowrap; }
+form .field-grid { display:grid; grid-template-columns:1fr 1fr; gap:11px; }
+.field { display:flex; flex-direction:column; gap:6px; margin-bottom:11px; }
+.field.full { grid-column:1/-1; }
+label { font-size:11px; font-weight:700; color:var(--muted); }
+input, select { width:100%; min-width:0; border:1px solid var(--line); background:var(--surface); color:var(--text); border-radius:10px; padding:10px 11px; outline:none; font-size:12px; }
+input:focus, select:focus { border-color:var(--site-primary); box-shadow:0 0 0 3px color-mix(in srgb, var(--site-primary) 13%, transparent); }
+input:disabled { opacity:.48; cursor:not-allowed; background:var(--surface-soft); }
+.btn { border:0; border-radius:10px; padding:11px 15px; font-size:12px; font-weight:750; transition:transform .15s, opacity .15s; }
+.btn:hover { transform:translateY(-1px); }
+.btn-primary { background:var(--site-primary); color:var(--site-on-primary); }
+.btn-secondary { background:var(--site-secondary); color:var(--site-on-secondary); }
+.btn-quiet { background:var(--surface-soft); color:var(--text); }
+.btn-danger { background:#f8e7e4; color:#9b3f37; }
+.btn-block { width:100%; }
+.category-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+.category-card { border:1px solid var(--line); border-radius:14px; padding:14px; background:var(--surface); min-width:0; }
+.category-top { display:flex; align-items:center; justify-content:space-between; gap:6px; }
+.category-icon { width:31px; height:31px; display:grid; place-items:center; border-radius:10px; background:var(--surface-soft); font-size:16px; }
+.category-percent { font-size:10px; color:var(--muted); font-weight:700; }
+.category-name { font-size:11px; color:var(--muted); margin:11px 0 4px; min-height:27px; }
+.category-balance { font-size:18px; font-weight:800; letter-spacing:-.5px; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+.progress { height:5px; border-radius:99px; background:var(--surface-soft); overflow:hidden; margin-top:11px; }
+.progress span { display:block; height:100%; border-radius:99px; background:var(--site-primary); }
+.category-foot { display:flex; justify-content:space-between; color:var(--muted); font-size:9px; margin-top:6px; }
+.section { margin-top:18px; }
+.two-col { display:grid; grid-template-columns:1.1fr .9fr; gap:16px; }
+.inline-form { display:grid; grid-template-columns:1.2fr .8fr .7fr auto; gap:8px; align-items:end; }
+.inline-form .field { margin:0; }
+.priority-list { display:flex; flex-direction:column; gap:9px; }
+.priority-item { border:1px solid var(--line); border-radius:12px; padding:11px 12px; display:flex; align-items:center; gap:10px; }
+.priority-item.done { opacity:.55; }
+.priority-item.done .buy-name { text-decoration:line-through; }
+.priority-check { width:17px; height:17px; accent-color:var(--site-primary); flex:0 0 auto; }
+.buy-info { min-width:0; flex:1; }
+.buy-name { font-size:12px; font-weight:750; overflow-wrap:anywhere; }
+.buy-meta { font-size:10px; color:var(--muted); margin-top:3px; }
+.buy-price { font-size:12px; font-weight:800; white-space:nowrap; }
+.priority-badge { font-size:9px; border-radius:99px; padding:4px 7px; background:var(--surface-soft); color:var(--muted); }
+.icon-btn { border:0; background:transparent; color:var(--muted); padding:5px; font-size:14px; }
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; min-width:520px; }
+th, td { text-align:left; padding:11px 9px; border-bottom:1px solid var(--line); font-size:11px; }
+th { color:var(--muted); font-size:9px; text-transform:uppercase; letter-spacing:1px; }
+td strong { font-size:11px; }
+.type-income { color:var(--good); font-weight:800; }
+.type-expense { color:var(--bad); font-weight:800; }
+.empty { color:var(--muted); text-align:center; padding:25px 10px; font-size:12px; }
+.report-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.report-note { color:var(--muted); font-size:11px; line-height:1.6; margin:0 0 14px; }
+.toast { position:fixed; bottom:22px; left:50%; transform:translate(-50%,20px); opacity:0; pointer-events:none; background:#263a30; color:white; padding:11px 16px; border-radius:10px; font-size:12px; box-shadow:var(--shadow); transition:.25s; z-index:10; }
+.toast.show { opacity:1; transform:translate(-50%,0); }
+.section-toggle { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; text-align:left; }
+.section-toggle .toggle-copy { display:flex; flex-direction:column; gap:4px; }
+.section-toggle .toggle-title { font-size:14px; font-weight:800; }
+.section-toggle .toggle-desc { color:var(--muted); font-size:11px; font-weight:400; }
+.toggle-arrow { font-size:16px; transition:transform .2s; }
+.section-toggle[aria-expanded="true"] .toggle-arrow { transform:rotate(180deg); }
+.collapsible-content[hidden] { display:none!important; }
+.summary-grid.compact { margin:0 0 16px; }
+.summary-grid.compact .summary-card { box-shadow:none; }
+.wish-category-tabs { display:flex; flex-wrap:wrap; gap:7px; margin:14px 0; }
+.wish-category-tabs button { border:1px solid var(--line); border-radius:999px; padding:7px 11px; background:var(--surface-soft); color:var(--text); font-size:10px; font-weight:750; }
+.wish-category-tabs button.active { background:var(--site-primary); border-color:var(--site-primary); color:white; }
+.wish-group { margin-top:13px; }
+.wish-group-title { display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:800; margin:0 0 8px; color:var(--text); }
+.wish-group-title span { color:var(--muted); font-size:10px; font-weight:600; }
+@media print { .collapsible-content[hidden] { display:block!important; } .section-toggle, .wish-category-tabs { display:none!important; } }
+.footer { text-align:center; color:var(--muted); font-size:10px; padding:20px; }
+
+/* Category settings, paid history and multiple reminder lists */
+.category-settings-btn { margin-left:auto; }
+.category-settings-panel { margin:14px 0 4px; padding:15px; border:1px solid var(--line); border-radius:13px; background:var(--surface-soft); }
+.category-settings-panel[hidden] { display:none!important; }
+.category-setting-row { display:grid; grid-template-columns:minmax(0,1fr) 100px 42px auto; gap:8px; align-items:center; margin:8px 0; }
+.category-setting-row input { min-width:0; }
+.category-setting-row .category-setting-icon { text-align:center; }
+.reminder-group { border:1px solid var(--line); border-radius:14px; padding:13px; margin:12px 0; background:var(--surface); }
+.reminder-group-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; }
+.reminder-group-head strong { font-size:13px; }
+.reminder-group-head small { display:block; color:var(--muted); font-size:10px; margin-top:3px; }
+.reminder-group-actions { display:flex; gap:5px; flex-wrap:wrap; }
+.reminder-group-actions button { border:0; background:var(--surface-soft); color:var(--text); border-radius:8px; padding:6px 8px; font-size:10px; }
+.paid-filter { max-width:240px; margin:0 0 13px; }
+.paid-category-group { border:1px solid var(--line); border-radius:12px; margin:9px 0; overflow:hidden; }
+.paid-category-head { width:100%; padding:13px; background:var(--surface-soft); display:flex; justify-content:space-between; align-items:center; gap:8px; border:0; color:var(--text); text-align:left; font-size:11px; font-weight:800; cursor:pointer; }
+.paid-category-head .paid-category-arrow { color:var(--muted); transition:transform .18s; }
+.paid-category-head[aria-expanded="true"] .paid-category-arrow { transform:rotate(180deg); }
+.paid-category-history { padding:0 13px 8px; }
+.paid-category-history[hidden] { display:none!important; }
+.paid-category-empty { padding:12px 0; color:var(--muted); font-size:11px; }
+.paid-category-record { display:flex; justify-content:space-between; gap:12px; padding:10px 13px; border-top:1px solid var(--line); font-size:11px; }
+.paid-category-record small { display:block; color:var(--muted); margin-top:3px; }
+@media(max-width:560px) { .category-setting-row { grid-template-columns:minmax(0,1fr) 75px 38px; } .category-setting-row .category-delete { grid-column:1/-1; justify-self:end; } }
+
+/* Interactive Reports & Data calendar */
+.report-year-control { max-width:220px; margin-bottom:18px; }
+.report-year-control .field { margin:0; }
+.report-heading { font-family:var(--site-font-heading); font-size:21px; color:var(--text); margin:4px 0 15px; }
+.report-overview-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-bottom:18px; }
+.report-total-card { width:100%; text-align:left; cursor:pointer; position:relative; transition:transform .16s,border-color .16s,box-shadow .16s; }
+.report-total-card:hover { transform:translateY(-2px); border-color:var(--site-primary); box-shadow:0 14px 30px rgba(32,48,39,.10); }
+.report-total-card:focus-visible,.report-month-card:focus-visible,.report-day-cell:focus-visible { outline:3px solid color-mix(in srgb,var(--site-primary) 35%,transparent); outline-offset:3px; }
+.report-total-card > .card-label,.report-total-card > .amount,.report-total-card > .card-note { display:block; }
+.report-total-card .report-open-hint { position:absolute; right:18px; top:17px; color:var(--muted); font-size:18px; }
+.report-explorer { border:1px solid var(--line); border-radius:16px; padding:17px; background:var(--surface); margin:14px 0 18px; }
+.report-explorer[hidden],.report-day-details[hidden] { display:none!important; }
+.report-nav { display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:16px; font-size:11px; color:var(--muted); }
+.report-nav button { border:0; padding:5px 8px; border-radius:7px; background:var(--surface-soft); color:var(--site-primary); font-size:11px; font-weight:750; }
+.report-nav button:disabled { color:var(--text); background:transparent; padding-left:0; }
+.report-month-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.report-month-card { text-align:left; border:1px solid var(--line); border-radius:13px; padding:14px; background:var(--surface); color:var(--text); min-width:0; transition:border-color .15s,transform .15s; }
+.report-month-card:hover { border-color:var(--site-primary); transform:translateY(-2px); }
+.report-month-name { display:block; font-size:13px; font-weight:850; margin-bottom:10px; }
+.report-month-line { display:flex; justify-content:space-between; gap:8px; font-size:10px; margin-top:5px; }
+.report-month-line span:first-child { color:var(--muted); }
+.report-calendar { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:6px; }
+.report-weekday { text-align:center; color:var(--muted); font-size:9px; font-weight:800; padding:5px 0; text-transform:uppercase; }
+.report-day-cell { min-width:0; min-height:91px; border:1px solid var(--line); border-radius:10px; padding:8px 6px; text-align:left; background:var(--surface); color:var(--text); }
+.report-day-cell.has-transactions { border-color:color-mix(in srgb,var(--site-primary) 40%,var(--line)); background:color-mix(in srgb,var(--site-primary) 5%,var(--surface)); }
+.report-day-cell:hover { border-color:var(--site-primary); }
+.report-day-number { display:block; font-size:11px; font-weight:850; margin-bottom:8px; }
+.report-day-amount { display:block; font-size:9px; line-height:1.5; overflow-wrap:anywhere; }
+.report-day-amount.income { color:var(--good); }
+.report-day-amount.expense { color:var(--bad); }
+.report-day-empty { border:1px dashed transparent; min-height:91px; }
+.report-day-details { margin-top:17px; }
+.report-detail-summary { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-bottom:18px; }
+.report-detail-total { border:1px solid var(--line); border-radius:12px; padding:14px; background:var(--surface-soft); }
+.report-detail-total small { display:block; color:var(--muted); font-size:9px; text-transform:uppercase; letter-spacing:.8px; font-weight:800; }
+.report-detail-total strong { display:block; font-size:20px; margin-top:7px; overflow-wrap:anywhere; }
+.report-breakdown { margin:14px 0 20px; }
+.report-breakdown h4,.report-transactions h4 { font-size:12px; margin:0 0 9px; }
+.report-category-row { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); font-size:11px; }
+.report-category-row span:first-child { color:var(--muted); }
+.report-category-row strong { text-align:right; }
+.report-transaction-list { display:flex; flex-direction:column; gap:8px; }
+.report-transaction { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; align-items:center; border:1px solid var(--line); border-radius:11px; padding:11px 12px; }
+.report-transaction-title { font-size:11px; font-weight:800; overflow-wrap:anywhere; }
+.report-transaction-meta { color:var(--muted); font-size:10px; margin-top:4px; line-height:1.5; }
+.report-transaction-amount { font-size:12px; font-weight:850; white-space:nowrap; }
+.report-empty { color:var(--muted); font-size:11px; text-align:center; padding:20px 8px; }
+.report-count-row { display:flex; justify-content:space-between; gap:10px; border-top:1px solid var(--line); padding-top:12px; margin-top:14px; font-size:11px; }
+@media(max-width:650px) {
+ .report-overview-grid,.report-detail-summary { grid-template-columns:1fr; }
+ .report-month-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .report-explorer { padding:12px; }
+ .report-calendar { gap:3px; }
+ .report-day-cell,.report-day-empty { min-height:73px; }
+ .report-day-cell { padding:6px 3px; border-radius:7px; }
+ .report-day-number { font-size:10px; margin-bottom:5px; }
+ .report-day-amount { font-size:8px; }
+ .report-weekday { font-size:8px; }
+}
+@media(max-width:390px) { .report-month-grid { grid-template-columns:1fr 1fr; } .report-month-card { padding:10px; } }
+@media print { .report-year-control,.report-nav,.report-actions { display:none!important; }.report-explorer { border:0; padding:0; } }
+
+@media(max-width:850px) { .summary-grid{grid-template-columns:1fr 1fr}.summary-card.primary{grid-column:1/-1}.category-grid{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr} }
+@media(max-width:600px) { main{padding:22px 14px 40px}.topbar{padding:14px}.top-actions .pill{display:none}.welcome{align-items:start;flex-direction:column}.summary-grid,.actions-grid{grid-template-columns:1fr}.summary-card.primary{grid-column:auto}.inline-form{grid-template-columns:1fr 1fr}.inline-form .field:first-child{grid-column:1/-1}.inline-form button{grid-column:1/-1}.category-grid{gap:9px}.panel{padding:16px}.brand h1{font-size:22px} }
+@media print { body{background:white!important;color:#111!important}.topbar{background:#315c4c!important;print-color-adjust:exact}.no-print, .actions-grid, #shoppingPanel, .footer{display:none!important} main{padding:10px;max-width:none}.panel,.summary-card,.category-card{box-shadow:none;break-inside:avoid}.summary-grid{grid-template-columns:repeat(3,1fr)}.category-grid{grid-template-columns:repeat(4,1fr)} }
+.bill-group {
+  margin-top: 12px;
+}
+
+.bill-group-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.bill-group-title span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.bill-item {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 13px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bill-item.done {
+  opacity: .55;
+}
+
+.bill-item.done .bill-name {
+  text-decoration: line-through;
+}
+
+.bill-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.bill-name {
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.bill-meta {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.bill-amount {
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+
+/* Main payment-card deck: visible before the urgent-bill list is opened */
+
+.bill-deck-trigger { position:relative; display:block; width:100%; height:218px; padding:0; border:0; background:transparent; cursor:pointer; text-align:left; color:inherit; }
+.bill-deck-back, .bill-deck-front { position:absolute; inset:0; display:block; border-radius:26px; box-shadow:0 12px 26px rgba(25,35,30,.15); }
+.bill-deck-back-three { inset:0 0 28px 0; transform:translateY(-12px) scale(.965); background:linear-gradient(125deg,#f5d64d,#edb92f); }
+.bill-deck-back-two { inset:0 0 18px 0; transform:translateY(-5px) scale(.982); background:linear-gradient(125deg,#138c70,#075d52); }
+.bill-deck-back-one { inset:0 0 9px 0; transform:translateY(2px) scale(.992); background:linear-gradient(125deg,#c94b43,#8d302c); }
+.bill-deck-front { overflow:hidden; padding:22px 24px; color:#fff; background:linear-gradient(125deg,#315c4c,#173d35); border:1px solid rgba(255,255,255,.22); transition:transform .2s, box-shadow .2s; }
+.bill-deck-front:before { content:""; position:absolute; width:240px; height:240px; right:-55px; top:-95px; border:26px solid rgba(255,255,255,.09); border-radius:50%; box-shadow:0 0 0 24px rgba(255,255,255,.04),0 0 0 50px rgba(255,255,255,.035); }
+.bill-deck-trigger:hover .bill-deck-front { transform:translateY(-5px); box-shadow:0 18px 32px rgba(25,35,30,.2); }
+.bill-deck-star { position:absolute; top:18px; left:22px; font-size:27px; color:#f5d96c; }
+.bill-deck-brand { position:absolute; top:22px; right:25px; font-size:12px; font-weight:900; letter-spacing:2px; opacity:.9; }
+.bill-deck-title { position:absolute; left:25px; right:25px; top:82px; font-size:clamp(23px,4vw,34px); font-weight:850; letter-spacing:-1px; }
+.bill-deck-subtitle { position:absolute; left:26px; right:25px; top:128px; font-size:12px; color:rgba(255,255,255,.78); }
+.bill-deck-open { position:absolute; left:26px; bottom:20px; font-size:9px; font-weight:850; letter-spacing:1.6px; color:#f6d66b; }
+.bill-deck-open span { font-size:15px; margin-left:5px; }
+.bill-panel-back-row { display:flex; justify-content:flex-start; margin:-6px 0 14px; }
+@media(max-width:600px) { .bill-deck-trigger { height:190px; } .bill-deck-front { padding:18px; border-radius:21px; } .bill-deck-title { top:72px; left:20px; } .bill-deck-subtitle { top:116px; left:21px; } .bill-deck-open { left:21px; bottom:17px; } }
+
+/* Urgent bills: overlapping reminder cards */
+.bill-stack { position:relative; padding:8px 2px 18px; }
+.bill-card {
+  position:relative; border:1px solid rgba(49,92,76,.16); border-radius:18px;
+  padding:16px 17px; margin-top:-12px; background:var(--surface);
+  box-shadow:0 9px 20px rgba(32,48,39,.10); overflow:hidden;
+  transition:transform .18s, box-shadow .18s;
+}
+.bill-card:first-child { margin-top:0; }
+.bill-card:nth-child(4n+1) { background:linear-gradient(125deg,#fffefa,#f4eee0); }
+.bill-card:nth-child(4n+2) { background:linear-gradient(125deg,#eaf2ed,#dce9df); }
+.bill-card:nth-child(4n+3) { background:linear-gradient(125deg,#fff3e9,#f4dfd0); }
+.bill-card:nth-child(4n) { background:linear-gradient(125deg,#edf0f8,#dfe5f2); }
+.bill-card.expanded { z-index:5; transform:translateY(-3px); box-shadow:0 16px 30px rgba(32,48,39,.17); }
+.bill-card-top { display:flex; align-items:center; gap:12px; cursor:pointer; }
+.bill-card-main { flex:1; min-width:0; }
+.bill-card-name { font-size:15px; font-weight:800; color:#24332d; overflow-wrap:anywhere; }
+.bill-card-due { margin-top:4px; font-size:10px; color:#68766e; }
+.bill-card-amount { font-size:15px; font-weight:850; color:#24332d; white-space:nowrap; }
+.bill-card-star { font-size:20px; color:#315c4c; opacity:.65; }
+.bill-card-details { border-top:1px solid rgba(49,92,76,.15); margin-top:13px; padding-top:12px; }
+.bill-card-details[hidden] { display:none!important; }
+.bill-card-meta { font-size:11px; color:#53645a; line-height:1.7; margin-bottom:10px; }
+.bill-card-actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.bill-paid-check { display:flex; align-items:center; gap:7px; font-size:11px; font-weight:750; color:#315c4c; }
+.bill-paid-check input { width:16px; height:16px; }
+.bill-card-delete { margin-left:auto; }
+.paid-bills-list { display:flex; flex-direction:column; gap:8px; }
+.paid-bill-group { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--surface); }
+.paid-bill-toggle { display:flex; justify-content:space-between; align-items:center; width:100%; padding:13px 14px; border:0; background:transparent; color:var(--text); text-align:left; font-size:12px; font-weight:800; }
+.paid-bill-toggle span:last-child { color:var(--muted); font-size:10px; font-weight:700; }
+.paid-bill-history { padding:0 14px 12px; }
+.paid-bill-history[hidden] { display:none!important; }
+.paid-bill-record { display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-top:1px solid var(--line); font-size:11px; }
+.paid-bill-record small { display:block; color:var(--muted); margin-top:3px; }
+
+
+/* Urgent bills: overlapping reminder cards */
+.bill-stack { position:relative; padding:8px 2px 18px; }
+.bill-card { position:relative; border:1px solid rgba(49,92,76,.16); border-radius:18px; padding:16px 17px; margin-top:-12px; background:var(--surface); box-shadow:0 9px 20px rgba(32,48,39,.10); overflow:hidden; transition:transform .18s, box-shadow .18s; }
+.bill-card:first-child { margin-top:0; }
+.bill-card:nth-child(4n+1) { background:linear-gradient(125deg,#fffefa,#f4eee0); }
+.bill-card:nth-child(4n+2) { background:linear-gradient(125deg,#eaf2ed,#dce9df); }
+.bill-card:nth-child(4n+3) { background:linear-gradient(125deg,#fff3e9,#f4dfd0); }
+.bill-card:nth-child(4n) { background:linear-gradient(125deg,#edf0f8,#dfe5f2); }
+.bill-card.expanded { z-index:5; transform:translateY(-3px); box-shadow:0 16px 30px rgba(32,48,39,.17); }
+.bill-card-top { display:flex; align-items:center; gap:12px; cursor:pointer; }
+.bill-card-main { flex:1; min-width:0; }
+.bill-card-name { font-size:15px; font-weight:800; color:#24332d; overflow-wrap:anywhere; }
+.bill-card-due { margin-top:4px; font-size:10px; color:#68766e; }
+.bill-card-amount { font-size:15px; font-weight:850; color:#24332d; white-space:nowrap; }
+.bill-card-star { font-size:20px; color:#315c4c; opacity:.65; }
+.bill-card-details { border-top:1px solid rgba(49,92,76,.15); margin-top:13px; padding-top:12px; }
+.bill-card-details[hidden] { display:none!important; }
+.bill-card-meta { font-size:11px; color:#53645a; line-height:1.7; margin-bottom:10px; }
+.bill-card-actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.bill-paid-check { display:flex; align-items:center; gap:7px; font-size:11px; font-weight:750; color:#315c4c; }
+.bill-paid-check input { width:16px; height:16px; }
+.bill-card-delete { margin-left:auto; }
+.paid-bills-list { display:flex; flex-direction:column; gap:8px; }
+.paid-bill-group { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--surface); }
+.paid-bill-toggle { display:flex; justify-content:space-between; align-items:center; width:100%; padding:13px 14px; border:0; background:transparent; color:var(--text); text-align:left; font-size:12px; font-weight:800; }
+.paid-bill-toggle span:last-child { color:var(--muted); font-size:10px; font-weight:700; }
+.paid-bill-history { padding:0 14px 12px; }
+.paid-bill-history[hidden] { display:none!important; }
+.paid-bill-record { display:flex; justify-content:space-between; gap:12px; padding:9px 0; border-top:1px solid var(--line); font-size:11px; }
+.paid-bill-record small { display:block; color:var(--muted); margin-top:3px; }
+
+/* Urgent Bills: do not reserve space while collapsed */
+#billsSection .collapsible-content[hidden] {
+    display: none !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Expanded dropdown occupies space naturally */
+#billsSection .collapsible-content:not([hidden]) {
+    display: block;
+    height: auto;
+    overflow: visible;
+}
+
+/* Allow the dashboard to adjust naturally */
+#app > main,
+#app > main + main {
+    min-height: 0;
+}
+
+
+/* Separate overlapping three-card previews for every reminder list */
+.bill-preview-lists { display:flex; flex-direction:column; gap:24px; }
+.bill-preview-group { min-width:0; }
+.bill-preview-group-title { display:flex; justify-content:space-between; align-items:center; gap:10px; margin:0 3px 9px; color:var(--text); font-size:12px; font-weight:800; }
+.bill-preview-group-title small { color:var(--muted); font-size:10px; font-weight:600; }
+.bill-preview-stack { display:flex; flex-direction:column; padding:0 2px 2px; }
+.bill-preview-card { margin:0; }
+.bill-preview-card + .bill-preview-card { margin-top:-13px !important; }
+.bill-preview-card:nth-child(1) { z-index:3; }
+.bill-preview-card:nth-child(2) { z-index:2; }
+.bill-preview-card:nth-child(3) { z-index:1; }
+.bill-preview-group .bill-preview-card:not(:first-child) { padding-top:13px; }
+.bill-preview-open { width:100%; border:0; padding:0; background:transparent; text-align:left; cursor:pointer; }
+.bill-preview-empty { padding:14px; border:1px dashed var(--line); border-radius:14px; color:var(--muted); font-size:11px; background:var(--surface); }
+.bill-preview-empty-action {
+  display:flex; flex-direction:column; align-items:flex-start; gap:4px;
+  width:100%; min-height:92px; padding:20px 22px;
+  border:1px dashed #b9c9bd; border-radius:18px;
+  background:var(--surface, #fffdf8); color:var(--text, #34483d);
+  text-align:left; cursor:pointer;
+  transition:border-color .18s ease, background .18s ease, transform .18s ease;
+}
+.bill-preview-empty-action strong { font-size:15px; font-weight:800; }
+.bill-preview-empty-action span { font-size:13px; color:var(--muted, #68766e); }
+.bill-preview-empty-action small { margin-top:5px; font-size:10px; color:var(--muted, #68766e); font-weight:700; }
+.bill-preview-empty-action:hover { border-color:var(--primary, #315c4c); background:var(--surface-soft, #f8faf6); transform:translateY(-1px); }
+.bill-preview-empty-action:focus-visible { outline:3px solid rgba(49,92,76,.22); outline-offset:3px; }
+
+.bill-group-add { margin:0 0 12px; }
+.bill-preview-card:hover { transform:translateY(-3px); }
+
+/* Three visible urgent-bill cards on the main dashboard */
+.bill-deck-cover { margin:8px 0 0 !important; }
+.bill-preview-stack {
+  display:flex;
+  flex-direction:column;
+  padding:0 2px 2px;
+  cursor:pointer;
+}
+.bill-preview-card {
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  gap:13px;
+  width:100%;
+  min-height:64px;
+  margin:0;
+  padding:9px 18px;
+  border:1px solid rgba(49,92,76,.16);
+  border-radius:18px;
+  text-align:left;
+  color:#24332d;
+  cursor:pointer;
+  box-shadow:0 8px 18px rgba(32,48,39,.13);
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.bill-preview-card + .bill-preview-card { margin-top:9px; }
+.bill-preview-card:nth-child(1) { z-index:1; background:linear-gradient(115deg,#fffefa,#f3ecdc); }
+.bill-preview-card:nth-child(2) { z-index:1; background:linear-gradient(115deg,#eaf2ed,#d5e7dc); }
+.bill-preview-card:nth-child(3) { z-index:1; background:linear-gradient(115deg,#fff0e8,#f1d7c9); }
+.bill-preview-card:hover { transform:translateY(-3px); box-shadow:0 12px 22px rgba(32,48,39,.17); }
+.bill-preview-star { flex:0 0 auto; color:#315c4c; font-size:21px; }
+.bill-preview-main { display:block; flex:1; min-width:0; }
+.bill-preview-name {
+  display:block;
+  overflow:hidden;
+  color:#24332d;
+  font-size:15px;
+  font-weight:850;
+  line-height:1.15;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.bill-preview-due {
+  display:block;
+  margin-top:3px;
+  color:#68766e;
+  font-size:10px;
+  line-height:1.1;
+}
+.bill-preview-amount {
+  flex:0 0 auto;
+  color:#24332d;
+  font-size:14px;
+  font-weight:850;
+  white-space:nowrap;
+}
+.bill-preview-hint {
+  margin:9px 5px 0;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:850;
+  letter-spacing:1.2px;
+  text-align:right;
+}
+.bill-preview-hint span { margin-left:4px; color:var(--site-primary); font-size:13px; }
+.bill-preview-empty {
+  display:block;
+  width:100%;
+  min-height:64px;
+  padding:17px 18px;
+  border:1px dashed rgba(49,92,76,.35);
+  border-radius:18px;
+  background:#fffefa;
+  color:#53645a;
+  text-align:left;
+  cursor:pointer;
+}
+@media(max-width:600px) {
+  .bill-preview-card { min-height:62px; padding:8px 13px; }
+  .bill-preview-name { font-size:14px; }
+  .bill-preview-amount { font-size:13px; }
+}
+
+/* Add Capital and Add Expense: sit directly below the urgent-bill preview */
+.capital-expense-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.capital-expense-container .actions-grid {
+    width: 100%;
+    margin: 0 0 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 600px) {
+    .capital-expense-container .actions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Paid history: category accordion with a second, name-based history level */
+.paid-expense-group { border-top:1px solid var(--line); }
+.paid-expense-head { width:100%; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 2px; border:0; background:transparent; color:var(--text); text-align:left; cursor:pointer; }
+.paid-expense-name { font-size:12px; font-weight:800; overflow-wrap:anywhere; }
+.paid-expense-summary { display:flex; align-items:center; gap:7px; color:var(--muted); font-size:10px; font-weight:700; white-space:nowrap; }
+.paid-expense-head .paid-category-arrow { transition:transform .18s; }
+.paid-expense-head[aria-expanded="true"] .paid-category-arrow { transform:rotate(180deg); }
+.paid-expense-history { padding:0 10px 8px; }
+.paid-expense-history[hidden] { display:none!important; }
+
+
+.recent-activity-more { display:flex; justify-content:center; padding:14px 0 2px; }
+.recent-activity-more .btn { min-width:190px; }
+\n</style>
+
+<meta name="theme-color" content="#315c4c">
+<meta name="description" content="PesoPlan — a thoughtful personal budget tracker.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<script src="supabase-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+.cloud-account-btn { border:1px solid rgba(255,255,255,.35); background:transparent; color:white; border-radius:999px; padding:8px 12px; font-size:11px; font-weight:700; }
+.cloud-account-btn:hover { background:rgba(255,255,255,.12); }
+.cloud-modal { position:fixed; inset:0; z-index:30; background:rgba(15,25,20,.58); display:grid; place-items:center; padding:18px; }
+.cloud-modal[hidden] { display:none!important; }
+.cloud-dialog { width:min(100%,430px); background:var(--surface); color:var(--text); border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 24px 70px rgba(0,0,0,.22); }
+.cloud-dialog h3 { margin:0 0 6px; font-family:var(--site-font-heading); font-size:23px; }
+.cloud-dialog p { color:var(--muted); font-size:12px; line-height:1.6; margin:0 0 16px; }
+.cloud-dialog .field { margin-bottom:12px; }
+.cloud-dialog-actions { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:14px; }
+.cloud-dialog .cloud-status { margin-top:12px; min-height:18px; font-size:11px; color:var(--muted); }
+.cloud-dialog .close-cloud { float:right; border:0; background:transparent; color:var(--muted); font-size:20px; cursor:pointer; }
+#cloudAccountSummary { font-size:11px; color:var(--muted); overflow-wrap:anywhere; margin:10px 0; }
+@media(max-width:600px) { .cloud-account-btn { padding:7px 9px; font-size:10px; } }
+</style>
+<style>
+/* Final override: keep each reminder-list preview as a slightly overlapping three-card deck. */
+.bill-preview-stack .bill-preview-card + .bill-preview-card { margin-top:-13px !important; }
+.bill-preview-stack .bill-preview-card:nth-child(1) { z-index:3; }
+.bill-preview-stack .bill-preview-card:nth-child(2) { z-index:2; }
+.bill-preview-stack .bill-preview-card:nth-child(3) { z-index:1; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark">₱</div><div><h1>PesoPlan</h1><small>Your money, thoughtfully divided</small></div></div>
+    <div class="top-actions"><span class="pill">PERSONAL BUDGET</span><span id="saveStatus">● Saved on this device</span><button class="cloud-account-btn" id="cloudAccountBtn" type="button">☁ Connect account</button></div>
+  </header>
+  <main>
+    <div class="welcome">
+      <div><div class="eyebrow">Your financial overview</div><h2>Make every peso count.</h2><p class="sub">Track what comes in, what goes out, and what remains for each part of your life.</p></div>
+      <div class="date-label" id="todayLabel"></div>
+    </div>
+    <section class="summary-grid" aria-label="Available capital">
+      <div class="summary-card primary" style="grid-column:1/-1"><span class="summary-icon">◈</span><div class="card-label">Available capital</div><div class="amount" id="totalBalance">₱0.00</div><div class="card-note">Your current total across all categories</div></div>
+    </section>
+
+    <section class="section" id="billsSection">
+      <div class="bill-deck-cover" id="billDeckCover">
+        <div class="bill-preview-lists" id="billPreviewList" aria-label="Reminder lists, each showing its three most urgent reminders">
+          <div class="empty">Loading reminder lists…</div>
+        </div>
+        <div class="bill-preview-hint">TAP A STACK TO OPEN THAT REMINDER LIST <span>↗</span></div>
+      </div>
+      <div id="billsPanel" class="collapsible-content" hidden style="margin-top:18px">
+          <div class="panel-head"><div><h3 id="reminderPanelTitle">Payment reminders</h3><div class="panel-desc">Create as many reminder lists as you need, each with its own deduction category.</div></div><span class="tag" id="billCount">0 REMINDERS</span></div>
+          <div class="bill-panel-back-row"><button class="btn btn-quiet" id="billBackBtn" type="button">← Back to cards</button></div>
+          <div class="bill-add-area no-print" style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-quiet" id="addReminderGroupToggle" type="button">＋ New reminder list</button></div>
+          <form id="reminderGroupForm" class="inline-form no-print" hidden style="margin:12px 0;padding:14px;border:1px solid var(--line);border-radius:13px;background:var(--surface-soft)"><div class="field full"><strong>Create a separate reminder list</strong><div class="panel-desc">Give this list its own name and choose which category will be deducted when its reminders are marked paid.</div></div><div class="field"><label for="reminderGroupName">Reminder list name</label><input id="reminderGroupName" maxlength="45" placeholder="e.g. School deadlines" required></div><div class="field"><label for="reminderGroupCategory">Deduct from category</label><select id="reminderGroupCategory"></select></div><button class="btn btn-primary" type="submit">Create list</button></form>
+          <div class="bill-form-wrap no-print" id="billFormWrap" hidden>
+            <form id="billForm">
+              <div class="bill-form-grid">
+                <div class="field full"><label for="billName">Name of reminder / bill / subscription</label><input id="billName" maxlength="80" placeholder="e.g. Internet, project deadline, subscription" required></div>
+                <div class="field"><label for="billAmount">Amount (₱)</label><input id="billAmount" type="number" min="0.01" step="0.01" placeholder="0.00" required></div>
+                <div class="field"><label for="billDueDate">Due date</label><input id="billDueDate" type="date" required></div>
+                <div class="field"><label for="billPriority">Payment priority</label><select id="billPriority"><option>Urgent</option><option>High</option><option selected>Medium</option><option>Low</option></select></div>
+                <div class="field"><label for="billRepeat">Repeat</label><select id="billRepeat"><option value="once">One-time event</option><option value="daily">Daily</option><option value="weekdays">Weekdays (Mon–Fri)</option><option value="weekly">Weekly</option><option value="monthly">Monthly (same date)</option><option value="yearly">Yearly</option></select></div>
+                <div class="field"><label for="billReminderLead">Show reminder</label><select id="billReminderLead"><option value="0">On the due date</option><option value="1">1 day before</option><option value="3">3 days before</option><option value="7">7 days before</option><option value="14">14 days before</option><option value="30" selected>30 days before</option><option value="60">60 days before</option><option value="90">90 days before</option></select></div>
+                <div class="field full"><label for="billNote">Note (optional)</label><input id="billNote" maxlength="120" placeholder="e.g. Account details or payment instructions"></div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:13px"><button class="btn btn-primary" type="submit">Save reminder</button><button class="btn btn-quiet" id="billCancelBtn" type="button">Cancel</button></div>
+            </form>
+          </div>
+          <div class="bill-deck" id="billList"></div>
+        </div>
+    </section>
+    <section class="capital-expense-container">
+    <section class="actions-grid">
+      <div class="panel">
+        <div class="panel-head"><div><h3>＋ Add money received</h3><div class="panel-desc">Every amount you add is distributed automatically.</div></div><span class="tag">INCOME</span></div>
+        <form id="incomeForm">
+          <div class="field-grid">
+            <div class="field"><label for="incomeAmount">Amount (₱)</label><input id="incomeAmount" type="number" min="0.01" step="0.01" placeholder="e.g. 100" required></div>
+            <div class="field"><label for="incomeDate">Date received</label><input id="incomeDate" type="date" required></div>
+            <div class="field full"><label for="incomeNote">Source / Note (optional)</label><input id="incomeNote" type="text" maxlength="80" placeholder="e.g. Allowance, gift, extra income"></div>
+          </div>
+          <button class="btn btn-primary btn-block" type="submit">Add to my capital</button>
+        </form>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div><h3>− Record an expense</h3><div class="panel-desc">Only the selected category and your total capital will decrease.</div></div><span class="tag">EXPENSE</span></div>
+        <form id="expenseForm">
+          <div class="field-grid">
+            <div class="field"><label for="expenseAmount">Amount (₱)</label><input id="expenseAmount" type="number" min="0.01" step="0.01" placeholder="e.g. 25" required></div>
+            <div class="field"><label for="expenseDate">Date purchased</label><input id="expenseDate" type="date" required></div>
+            <div class="field"><label for="expenseCategory">Expense category</label><select id="expenseCategory" required></select></div>
+            <div class="field"><label for="expenseNote">What did you buy?</label><input id="expenseNote" type="text" maxlength="80" placeholder="e.g. Hair clip" required></div>
+          </div>
+          <button class="btn btn-secondary btn-block" type="submit">Save expense</button>
+        </form>
+      </div>
+    </section>
+    </section>
+
+    <section class="section">
+      <div class="panel">
+        <div class="panel-head"><div><h3>My category balances</h3><div class="panel-desc">Your incoming money is split using your chosen percentages.</div></div><button class="btn btn-quiet category-settings-btn" id="categorySettingsToggle" type="button" aria-expanded="false">⚙ Settings</button><span class="tag">100% ALLOCATION</span></div>
+        <div class="category-settings-panel no-print" id="categorySettingsPanel" hidden>
+          <p class="report-note">Edit category names and allocation percentages, or add and remove categories. Percentages must total exactly 100% before saving.</p>
+          <div id="categorySettingsRows"></div>
+          <form id="addCategoryForm" class="inline-form" style="margin-top:12px">
+            <div class="field"><label for="newCategoryName">New category name</label><input id="newCategoryName" maxlength="35" placeholder="e.g. Transportation" required></div>
+            <div class="field"><label for="newCategoryPercent">Allocation %</label><input id="newCategoryPercent" type="number" min="0" max="100" step="0.1" value="0" required></div>
+            <div class="field"><label for="newCategoryIcon">Icon</label><input id="newCategoryIcon" maxlength="3" value="✦"></div>
+            <button class="btn btn-secondary" type="submit">＋ Add category</button>
+          </form>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn btn-primary" id="saveCategorySettings" type="button">Save category settings</button><button class="btn btn-quiet" id="cancelCategorySettings" type="button">Cancel</button></div>
+        </div>
+        <div class="category-grid" id="categoryGrid"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="panel">
+        <button class="btn btn-quiet btn-block section-toggle" id="shoppingToggle" type="button" aria-expanded="false" aria-controls="shoppingPanel">
+          <span class="toggle-copy"><span class="toggle-title">♡ Things I want to buy</span><span class="toggle-desc">Open your wishlist, organized by category.</span></span><span class="toggle-arrow">⌄</span>
+        </button>
+        <div id="shoppingPanel" class="collapsible-content" hidden style="margin-top:18px">
+          <div class="panel-head"><div><h3>My shopping list</h3><div class="panel-desc">Add items and view them one category at a time.</div></div><span class="tag">WISHLIST</span></div>
+          <form id="wishForm" class="inline-form no-print">
+            <div class="field"><label for="wishName">Item</label><input id="wishName" maxlength="70" placeholder="What do you want to buy?" required></div>
+            <div class="field"><label for="wishCategory">Category</label><select id="wishCategory"></select></div>
+            <div class="field"><label for="wishAmount">Estimated ₱</label><input id="wishAmount" type="number" min="0" step="0.01" placeholder="0.00"></div>
+            <button class="btn btn-primary" type="submit">＋ Add</button>
+          </form>
+          <div class="field no-print" style="max-width:190px;margin-top:12px"><label for="wishPriority">Priority for next item</label><select id="wishPriority"><option>High</option><option selected>Medium</option><option>Low</option></select></div>
+          <div id="wishCategoryTabs" class="wish-category-tabs no-print"></div>
+          <div class="priority-list" id="wishList"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="panel">
+        <button class="btn btn-quiet btn-block section-toggle" id="reportsToggle" type="button" aria-expanded="false" aria-controls="reportsPanel">
+          <span class="toggle-copy"><span class="toggle-title">▤ Reports & data</span><span class="toggle-desc">View totals, transaction counts, and export your records.</span></span><span class="toggle-arrow">⌄</span>
+        </button>
+        <div id="reportsPanel" class="collapsible-content" hidden style="margin-top:18px">
+          <div class="report-year-control no-print">
+            <div class="field"><label for="reportYear">Select year</label><input id="reportYear" type="number" min="2000" max="2100" step="1"></div>
+          </div>
+          <div class="report-heading" id="reportPeriodHeading">Financial overview</div>
+          <div class="report-overview-grid" aria-label="Financial totals for selected year">
+            <button type="button" class="summary-card report-total-card" id="totalIncomeCard" data-report-metric="income">
+              <span class="summary-icon">↗</span><span class="card-label">Total money received</span>
+              <span class="amount" id="totalIncome">₱0.00</span><span class="card-note" id="incomeReportNote">For the selected year</span><span class="report-open-hint">↗</span>
+            </button>
+            <button type="button" class="summary-card report-total-card" id="totalExpensesCard" data-report-metric="expense">
+              <span class="summary-icon">↘</span><span class="card-label">Total expenses</span>
+              <span class="amount" id="totalExpenses">₱0.00</span><span class="card-note" id="expenseReportNote">For the selected year</span><span class="report-open-hint">↗</span>
+            </button>
+          </div>
+          <div class="report-explorer" id="reportExplorer" hidden>
+            <div class="report-nav" id="reportBreadcrumbs"></div>
+            <div id="reportCalendarContent"></div>
+            <div class="report-day-details" id="reportDayDetails" hidden></div>
+          </div>
+          <p class="report-note">Your entries are saved automatically in this browser on this device. Download a CSV report to keep a copy, or print this page to save a simple PDF report.</p>
+          <div class="report-actions no-print"><button class="btn btn-primary" id="csvBtn">↓ Download CSV report</button><button class="btn btn-quiet" id="printBtn">▤ Print / Save PDF</button><button class="btn btn-quiet" id="backupBtn">Export backup</button><button class="btn btn-quiet" id="restoreBtn">Import backup</button><input type="file" id="restoreFile" accept="application/json" hidden></div>
+          <div style="border-top:1px solid var(--line);margin:18px 0 13px"></div>
+          <div class="report-count-row"><span style="color:var(--muted)">Transactions in this view</span><strong id="transactionCount">0</strong></div>
+          <div style="display:flex;justify-content:space-between;gap:10px;font-size:11px;margin-top:10px"><span style="color:var(--muted)">Current wishlist items</span><strong id="wishCount">0</strong></div>
+          <div style="display:flex;justify-content:space-between;gap:10px;font-size:11px;margin-top:10px"><span style="color:var(--muted)">Current urgent bill reminders</span><strong id="billReportCount">0</strong></div>
+          <p class="report-note" style="margin-top:17px">Tip: Export a backup regularly, especially before clearing browser data or changing devices.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section panel">
+      <button class="btn btn-quiet btn-block section-toggle" id="activityToggle" type="button" aria-expanded="false" aria-controls="activityPanel">
+        <span class="toggle-copy"><span class="toggle-title">◷ Recent activity</span><span class="toggle-desc">Show your money received and expenses, newest first.</span></span><span class="toggle-arrow">⌄</span>
+      </button>
+      <div id="activityPanel" class="collapsible-content" hidden style="margin-top:18px">
+        <div class="table-wrap"><table><thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Category</th><th>Amount</th><th class="no-print">Action</th></tr></thead><tbody id="transactionRows"></tbody></table></div>
+        <div id="recentActivityMoreWrap" class="recent-activity-more no-print" hidden>
+          <button type="button" class="btn btn-quiet" id="recentActivityMoreBtn" aria-expanded="false">View more transactions</button>
+        </div>
+      </div>
+    </section>
+    <section class="section panel" id="paidBillsSection">
+      <div class="panel-head">
+        <div><h3>✓ Paid history</h3><div class="panel-desc">Expenses are grouped by category and then by bill or expense name. Open a name to see its payment history.</div></div>
+        <span class="tag" id="paidBillCount">0 PAYMENTS</span>
+      </div>
+      <div class="field paid-filter"><label for="paidCategoryFilter">Show paid items by category</label><select id="paidCategoryFilter"><option value="all">All categories</option></select></div>
+      <div class="paid-bills-list" id="paidBillsList"></div>
+    </section>
+    <div class="footer">PesoPlan · A simple way to keep your pesos organized</div>
+  </main>
+</div>
+
+<div class="cloud-modal" id="cloudModal" hidden>
+  <div class="cloud-dialog" role="dialog" aria-modal="true" aria-labelledby="cloudTitle">
+    <button class="close-cloud" id="cloudCloseBtn" type="button" aria-label="Close">×</button>
+    <h3 id="cloudTitle">Sync PesoPlan</h3>
+    <p id="cloudIntro">Sign in with the same account on your phone and computer to access the same budget records.</p>
+    <div id="cloudAuthFields">
+      <div class="field"><label for="cloudEmail">Email address</label><input id="cloudEmail" type="email" autocomplete="email" placeholder="you\@example.com"></div>
+      <div class="field"><label for="cloudPassword">Password</label><input id="cloudPassword" type="password" autocomplete="current-password" placeholder="At least 6 characters"></div>
+      <div class="cloud-dialog-actions">
+        <button class="btn btn-primary" id="cloudSignInBtn" type="button">Sign in</button>
+        <button class="btn btn-secondary" id="cloudSignUpBtn" type="button">Create account</button>
+      </div>
+    </div>
+    <div id="cloudSignedIn" hidden>
+      <div id="cloudAccountSummary"></div>
+      <button class="btn btn-danger btn-block" id="cloudSignOutBtn" type="button">Sign out</button>
+    </div>
+    <div class="cloud-status" id="cloudModalStatus" role="status"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<script>
+(() => {
+  const DEFAULT_CATEGORIES = [
+    {id:'aesthetics', name:'Aesthetics', percent:20, icon:'✿'},
+    {id:'food', name:'Food', percent:20, icon:'♡'},
+    {id:'hygiene', name:'Hygiene / Skincare', percent:10, icon:'✧'},
+    {id:'gadgets', name:'Gadgets', percent:10, icon:'▣'},
+    {id:'house', name:'House Stuff', percent:10, icon:'⌂'},
+    {id:'savings', name:'Savings', percent:10, icon:'◈'},
+    {id:'bills', name:'Bills', percent:20, icon:'▤'}
+  ];
+  let CATEGORIES = DEFAULT_CATEGORIES.map(c => ({...c}));
+  const DEFAULT_REMINDER_GROUPS = [{id:'default-reminders',name:'Urgent bills',category:'bills'}];
+  const KEY = 'pesoplan_data_v1';
+  const peso = n => '₱' + Number(n || 0).toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+  const makeId = () => (globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function') ? globalThis.crypto.randomUUID() : `pp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const blankBalances = () => Object.fromEntries(CATEGORIES.map(c => [c.id, 0]));
+  let state = load();
+  let selectedWishCategory = 'all';
+  let expandedBillId = null;
+  let activeReminderGroupId = null;
+  let expandedPaidBillName = null;
+  let expandedPaidExpenseName = null;
+  let reportView = 'overview';
+  let reportMetric = 'income';
+  let reportSelectedMonth = null;
+  let reportSelectedDay = null;
+  function load() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(KEY));
+      if (saved && saved.balances && Array.isArray(saved.transactions) && Array.isArray(saved.wishes)) {
+        if (Array.isArray(saved.categories) && saved.categories.length) CATEGORIES = saved.categories.map(c => ({...c}));
+        const migratedAt = Date.now();
+        const syncMeta = saved._syncMeta || {};
+        if (!syncMeta.categoriesAt && JSON.stringify(CATEGORIES) !== JSON.stringify(DEFAULT_CATEGORIES)) syncMeta.categoriesAt = migratedAt;
+        const migrateRecords = items => (Array.isArray(items) ? items : []).map(item =>
+          item && item.id != null && !item.updatedAt ? {...item, updatedAt:migratedAt} : item);
+        return {categories:CATEGORIES,balances:{...blankBalances(),...saved.balances}, transactions:migrateRecords(saved.transactions), wishes:migrateRecords(saved.wishes), bills:migrateRecords(saved.bills), paidBills:migrateRecords(saved.paidBills), reminderGroups:migrateRecords(saved.reminderGroups && saved.reminderGroups.length ? saved.reminderGroups : DEFAULT_REMINDER_GROUPS.map(g=>({...g}))), deletedTransactionIds:Array.isArray(saved.deletedTransactionIds)?saved.deletedTransactionIds:[], deletedBillIds:Array.isArray(saved.deletedBillIds)?saved.deletedBillIds:[], deletedWishIds:Array.isArray(saved.deletedWishIds)?saved.deletedWishIds:[], deletedReminderGroupIds:Array.isArray(saved.deletedReminderGroupIds)?saved.deletedReminderGroupIds:[], deletedPaidBillIds:Array.isArray(saved.deletedPaidBillIds)?saved.deletedPaidBillIds:[], deletedCategoryIds:Array.isArray(saved.deletedCategoryIds)?saved.deletedCategoryIds:[], _syncMeta:syncMeta};
+      }
+    } catch (e) {}
+    return {categories:CATEGORIES,balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[], reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), deletedTransactionIds:[], deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
+  }
+  // Cloud sync uses one private JSON record per signed-in user.
+  // Only the Supabase project URL and publishable/anon key belong in the browser.
+  let cloudClient = null;
+  let cloudUser = null;
+  let cloudSyncTimer = null;
+  let cloudPollTimer = null;
+  let lastCloudUpdatedAt = null;
+  let cloudBusy = false;
+  let cloudSaveRequested = false;
+
+  const cloudModal = document.getElementById('cloudModal');
+  const cloudModalStatus = document.getElementById('cloudModalStatus');
+  const cloudConfigured = Boolean(
+    window.PESOPLAN_SUPABASE_URL &&
+    window.PESOPLAN_SUPABASE_ANON_KEY &&
+    !String(window.PESOPLAN_SUPABASE_URL).includes('YOUR_') &&
+    !String(window.PESOPLAN_SUPABASE_ANON_KEY).includes('YOUR_')
+  );
+
+  function setCloudStatus(message) {
+    const status = document.getElementById('saveStatus');
+    if (status) status.textContent = message;
+    if (cloudModalStatus) cloudModalStatus.textContent = message;
+  }
+
+  function updateCloudAccountUI() {
+    const btn = document.getElementById('cloudAccountBtn');
+    const fields = document.getElementById('cloudAuthFields');
+    const signedIn = document.getElementById('cloudSignedIn');
+    const summary = document.getElementById('cloudAccountSummary');
+    if (!cloudConfigured) {
+      btn.textContent = '☁ Set up cloud';
+      btn.title = 'Add your Supabase project settings first';
+      fields.hidden = true;
+      signedIn.hidden = true;
+      cloudModalStatus.textContent = 'Cloud setup is not finished. Follow the README and add your Supabase project URL and publishable key.';
+      return;
+    }
+    fields.hidden = Boolean(cloudUser);
+    signedIn.hidden = !cloudUser;
+    btn.textContent = cloudUser ? '☁ Account' : '☁ Sign in';
+    if (cloudUser) {
+      summary.textContent = 'Signed in as ' + cloudUser.email + '. Your records sync to this account.';
+    }
+  }
+
+  function openCloudModal() {
+    cloudModal.hidden = false;
+    updateCloudAccountUI();
+  }
+  function closeCloudModal() { cloudModal.hidden = true; }
+
+  // Transaction-first cloud sync.
+  // The cloud remains canonical; local transactions missing from the cloud are
+  // treated as offline additions and merged by their stable transaction IDs.
+  function transactionBalanceEffect(balances, tx, direction, categories) {
+    const sign = direction === 'add' ? 1 : -1;
+    const amount = Number(tx?.amount || 0) * sign;
+    if (!Number.isFinite(amount) || !tx) return;
+    if (tx.type === 'income') {
+      if (Array.isArray(tx.allocations) && tx.allocations.length) {
+        tx.allocations.forEach(allocation => {
+          if (allocation && allocation.category) {
+            balances[allocation.category] = Number(balances[allocation.category] || 0) + Number(allocation.amount || 0) * sign;
+          }
+        });
+      } else {
+        // Older income records did not save their original category split.
+        (categories || CATEGORIES).forEach(c => {
+          balances[c.id] = Number(balances[c.id] || 0) + amount * Number(c.percent || 0) / 100;
+        });
+      }
+    } else if (tx.type === 'expense' && tx.category) {
+      balances[tx.category] = Number(balances[tx.category] || 0) - amount;
+    }
+  }
+
+  function mergeCloudStates(localState, remoteState) {
+    const remote = remoteState || null;
+    const local = localState || {};
+    const ids = key => new Set([
+      ...(Array.isArray(remote?.[key]) ? remote[key] : []),
+      ...(Array.isArray(local?.[key]) ? local[key] : [])
+    ].map(String));
+
+    const deletedTransactionIds = ids('deletedTransactionIds');
+    const deletedBillIds = ids('deletedBillIds');
+    const deletedWishIds = ids('deletedWishIds');
+    const deletedReminderGroupIds = ids('deletedReminderGroupIds');
+    const deletedPaidBillIds = ids('deletedPaidBillIds');
+    const deletedCategoryIds = ids('deletedCategoryIds');
+
+    const localTransactions = Array.isArray(local.transactions) ? local.transactions : [];
+    const remoteTransactions = Array.isArray(remote?.transactions) ? remote.transactions : [];
+    const transactionMap = new Map();
+    const mergeByUpdatedAt = (localItems, remoteItems) => {
+      const map = new Map();
+      (Array.isArray(remoteItems) ? remoteItems : []).forEach(item => {
+        if (item && item.id != null) map.set(String(item.id), item);
+      });
+      (Array.isArray(localItems) ? localItems : []).forEach(item => {
+        if (!item || item.id == null) return;
+        const key = String(item.id), existing = map.get(key);
+        if (!existing || Number(item.updatedAt || item.createdAt || 0) > Number(existing.updatedAt || existing.createdAt || 0)) {
+          map.set(key, item);
+        }
+      });
+      return [...map.values()];
+    };
+
+    remoteTransactions.forEach(t => {
+      if (t && t.id != null && !deletedTransactionIds.has(String(t.id))) transactionMap.set(String(t.id), t);
+    });
+    const localOnly = localTransactions.filter(t => t && t.id != null &&
+      !deletedTransactionIds.has(String(t.id)) && !transactionMap.has(String(t.id)));
+    localOnly.forEach(t => transactionMap.set(String(t.id), t));
+
+    const localMeta = local._syncMeta || {}, remoteMeta = remote?._syncMeta || {};
+    const localCategoriesAt = Number(localMeta.categoriesAt || 0);
+    const remoteCategoriesAt = Number(remoteMeta.categoriesAt || 0);
+    const categoriesSource = !remote || localCategoriesAt > remoteCategoriesAt ? local.categories : remote.categories;
+    const baseCategories = (Array.isArray(categoriesSource) && categoriesSource.length
+      ? categoriesSource : (Array.isArray(local.categories) && local.categories.length ? local.categories : CATEGORIES))
+      .filter(c => c && c.id != null && !deletedCategoryIds.has(String(c.id))).map(c => ({...c}));
+    const balances = {...blankBalances(), ...(remote?.balances || local.balances || {})};
+
+    // Reconcile balances using transaction IDs, not by adding two complete balance snapshots.
+    if (remote) {
+      remoteTransactions.filter(t => t && t.id != null && deletedTransactionIds.has(String(t.id)))
+        .forEach(tx => transactionBalanceEffect(balances, tx, 'remove', baseCategories));
+      localOnly.forEach(tx => transactionBalanceEffect(balances, tx, 'add', baseCategories));
+    }
+
+    const merged = remote ? {
+      ...remote,
+      categories: baseCategories,
+      balances,
+      transactions: [...transactionMap.values()],
+      wishes: mergeByUpdatedAt(local.wishes, remote.wishes).filter(x => !deletedWishIds.has(String(x.id))),
+      bills: mergeByUpdatedAt(local.bills, remote.bills).filter(x => !deletedBillIds.has(String(x.id))),
+      paidBills: mergeByUpdatedAt(local.paidBills, remote.paidBills).filter(x => !deletedPaidBillIds.has(String(x.id))),
+      reminderGroups: mergeByUpdatedAt(local.reminderGroups, remote.reminderGroups).filter(x => !deletedReminderGroupIds.has(String(x.id))),
+      deletedTransactionIds: [...deletedTransactionIds],
+      deletedBillIds: [...deletedBillIds],
+      deletedWishIds: [...deletedWishIds],
+      deletedReminderGroupIds: [...deletedReminderGroupIds],
+      deletedPaidBillIds: [...deletedPaidBillIds],
+      deletedCategoryIds: [...deletedCategoryIds],
+      _syncMeta: {
+        categoriesAt: Math.max(localCategoriesAt, remoteCategoriesAt),
+        stateAt: Math.max(Number(localMeta.stateAt || 0), Number(remoteMeta.stateAt || 0))
+      }
+    } : {
+      ...local,
+      transactions: [...transactionMap.values()],
+      deletedTransactionIds: [...deletedTransactionIds],
+      deletedBillIds: [...deletedBillIds],
+      deletedWishIds: [...deletedWishIds],
+      deletedReminderGroupIds: [...deletedReminderGroupIds],
+      deletedPaidBillIds: [...deletedPaidBillIds],
+      deletedCategoryIds: [...deletedCategoryIds]
+    };
+    return {state: merged, added: localOnly.length};
+  }
+
+  async function fetchCloudRecord() {
+    const { data, error } = await cloudClient
+      .from('pesoplan_data')
+      .select('data, updated_at')
+      .eq('user_id', cloudUser.id)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  }
+
+  async function pushCloudData() {
+    if (!cloudClient || !cloudUser || !navigator.onLine) return;
+    if (cloudBusy) { cloudSaveRequested = true; return; }
+    cloudBusy = true;
+    const startingSnapshot = JSON.stringify(state);
+    try {
+      // Always read the newest cloud row before writing, preventing a stale
+      // device snapshot from blindly replacing newer cloud transactions.
+      const remoteRecord = await fetchCloudRecord();
+      const localSnapshot = JSON.parse(startingSnapshot);
+      const merge = mergeCloudStates(localSnapshot, remoteRecord?.data || null);
+      const mergedState = merge.state;
+      const { data, error } = await cloudClient
+        .from('pesoplan_data')
+        .upsert({
+          user_id: cloudUser.id,
+          data: {...mergedState, categories: mergedState.categories || CATEGORIES},
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id' })
+        .select('updated_at')
+        .single();
+      if (error) throw error;
+      lastCloudUpdatedAt = data?.updated_at || new Date().toISOString();
+
+      // Incorporate transactions created while the request was in flight.
+      if (JSON.stringify(state) === startingSnapshot) {
+        applyCloudState(mergedState);
+      } else {
+        const concurrentMerge = mergeCloudStates(state, mergedState);
+        const concurrentChangesRemain = JSON.stringify(concurrentMerge.state) !== JSON.stringify(mergedState);
+        applyCloudState(concurrentMerge.state);
+        if (concurrentChangesRemain) queueCloudSave();
+      }
+      setCloudStatus('● Synced to cloud' + (merge.added ? ` · ${merge.added} offline transaction${merge.added===1?'':'s'} merged` : ''));
+    } catch (error) {
+      console.error('PesoPlan cloud save:', error);
+      setCloudStatus('● Saved on this device · cloud sync pending');
+    } finally {
+      cloudBusy = false;
+      if (cloudSaveRequested && cloudUser && navigator.onLine) {
+        cloudSaveRequested = false;
+        clearTimeout(cloudSyncTimer);
+        cloudSyncTimer = setTimeout(pushCloudData, 250);
+      }
+    }
+  }
+
+  function queueCloudSave() {
+    if (!cloudUser || !cloudClient) return;
+    if (!navigator.onLine) { setCloudStatus('● Offline · saved on this device; cloud sync pending'); return; }
+    clearTimeout(cloudSyncTimer);
+    setCloudStatus('● Saving to cloud…');
+    cloudSyncTimer = setTimeout(pushCloudData, 500);
+  }
+
+  function applyCloudState(remoteState) {
+    if (!remoteState || !remoteState.balances ||
+        !Array.isArray(remoteState.transactions) ||
+        !Array.isArray(remoteState.wishes)) return false;
+    if (Array.isArray(remoteState.categories) && remoteState.categories.length) CATEGORIES = remoteState.categories.map(c => ({...c}));
+    state = {
+      categories: CATEGORIES,
+      reminderGroups: Array.isArray(remoteState.reminderGroups) && remoteState.reminderGroups.length ? remoteState.reminderGroups : DEFAULT_REMINDER_GROUPS.map(g=>({...g})),
+      balances: { ...blankBalances(), ...remoteState.balances },
+      transactions: remoteState.transactions,
+      wishes: remoteState.wishes,
+      bills: Array.isArray(remoteState.bills) ? remoteState.bills : [],
+      paidBills: Array.isArray(remoteState.paidBills) ? remoteState.paidBills : [],
+      deletedTransactionIds: Array.isArray(remoteState.deletedTransactionIds) ? remoteState.deletedTransactionIds : [],
+      deletedBillIds: Array.isArray(remoteState.deletedBillIds) ? remoteState.deletedBillIds : [],
+      deletedWishIds: Array.isArray(remoteState.deletedWishIds) ? remoteState.deletedWishIds : [],
+      deletedReminderGroupIds: Array.isArray(remoteState.deletedReminderGroupIds) ? remoteState.deletedReminderGroupIds : [],
+      deletedPaidBillIds: Array.isArray(remoteState.deletedPaidBillIds) ? remoteState.deletedPaidBillIds : [],
+      deletedCategoryIds: Array.isArray(remoteState.deletedCategoryIds) ? remoteState.deletedCategoryIds : [],
+      _syncMeta: remoteState._syncMeta || {}
+    };
+    try { state.categories = CATEGORIES;
+      localStorage.setItem(KEY, JSON.stringify(state));
+      lastSavedSnapshot = JSON.stringify(state);
+    } catch (e) {}
+    render();
+    return true;
+  }
+
+  async function pullCloudData(showMessage = false) {
+    if (!cloudClient || !cloudUser || cloudBusy || !navigator.onLine) return;
+    cloudBusy = true;
+    try {
+      const record = await fetchCloudRecord();
+      if (record?.data && record.updated_at !== lastCloudUpdatedAt) {
+        const merge = mergeCloudStates(state, record.data);
+        const mergedDiffersFromCloud = JSON.stringify(merge.state) !== JSON.stringify(record.data);
+        if (applyCloudState(merge.state)) {
+          lastCloudUpdatedAt = record.updated_at;
+          if (mergedDiffersFromCloud) {
+            setCloudStatus('● Merging offline changes…');
+            setTimeout(pushCloudData, 0);
+          } else {
+            setCloudStatus('● Updated from cloud');
+          }
+        }
+      } else if (showMessage) {
+        setCloudStatus('● Cloud data is up to date');
+      }
+    } catch (error) {
+      console.error('PesoPlan cloud load:', error);
+      setCloudStatus('● Offline · changes saved on this device');
+    } finally {
+      cloudBusy = false;
+    }
+  }
+
+  async function activateCloudSession(session) {
+    const nextUser = session?.user || null;
+    clearInterval(cloudPollTimer);
+    clearTimeout(cloudSyncTimer);
+    // Never carry the previous account's browser data into another account.
+    if (nextUser) {
+      const ownerKey = KEY + '_owner';
+      const previousOwner = localStorage.getItem(ownerKey);
+      if (previousOwner !== nextUser.id) {
+        // Remove every prior PesoPlan browser-data key before loading this account.
+        try {
+          for (let i = localStorage.length - 1; i >= 0; i--) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith(KEY)) localStorage.removeItem(key);
+          }
+        } catch (e) {}
+        CATEGORIES = DEFAULT_CATEGORIES.map(c => ({...c}));
+        state = {categories:CATEGORIES, balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[],
+          reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), deletedTransactionIds:[], deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
+      }
+      try { localStorage.setItem(ownerKey, nextUser.id); } catch (e) {}
+    }
+    cloudUser = nextUser;
+    updateCloudAccountUI();
+    if (!cloudUser) {
+      lastCloudUpdatedAt = null;
+      setCloudStatus('● Saved on this device');
+      return;
+    }
+
+    setCloudStatus('● Loading your cloud records…');
+    try {
+      const record = await fetchCloudRecord();
+      if (record) {
+        const localHasData = state.transactions.length > 0 || state.wishes.length > 0 ||
+          (state.bills || []).length > 0 || (state.paidBills || []).length > 0 ||
+          (state.reminderGroups || []).length > 0 ||
+          (state.categories || []).length > 0 ||
+          Object.values(state.balances).some(value => Number(value) !== 0);
+        if (localHasData) {
+          try { localStorage.setItem(KEY + '_before_cloud_login', JSON.stringify(state)); } catch (e) {}
+        }
+        const merge = mergeCloudStates(state, record.data);
+        applyCloudState(merge.state);
+        lastCloudUpdatedAt = record.updated_at;
+        if (merge.added) {
+          setCloudStatus(`● Preserved ${merge.added} local transaction${merge.added===1?'':'s'} · merging to cloud…`);
+          await pushCloudData();
+        } else {
+          setCloudStatus('● Synced to cloud');
+        }
+      } else {
+        // No cloud record exists yet: first sign-in migration remains unchanged.
+        await pushCloudData();
+      }
+      cloudPollTimer = setInterval(() => pullCloudData(false), 15000);
+      closeCloudModal();
+    } catch (error) {
+      console.error('PesoPlan cloud initialization:', error);
+      setCloudStatus('● Could not load cloud data · local data is safe');
+      cloudModalStatus.textContent = 'Could not connect to your cloud database. Check your setup and SQL policies. Your local browser data has not been deleted.';
+    }
+    updateCloudAccountUI();
+  }
+
+  async function initializeCloud() {
+    updateCloudAccountUI();
+    if (!cloudConfigured || !window.supabase?.createClient) return;
+    cloudClient = window.supabase.createClient(
+      window.PESOPLAN_SUPABASE_URL,
+      window.PESOPLAN_SUPABASE_ANON_KEY
+    );
+    const { data: { session } } = await cloudClient.auth.getSession();
+    await activateCloudSession(session);
+    cloudClient.auth.onAuthStateChange((_event, session) => {
+      // Defer network work so the auth callback does not block Supabase's internal queue.
+      setTimeout(() => activateCloudSession(session), 0);
+    });
+  }
+
+  document.getElementById('cloudAccountBtn').addEventListener('click', openCloudModal);
+  document.getElementById('cloudCloseBtn').addEventListener('click', closeCloudModal);
+  cloudModal.addEventListener('click', event => { if (event.target === cloudModal) closeCloudModal(); });
+
+  document.getElementById('cloudSignUpBtn').addEventListener('click', async () => {
+    if (!cloudClient) return;
+    const email = document.getElementById('cloudEmail').value.trim();
+    const password = document.getElementById('cloudPassword').value;
+    if (!email || password.length < 6) {
+      cloudModalStatus.textContent = 'Enter a valid email and a password with at least 6 characters.';
+      return;
+    }
+    cloudModalStatus.textContent = 'Creating your account…';
+    const { data, error } = await cloudClient.auth.signUp({ email, password });
+    if (error) cloudModalStatus.textContent = error.message;
+    else if (data.session) {
+      cloudModalStatus.textContent = 'Account created. Connecting…';
+      await activateCloudSession(data.session);
+    } else {
+      cloudModalStatus.textContent = 'Account created! Check your email to confirm it, then sign in.';
+    }
+  });
+
+  document.getElementById('cloudSignInBtn').addEventListener('click', async () => {
+    if (!cloudClient) return;
+    const email = document.getElementById('cloudEmail').value.trim();
+    const password = document.getElementById('cloudPassword').value;
+    if (!email || !password) {
+      cloudModalStatus.textContent = 'Enter your email and password.';
+      return;
+    }
+    cloudModalStatus.textContent = 'Signing in…';
+    const { data, error } = await cloudClient.auth.signInWithPassword({ email, password });
+    if (error) cloudModalStatus.textContent = error.message;
+    else await activateCloudSession(data.session);
+  });
+
+  document.getElementById('cloudSignOutBtn').addEventListener('click', async () => {
+    if (!cloudClient) return;
+    const { error } = await cloudClient.auth.signOut();
+    if (error) cloudModalStatus.textContent = error.message;
+    else {
+      cloudUser = null;
+      clearInterval(cloudPollTimer);
+      clearTimeout(cloudSyncTimer);
+      // Clear only this browser's active copy. The signed-in user's cloud backup is untouched.
+      try {
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith(KEY)) localStorage.removeItem(key);
+        }
+      } catch (e) {}
+      CATEGORIES = DEFAULT_CATEGORIES.map(c => ({...c}));
+      state = {categories:CATEGORIES, balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[],
+        reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), deletedTransactionIds:[], deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
+      render();
+      updateCloudAccountUI();
+      setCloudStatus('● Signed out · this device is cleared');
+    }
+  });
+
+  window.addEventListener('focus', () => { if (cloudUser && navigator.onLine) pullCloudData(false); });
+  window.addEventListener('online', () => { if (cloudUser && cloudClient) { setCloudStatus('● Online · syncing saved changes…'); pushCloudData(); } });
+  window.addEventListener('offline', () => setCloudStatus('● Offline · saved on this device; cloud sync will resume when online'));
+
+  let lastSavedSnapshot = JSON.stringify(state);
+  function save() {
+    try {
+      const previous = (() => { try { return JSON.parse(lastSavedSnapshot || '{}'); } catch (_) { return {}; } })();
+      const now = Date.now();
+      state.categories = CATEGORIES;
+      state.reminderGroups = state.reminderGroups || DEFAULT_REMINDER_GROUPS.map(g=>({...g}));
+      state._syncMeta = state._syncMeta || {};
+      const categoryChanged = JSON.stringify(previous.categories || []) !== JSON.stringify(CATEGORIES);
+      if (categoryChanged) state._syncMeta.categoriesAt = Math.max(now, Number(state._syncMeta.categoriesAt || 0) + 1);
+
+      const stampChanged = (key) => {
+        const before = new Map((Array.isArray(previous[key]) ? previous[key] : []).filter(x=>x && x.id!=null).map(x=>[String(x.id), JSON.stringify(x)]));
+        const current = Array.isArray(state[key]) ? state[key] : [];
+        current.forEach(item => {
+          if (!item || item.id == null) return;
+          if (before.get(String(item.id)) !== JSON.stringify(item)) item.updatedAt = Math.max(now, Number(item.updatedAt || 0) + 1);
+        });
+      };
+      ['transactions','wishes','bills','paidBills','reminderGroups'].forEach(stampChanged);
+
+      const trackDeleted = (key, tombstoneKey) => {
+        const currentIds = new Set((Array.isArray(state[key]) ? state[key] : []).filter(x=>x && x.id!=null).map(x=>String(x.id)));
+        const removed = (Array.isArray(previous[key]) ? previous[key] : []).filter(x=>x && x.id!=null && !currentIds.has(String(x.id)));
+        state[tombstoneKey] = Array.isArray(state[tombstoneKey]) ? state[tombstoneKey] : [];
+        removed.forEach(x => { if (!state[tombstoneKey].includes(String(x.id))) state[tombstoneKey].push(String(x.id)); });
+      };
+      trackDeleted('wishes','deletedWishIds');
+      trackDeleted('bills','deletedBillIds');
+      trackDeleted('paidBills','deletedPaidBillIds');
+      trackDeleted('reminderGroups','deletedReminderGroupIds');
+      const currentCategoryIds = new Set(CATEGORIES.map(c=>String(c.id)));
+      state.deletedCategoryIds = Array.isArray(state.deletedCategoryIds) ? state.deletedCategoryIds : [];
+      (previous.categories || []).filter(c=>c && c.id!=null && !currentCategoryIds.has(String(c.id)))
+        .forEach(c=>{ if(!state.deletedCategoryIds.includes(String(c.id))) state.deletedCategoryIds.push(String(c.id)); });
+
+      state._syncMeta.stateAt = now;
+      const serialized = JSON.stringify(state);
+      localStorage.setItem(KEY, serialized);
+      lastSavedSnapshot = serialized;
+      document.getElementById('saveStatus').textContent = cloudUser ? '● Saved on this device · syncing…' : '● Saved on this device';
+      queueCloudSave();
+    } catch (error) {
+      console.error('PesoPlan local save:', error);
+      document.getElementById('saveStatus').textContent = '● Browser storage unavailable';
+      toast('Your browser blocked saving. Please allow site storage or export a backup.');
+    }
+  }
+  function toast(message) {
+    const el = document.getElementById('toast'); el.textContent = message; el.classList.add('show');
+    clearTimeout(toast.timer); toast.timer = setTimeout(() => el.classList.remove('show'), 2400);
+  }
+  function category(id) { return CATEGORIES.find(c => c.id === id); }
+  function total() { return CATEGORIES.reduce((sum,c) => sum + Number(state.balances[c.id] || 0), 0); }
+  function sumType(type) { return state.transactions.filter(t => t.type === type).reduce((s,t) => s + Number(t.amount), 0); }
+
+  function reportTransactionsForYear(year) {
+    return state.transactions.filter(t => t.date && String(t.date).slice(0,4) === String(year));
+  }
+  function reportSum(transactions, type) {
+    return transactions.filter(t => t.type === type).reduce((sum,t) => sum + Number(t.amount || 0), 0);
+  }
+  function reportMonthLabel(monthValue, options = {month:'long',year:'numeric'}) {
+    return new Date(`${monthValue}-01T12:00:00`).toLocaleDateString('en-PH', options);
+  }
+  function getReportPeriod() {
+    const year = String(document.getElementById('reportYear')?.value || new Date().getFullYear());
+    let transactions = reportTransactionsForYear(year);
+    let mode = 'yearly';
+    let label = year;
+    if (reportView === 'days' && reportSelectedMonth) {
+      transactions = transactions.filter(t => t.date.slice(0,7) === reportSelectedMonth);
+      mode = 'monthly'; label = reportMonthLabel(reportSelectedMonth);
+    } else if (reportView === 'day' && reportSelectedDay) {
+      transactions = transactions.filter(t => t.date === reportSelectedDay);
+      mode = 'daily';
+      label = new Date(`${reportSelectedDay}T12:00:00`).toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'});
+    } else if (reportView === 'months') {
+      label = year;
+    }
+    return {mode,label,transactions,year};
+  }
+  function renderReportMonths(year) {
+    const months = Array.from({length:12},(_,i) => {
+      const monthValue = `${year}-${String(i+1).padStart(2,'0')}`;
+      const tx = state.transactions.filter(t => t.date && t.date.slice(0,7) === monthValue);
+      return {monthValue, name:new Date(`${monthValue}-01T12:00:00`).toLocaleDateString('en-PH',{month:'long'}), income:reportSum(tx,'income'), expense:reportSum(tx,'expense')};
+    });
+    return `<div class="report-month-grid">${months.map(m => `<button type="button" class="report-month-card" data-report-month="${m.monthValue}"><span class="report-month-name">${m.name}</span><span class="report-month-line"><span>Money received</span><strong class="type-income">${peso(m.income)}</strong></span><span class="report-month-line"><span>Expenses</span><strong class="type-expense">${peso(m.expense)}</strong></span></button>`).join('')}</div>`;
+  }
+  function renderReportDays(monthValue) {
+    const [year,month] = monthValue.split('-').map(Number);
+    const firstDay = new Date(year,month-1,1).getDay();
+    const daysInMonth = new Date(year,month,0).getDate();
+    const names = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    let html = `<div class="report-calendar">${names.map(n => `<div class="report-weekday">${n}</div>`).join('')}`;
+    for (let i=0;i<firstDay;i++) html += '<div class="report-day-empty" aria-hidden="true"></div>';
+    for (let day=1;day<=daysInMonth;day++) {
+      const date = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      const tx = state.transactions.filter(t => t.date === date);
+      const income = reportSum(tx,'income'), expense = reportSum(tx,'expense');
+      html += `<button type="button" class="report-day-cell ${tx.length?'has-transactions':''}" data-report-day="${date}" aria-label="${date}: income ${peso(income)}, expenses ${peso(expense)}"><span class="report-day-number">${day}</span><span class="report-day-amount income">+${peso(income)}</span><span class="report-day-amount expense">−${peso(expense)}</span></button>`;
+    }
+    html += '</div>';
+    return html;
+  }
+  function renderReportDayDetails(dateValue) {
+    const tx = state.transactions.filter(t => t.date === dateValue).sort((a,b) => (a.createdAt || 0)-(b.createdAt || 0));
+    const income = reportSum(tx,'income'), expense = reportSum(tx,'expense');
+    const groups = new Map();
+    tx.filter(t => t.type === 'expense').forEach(t => {
+      const name = category(t.category)?.name || 'Uncategorized';
+      groups.set(name,(groups.get(name)||0)+Number(t.amount||0));
+    });
+    const categoryRows = groups.size ? [...groups.entries()].sort((a,b)=>b[1]-a[1]).map(([name,amount]) => `<div class="report-category-row"><span>${escapeHTML(name)}</span><strong>${peso(amount)}</strong></div>`).join('') : '<div class="report-empty">No expense categories recorded for this day.</div>';
+    const transactions = tx.length ? tx.map(t => {
+      const isIncome = t.type === 'income';
+      const title = t.note || (isIncome ? 'Money received' : 'Purchase');
+      const categoryName = isIncome ? 'Money received' : (category(t.category)?.name || 'Uncategorized');
+      return `<article class="report-transaction"><div><div class="report-transaction-title">${escapeHTML(title)}</div><div class="report-transaction-meta">${isIncome?'Money received':'Expense'} · ${escapeHTML(categoryName)}</div></div><div class="report-transaction-amount ${isIncome?'type-income':'type-expense'}">${isIncome?'+':'−'}${peso(t.amount)}</div></article>`;
+    }).join('') : '<div class="report-empty">No transactions recorded on this day.</div>';
+    return `<div class="report-detail-summary"><div class="report-detail-total"><small>Total money received</small><strong class="type-income">${peso(income)}</strong></div><div class="report-detail-total"><small>Total expenses</small><strong class="type-expense">${peso(expense)}</strong></div></div><div class="report-breakdown"><h4>Income breakdown</h4><div class="report-category-row"><span>Money received</span><strong class="type-income">${peso(income)}</strong></div></div><div class="report-breakdown"><h4>Expense breakdown by category</h4>${categoryRows}</div><div class="report-transactions"><h4>All transactions for this day (${tx.length})</h4><div class="report-transaction-list">${transactions}</div></div>`;
+  }
+  function renderReport() {
+    const yearInput = document.getElementById('reportYear');
+    const year = String(yearInput?.value || new Date().getFullYear());
+    const yearTransactions = reportTransactionsForYear(year);
+    const income = reportSum(yearTransactions,'income');
+    const expenses = reportSum(yearTransactions,'expense');
+    document.getElementById('totalIncome').textContent = peso(income);
+    document.getElementById('totalExpenses').textContent = peso(expenses);
+    document.getElementById('incomeReportNote').textContent = `Money received in ${year}`;
+    document.getElementById('expenseReportNote').textContent = `Expenses recorded in ${year}`;
+    const explorer = document.getElementById('reportExplorer');
+    const breadcrumbs = document.getElementById('reportBreadcrumbs');
+    const content = document.getElementById('reportCalendarContent');
+    const details = document.getElementById('reportDayDetails');
+    const heading = document.getElementById('reportPeriodHeading');
+    const count = document.getElementById('transactionCount');
+    const report = getReportPeriod();
+    count.textContent = report.transactions.length;
+    if (reportView === 'overview') {
+      heading.textContent = `Financial overview · ${year}`;
+      explorer.hidden = true;
+      return report;
+    }
+    explorer.hidden = false;
+    details.hidden = reportView !== 'day';
+    const crumbs = [`<button type="button" data-report-back="overview" ${reportView==='months'?'disabled':''}>${year}</button>`];
+    if (reportView === 'days' || reportView === 'day') crumbs.push(`<span>›</span><button type="button" data-report-back="months" ${reportView==='days'?'disabled':''}>${reportMonthLabel(reportSelectedMonth,{month:'long'})}</button>`);
+    if (reportView === 'day') crumbs.push(`<span>›</span><button type="button" disabled>${new Date(`${reportSelectedDay}T12:00:00`).toLocaleDateString('en-PH',{month:'short',day:'numeric'})}</button>`);
+    breadcrumbs.innerHTML = crumbs.join('');
+    if (reportView === 'months') {
+      heading.textContent = `Monthly calendar · ${year}`;
+      content.innerHTML = renderReportMonths(year);
+    } else if (reportView === 'days') {
+      heading.textContent = `Daily calendar · ${reportMonthLabel(reportSelectedMonth)}`;
+      content.innerHTML = renderReportDays(reportSelectedMonth);
+    } else if (reportView === 'day') {
+      heading.textContent = `Daily report · ${new Date(`${reportSelectedDay}T12:00:00`).toLocaleDateString('en-PH',{month:'long',day:'numeric',year:'numeric'})}`;
+      content.innerHTML = '';
+      details.innerHTML = renderReportDayDetails(reportSelectedDay);
+    }
+    return report;
+  }
+
+  function render() {
+    document.getElementById('totalBalance').textContent = peso(total());
+    renderReport();
+    document.getElementById('wishCount').textContent = state.wishes.length;
+    const billReportCount = document.getElementById('billReportCount'); if (billReportCount) billReportCount.textContent = (state.bills || []).length;
+    const grid = document.getElementById('categoryGrid');
+    const allocationTag = document.querySelector('#categoryGrid')?.closest('.panel')?.querySelector('.panel-head .tag');
+    if (allocationTag) allocationTag.textContent = `${CATEGORIES.reduce((n,c)=>n+Number(c.percent||0),0).toFixed(1).replace(/\.0$/,'')}% ALLOCATION`;
+    refreshCategorySelects();
+    grid.innerHTML = CATEGORIES.map(c => {
+      const balance = Number(state.balances[c.id] || 0);
+      const allocated = sumType('income') * c.percent / 100;
+      const used = Math.max(0, allocated - balance);
+      const pct = allocated > 0 ? Math.max(0, Math.min(100, balance / allocated * 100)) : 0;
+      return `<article class="category-card"><div class="category-top"><span class="category-icon">${escapeHTML(c.icon)}</span><span class="category-percent">${c.percent}%</span></div><div class="category-name">${escapeHTML(c.name)}</div><div class="category-balance">${peso(balance)}</div><div class="progress"><span style="width:${pct}%"></span></div><div class="category-foot"><span>Remaining</span><span>${allocated ? peso(used)+' used' : 'No funds yet'}</span></div></article>`;
+    }).join('');
+    refreshCategorySelects();
+    renderTransactions(); renderWishes(); renderBills();
+  }
+  let showAllRecentTransactions = false;
+  const RECENT_ACTIVITY_LIMIT = 10;
+
+  function renderTransactions() {
+    const rows = document.getElementById('transactionRows');
+    const moreWrap = document.getElementById('recentActivityMoreWrap');
+    const moreButton = document.getElementById('recentActivityMoreBtn');
+    const sorted = [...state.transactions].sort((a,b) =>
+      String(b.date || '').localeCompare(String(a.date || '')) ||
+      Number(b.createdAt || 0) - Number(a.createdAt || 0)
+    );
+    const visible = showAllRecentTransactions ? sorted : sorted.slice(0, RECENT_ACTIVITY_LIMIT);
+
+    rows.innerHTML = visible.length ? visible.map(t => {
+      const isIncome = t.type === 'income';
+      return `<tr><td>${escapeHTML(t.date)}</td><td class="${isIncome?'type-income':'type-expense'}">${isIncome?'Money received':'Expense'}</td><td><strong>${escapeHTML(t.note || (isIncome?'Added capital':'Purchase'))}</strong></td><td>${isIncome?'All categories':escapeHTML(category(t.category)?.name || '—')}</td><td class="${isIncome?'type-income':'type-expense'}">${isIncome?'+':'−'}${peso(t.amount)}</td><td class="no-print"><button class="icon-btn" title="Delete transaction and reverse its effect" data-delete-transaction="${t.id}">✕</button></td></tr>`;
+    }).join('') : '<tr><td colspan="6" class="empty">No transactions yet. Add money received or record your first expense.</td></tr>';
+
+    const hasMoreThanLimit = sorted.length > RECENT_ACTIVITY_LIMIT;
+    if (moreWrap) moreWrap.hidden = !hasMoreThanLimit;
+    if (moreButton) {
+      moreButton.textContent = showAllRecentTransactions ? 'Show less' : `View more (${sorted.length - RECENT_ACTIVITY_LIMIT})`;
+      moreButton.setAttribute('aria-expanded', String(showAllRecentTransactions));
+    }
+  }
+
+  const BILL_PRIORITY = {Urgent:0,High:1,Medium:2,Low:3};
+  function formatBillDate(value) {
+    if (!value) return 'No due date';
+    const d = new Date(value + 'T00:00:00');
+    return Number.isNaN(d.getTime()) ? value : d.toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'});
+  }
+  function nextBillDate(dateValue, repeat) {
+    const d = new Date(dateValue + 'T12:00:00');
+    if (repeat === 'daily') d.setDate(d.getDate()+1);
+    else if (repeat === 'weekdays') { d.setDate(d.getDate()+1); while ([0,6].includes(d.getDay())) d.setDate(d.getDate()+1); }
+    else if (repeat === 'weekly') d.setDate(d.getDate()+7);
+    else if (repeat === 'monthly') { const day=d.getDate(); d.setDate(1); d.setMonth(d.getMonth()+1); const last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(); d.setDate(Math.min(day,last)); }
+    else if (repeat === 'yearly') d.setFullYear(d.getFullYear()+1);
+    else return null;
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  function daysUntilBill(dateValue) {
+    const due = new Date(dateValue + 'T00:00:00');
+    const now = new Date(today() + 'T00:00:00');
+    return Math.round((due - now) / 86400000);
+  }
+  function reminderLeadLabel(days) {
+    const n = Number(days) || 0;
+    return n === 0 ? 'On the due date' : `${n} day${n === 1 ? '' : 's'} before`;
+  }
+  function renderBills() {
+    const list = document.getElementById('billList');
+    const count = document.getElementById('billCount');
+    const preview = document.getElementById('billPreviewList');
+    if (!list || !count || !preview) return;
+
+    const reminderGroups = (state.reminderGroups && state.reminderGroups.length)
+      ? state.reminderGroups
+      : DEFAULT_REMINDER_GROUPS;
+    if (!state.reminderGroups || !state.reminderGroups.length) {
+      state.reminderGroups = reminderGroups.map(g => ({...g}));
+    }
+
+    // Show reminders only when their personal reminder window begins; overdue items stay visible.
+    // Priority is ranked first, then the nearest due date.
+    const bills = [...(state.bills || [])]
+      .filter(b => {
+        if (b.paid || !b.dueDate) return false;
+        const leadDays = Math.max(0, Number(b.reminderLeadDays ?? 30) || 0);
+        return daysUntilBill(b.dueDate) <= leadDays;
+      })
+      .sort((a,b) =>
+        (BILL_PRIORITY[a.priority] ?? 2) - (BILL_PRIORITY[b.priority] ?? 2) ||
+        String(a.dueDate || '9999-12-31').localeCompare(String(b.dueDate || '9999-12-31'))
+      );
+
+    const groupIdFor = b => b.reminderGroupId || 'default-reminders';
+    const getGroupBills = group => bills.filter(b => groupIdFor(b) === group.id);
+
+    count.textContent = `${bills.length} ACTIVE REMINDER${bills.length === 1 ? '' : 'S'}`;
+
+    // Every reminder list gets its own stack, capped at its three highest-priority reminders.
+    preview.innerHTML = reminderGroups.map(group => {
+      const groupBills = getGroupBills(group);
+      const topThree = groupBills.slice(0, 3);
+
+      // If this list has no active reminders, do not render an empty card stack.
+      // Render a dashed call-to-action instead; clicking it opens this exact list
+      // and automatically opens its Add Reminder form.
+      if (!groupBills.length) {
+        return `<section class="bill-preview-group bill-preview-group-empty">
+          <button class="bill-preview-empty-action" type="button" data-empty-add="${escapeHTML(group.id)}">
+            <strong>No active reminders</strong>
+            <span>Click here to add more reminders</span>
+            <small>${escapeHTML(group.name)}</small>
+          </button>
+        </section>`;
+      }
+
+      const cards = topThree.map(b => `
+        <button class="bill-preview-card" type="button" data-preview-open="${escapeHTML(group.id)}"
+          aria-label="Open ${escapeHTML(group.name)} reminders. ${escapeHTML(b.name)}, due ${formatBillDate(b.dueDate)}">
+          <span class="bill-preview-star">✦</span>
+          <span class="bill-preview-main">
+            <strong class="bill-preview-name">${escapeHTML(b.name)}</strong>
+            <small class="bill-preview-due">Due ${formatBillDate(b.dueDate)} · ${escapeHTML(b.priority || 'Medium')} priority</small>
+          </span>
+          <span class="bill-preview-amount">${peso(b.amount)}</span>
+        </button>`).join('');
+
+      return `<section class="bill-preview-group">
+        <div class="bill-preview-group-title"><span>${escapeHTML(group.name)}</span><small>${groupBills.length} reminder${groupBills.length === 1 ? '' : 's'}</small></div>
+        <div class="bill-preview-stack">${cards}</div>
+      </section>`;
+    }).join('');
+
+    // Keep the detail panel focused on the specific reminder list whose stack was opened.
+    const selectedGroup = reminderGroups.find(g => g.id === activeReminderGroupId) || reminderGroups[0];
+    if (selectedGroup) activeReminderGroupId = selectedGroup.id;
+    const panelTitle = document.getElementById('reminderPanelTitle');
+    if (panelTitle) panelTitle.textContent = selectedGroup ? selectedGroup.name : 'Payment reminders';
+
+    if (!selectedGroup) {
+      list.innerHTML = '<div class="empty">Create a reminder list to get started.</div>';
+    } else {
+      const groupBills = getGroupBills(selectedGroup);
+      list.innerHTML = `
+        <section class="reminder-group" data-reminder-group-panel="${escapeHTML(selectedGroup.id)}">
+          <div class="reminder-group-head">
+            <div><strong>${escapeHTML(selectedGroup.name)}</strong><small>Paid from: ${escapeHTML(category(selectedGroup.category)?.name || 'Choose a category')}</small></div>
+            <div class="reminder-group-actions no-print">
+              <button type="button" data-rename-reminder-group="${escapeHTML(selectedGroup.id)}">Rename</button>
+              <button type="button" data-edit-reminder-group="${escapeHTML(selectedGroup.id)}">Settings</button>
+              <button type="button" data-delete-reminder-group="${escapeHTML(selectedGroup.id)}">Delete list</button>
+            </div>
+          </div>
+          <button class="btn btn-secondary bill-group-add no-print" type="button" data-add-reminder-to="${escapeHTML(selectedGroup.id)}">＋ Add a reminder to ${escapeHTML(selectedGroup.name)}</button>
+          <div class="bill-stack">${groupBills.map(b => {
+            const expanded = expandedBillId === b.id;
+            return `
+              <article class="bill-card ${expanded ? 'expanded' : ''}">
+                <div class="bill-card-top" role="button" tabindex="0" aria-expanded="${expanded}" data-bill-expand="${escapeHTML(b.id)}">
+                  <span class="bill-card-star">✦</span>
+                  <div class="bill-card-main">
+                    <div class="bill-card-name">${escapeHTML(b.name)}</div>
+                    <div class="bill-card-due">Due ${formatBillDate(b.dueDate)}</div>
+                  </div>
+                  <span class="bill-card-amount">${peso(b.amount)}</span>
+                </div>
+                <div class="bill-card-details" ${expanded ? '' : 'hidden'}>
+                  <div class="bill-card-meta">
+                    ${escapeHTML(b.priority || 'Medium')} priority
+                    ${b.repeat && b.repeat !== 'once' ? ' · Repeats ' + escapeHTML(b.repeat) : ' · One-time reminder'}
+                    <br>Deduct from: ${escapeHTML(category(b.category || selectedGroup.category)?.name || 'Unknown category')}<br>Reminder: ${escapeHTML(reminderLeadLabel(b.reminderLeadDays ?? 30))}
+                    ${b.note ? '<br>' + escapeHTML(b.note) : ''}
+                  </div>
+                  <div class="bill-card-actions">
+                    <label class="bill-paid-check"><input class="priority-check" type="checkbox" data-bill-check="${escapeHTML(b.id)}"> Mark as paid</label>
+                    <button class="icon-btn bill-card-delete" type="button" title="Delete reminder" data-delete-bill="${escapeHTML(b.id)}">✕ Delete</button>
+                  </div>
+                </div>
+              </article>`;
+          }).join('') || '<div class="empty">No active reminders in this list yet. Add one using the button above.</div>'}</div>
+        </section>`;
+    }
+    renderPaidBills();
+  }
+
+  function paidExpenseLabel(t) {
+    const raw = String(t.note || 'Expense').trim();
+    // Reminder payments are grouped by the actual bill name, not by the repeated prefix.
+    return raw.replace(/^Reminder payment\s*:\s*/i, '').replace(/^Payment\s*:\s*/i, '').trim() || 'Expense';
+  }
+
+  function renderPaidBills() {
+    const list = document.getElementById('paidBillsList');
+    const count = document.getElementById('paidBillCount');
+    const filter = document.getElementById('paidCategoryFilter');
+    if (!list || !count || !filter) return;
+    const expenses = [...state.transactions].filter(t => t.type === 'expense')
+      .sort((a,b) => String(b.date || '').localeCompare(String(a.date || '')) || (b.createdAt || 0)-(a.createdAt || 0));
+    const selected = filter.value || 'all';
+    const visible = selected === 'all' ? expenses : expenses.filter(t => t.category === selected);
+    count.textContent = `${expenses.length} PAID ITEM${expenses.length === 1 ? '' : 'S'}`;
+    const categories = selected === 'all' ? CATEGORIES : [category(selected)].filter(Boolean);
+    list.innerHTML = categories.map(c => {
+      const items = visible.filter(t => t.category === c.id);
+      const totalAmount = items.reduce((sum,t) => sum + Number(t.amount || 0), 0);
+      const expanded = expandedPaidBillName === c.id;
+      // Within each category, combine repeated expenses under one recognizable name.
+      const grouped = new Map();
+      items.forEach(t => {
+        const name = paidExpenseLabel(t);
+        if (!grouped.has(name)) grouped.set(name, []);
+        grouped.get(name).push(t);
+      });
+      const history = grouped.size
+        ? [...grouped.entries()].map(([name, records]) => {
+            const groupTotal = records.reduce((sum,t) => sum + Number(t.amount || 0), 0);
+            const groupKey = `${c.id}::${name}`;
+            const historyExpanded = expandedPaidExpenseName === groupKey;
+            const recordsHTML = records.map(t => `<div class="paid-category-record"><div>${escapeHTML(t.billPaymentId ? 'Payment' : (t.note || name))}<small>${formatBillDate(t.date)}${t.billPaymentId ? ' · Reminder payment' : t.wishId ? ' · Wishlist purchase' : ''}</small></div><strong>${peso(t.amount)}</strong></div>`).join('');
+            return `<section class="paid-expense-group"><button class="paid-expense-head" type="button" data-paid-expense="${escapeHTML(groupKey)}" aria-expanded="${historyExpanded}"><span class="paid-expense-name">${escapeHTML(name)}</span><span class="paid-expense-summary">${peso(groupTotal)} · ${records.length} payment${records.length===1?'':'s'} <span class="paid-category-arrow">⌄</span></span></button><div class="paid-expense-history" ${historyExpanded ? '' : 'hidden'}>${recordsHTML}</div></section>`;
+          }).join('')
+        : '<div class="paid-category-empty">No expenses recorded in this category yet.</div>';
+      return `<section class="paid-category-group"><button class="paid-category-head" type="button" data-paid-history="${escapeHTML(c.id)}" aria-expanded="${expanded}"><span>${escapeHTML(c.icon || '')} ${escapeHTML(c.name)}</span><span>${peso(totalAmount)} · ${items.length} item${items.length===1?'':'s'} <span class="paid-category-arrow">⌄</span></span></button><div class="paid-category-history" ${expanded ? '' : 'hidden'}>${history}</div></section>`;
+    }).join('');
+  }
+
+  function renderWishes() {
+    const list = document.getElementById('wishList');
+    const tabs = document.getElementById('wishCategoryTabs');
+    const sorted = [...state.wishes].sort((a,b) => Number(a.done)-Number(b.done) || ({High:0,Medium:1,Low:2}[a.priority] - {High:0,Medium:1,Low:2}[b.priority]));
+    const counts = Object.fromEntries(CATEGORIES.map(c => [c.id, state.wishes.filter(w => w.category === c.id).length]));
+    tabs.innerHTML = `<button type="button" data-wish-filter="all" class="${selectedWishCategory==='all'?'active':''}">All (${state.wishes.length})</button>` +
+      CATEGORIES.filter(c => counts[c.id] > 0).map(c => `<button type="button" data-wish-filter="${c.id}" class="${selectedWishCategory===c.id?'active':''}">${c.icon} ${escapeHTML(c.name)} (${counts[c.id]})</button>`).join('');
+    const visible = selectedWishCategory === 'all' ? sorted : sorted.filter(w => w.category === selectedWishCategory);
+    if (!visible.length) {
+      list.innerHTML = '<div class="empty">No items in this category yet. Add something you are planning to buy.</div>';
+      return;
+    }
+    const groups = selectedWishCategory === 'all' ? CATEGORIES.filter(c => visible.some(w => w.category === c.id)) : [category(selectedWishCategory)].filter(Boolean);
+    list.innerHTML = groups.map(c => {
+      const items = visible.filter(w => w.category === c.id);
+      return `<div class="wish-group"><div class="wish-group-title">${c.icon} ${escapeHTML(c.name)} <span>${items.length} item${items.length===1?'':'s'}</span></div>` +
+        items.map(w => `<div class="priority-item ${w.done?'done':''}"><input class="priority-check no-print" type="checkbox" aria-label="Mark ${escapeHTML(w.name)} as purchased" data-wish-check="${w.id}" ${w.done?'checked':''}><div class="buy-info"><div class="buy-name">${escapeHTML(w.name)}</div><div class="buy-meta">${w.priority} priority · ${w.done ? 'Purchased '+formatBillDate(w.purchasedAt || today()) : 'Estimated purchase'}</div></div><span class="buy-price">${peso(w.amount)}</span><button class="icon-btn no-print" title="Remove item" data-delete-wish="${w.id}">✕</button></div>`).join('') + '</div>';
+    }).join('');
+  }
+  function escapeHTML(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  function addTransaction(t) { state.transactions.push(t); save(); render(); }
+  function refreshCategorySelects() {
+    const options = CATEGORIES.map(c => `<option value="${escapeHTML(c.id)}">${escapeHTML(c.name)}</option>`).join('');
+    ['expenseCategory','wishCategory','reminderGroupCategory','paidCategoryFilter'].forEach(id => {
+      const el = document.getElementById(id); if (!el) return;
+      const previous = el.value;
+      const prefix = id === 'paidCategoryFilter' ? '<option value="all">All categories</option>' : '';
+      el.innerHTML = prefix + options;
+      if ([...el.options].some(o => o.value === previous)) el.value = previous;
+    });
+  }
+  function renderCategorySettings() {
+    const rows = document.getElementById('categorySettingsRows'); if (!rows) return;
+    rows.innerHTML = CATEGORIES.map(c => `<div class="category-setting-row" data-category-row="${escapeHTML(c.id)}"><input aria-label="Category name" data-category-name="${escapeHTML(c.id)}" maxlength="35" value="${escapeHTML(c.name)}"><input aria-label="Allocation percentage" data-category-percent="${escapeHTML(c.id)}" type="number" min="0" max="100" step="0.1" value="${Number(c.percent)||0}"><input class="category-setting-icon" aria-label="Category icon" data-category-icon="${escapeHTML(c.id)}" maxlength="3" value="${escapeHTML(c.icon||'✦')}"><button class="btn btn-danger category-delete" type="button" data-delete-category="${escapeHTML(c.id)}">Delete</button></div>`).join('');
+  }
+  function refreshReminderGroupSelect() { refreshCategorySelects(); }
+  function initSelects() {
+    refreshCategorySelects();
+  }
+  document.getElementById('incomeForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const amount = Number(document.getElementById('incomeAmount').value);
+    const date = document.getElementById('incomeDate').value;
+    if (!Number.isFinite(amount) || amount <= 0 || !date) return toast('Enter a valid amount and date.');
+    CATEGORIES.forEach(c => state.balances[c.id] += amount * c.percent / 100);
+    addTransaction({id:makeId(), type:'income', amount, date, note:document.getElementById('incomeNote').value.trim(), allocations:CATEGORIES.map(c=>({category:c.id,amount:amount*Number(c.percent||0)/100})), createdAt:Date.now()});
+    e.target.reset(); document.getElementById('incomeDate').value = today(); toast('Money added and distributed across your categories.');
+  });
+  document.getElementById('expenseForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const amount = Number(document.getElementById('expenseAmount').value);
+    const date = document.getElementById('expenseDate').value;
+    const cat = document.getElementById('expenseCategory').value;
+    const note = document.getElementById('expenseNote').value.trim();
+    if (!Number.isFinite(amount) || amount <= 0 || !date || !note) return toast('Complete all expense details with a valid amount.');
+    if (amount > Number(state.balances[cat] || 0) + 0.000001) return toast(`Not enough in ${category(cat).name}. Available: ${peso(state.balances[cat])}`);
+    state.balances[cat] -= amount;
+    if (Math.abs(state.balances[cat]) < 0.000001) state.balances[cat] = 0;
+    addTransaction({id:makeId(), type:'expense', amount, date, category:cat, note, createdAt:Date.now()});
+    e.target.reset(); document.getElementById('expenseDate').value = today(); toast('Expense saved. Only that category was deducted.');
+  });
+
+  const billFormWrap = document.getElementById('billFormWrap');
+  document.getElementById('billCancelBtn').addEventListener('click', () => {
+    document.getElementById('billForm').reset();
+    billFormWrap.hidden = true;
+  });
+  document.getElementById('billForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const name = document.getElementById('billName').value.trim();
+    const amount = Number(document.getElementById('billAmount').value);
+    const dueDate = document.getElementById('billDueDate').value;
+    if (!name || !Number.isFinite(amount) || amount <= 0 || !dueDate) return toast('Enter a reminder name, valid amount, and due date.');
+    const repeat = document.getElementById('billRepeat').value;
+    const reminderLeadDays = Number(document.getElementById('billReminderLead').value);
+    const reminderGroup = (state.reminderGroups || DEFAULT_REMINDER_GROUPS).find(g => g.id === activeReminderGroupId);
+    if (!reminderGroup) return toast('Open a reminder list first.');
+    state.bills = state.bills || [];
+    state.bills.push({
+      id:makeId(), name, amount, dueDate,
+      priority:document.getElementById('billPriority').value,
+      repeat, reminderLeadDays,
+      category:reminderGroup.category || 'bills',
+      reminderGroupId:reminderGroup.id,
+      note:document.getElementById('billNote').value.trim(),
+      paid:false, createdAt:Date.now()
+    });
+    save(); renderBills(); e.target.reset(); document.getElementById('billReminderLead').value = '30';
+    billFormWrap.hidden = true;
+    toast(`Reminder added to ${reminderGroup.name}.`);
+  });
+
+  document.getElementById('addReminderGroupToggle').addEventListener('click', () => {
+    const form = document.getElementById('reminderGroupForm'); form.hidden = !form.hidden;
+    if (!form.hidden) document.getElementById('billFormWrap').hidden = true;
+  });
+  document.getElementById('reminderGroupForm').addEventListener('submit', e => {
+    e.preventDefault(); const name = document.getElementById('reminderGroupName').value.trim();
+    if (!name) return;
+    state.reminderGroups = state.reminderGroups || DEFAULT_REMINDER_GROUPS.map(g=>({...g}));
+    const newGroup = {id:makeId(),name,category:document.getElementById('reminderGroupCategory').value};
+    state.reminderGroups.push(newGroup);
+    activeReminderGroupId = newGroup.id;
+    save(); refreshReminderGroupSelect(); renderBills(); e.target.reset(); e.target.hidden = true;
+    closeBillsPanel();
+    toast('New reminder list created. It now has its own three-card preview.');
+  });
+  document.getElementById('categorySettingsToggle').addEventListener('click', () => {
+    const panel = document.getElementById('categorySettingsPanel'); panel.hidden = !panel.hidden;
+    document.getElementById('categorySettingsToggle').setAttribute('aria-expanded',String(!panel.hidden));
+    if (!panel.hidden) renderCategorySettings();
+  });
+  document.getElementById('cancelCategorySettings').addEventListener('click', () => { document.getElementById('categorySettingsPanel').hidden = true; });
+  document.getElementById('addCategoryForm').addEventListener('submit', e => {
+    e.preventDefault(); const name = document.getElementById('newCategoryName').value.trim();
+    if (!name || CATEGORIES.some(c => c.name.toLowerCase() === name.toLowerCase())) return toast('Enter a unique category name.');
+    // Always create a fresh ID. Reusing a name-derived ID can collide with an old
+    // deletedCategoryIds tombstone and make a newly-added category disappear on sync.
+    const id = `cat-${makeId()}`;
+    const percent = Number(document.getElementById('newCategoryPercent').value) || 0;
+    CATEGORIES.push({id,name,percent,icon:document.getElementById('newCategoryIcon').value.trim() || '✦'});
+    state.deletedCategoryIds = (state.deletedCategoryIds || []).filter(deletedId => String(deletedId) !== String(id));
+    state.balances[id] = 0; save(); render(); renderCategorySettings(); e.target.reset(); document.getElementById('newCategoryIcon').value='✦';
+  });
+  document.getElementById('categorySettingsRows').addEventListener('click', e => {
+    const btn = e.target.closest('[data-delete-category]'); if (!btn) return;
+    const id = btn.dataset.deleteCategory; const c = category(id); if (!c) return;
+    if (CATEGORIES.length <= 1) return toast('At least one category must remain.');
+    const destinations = CATEGORIES.filter(x => x.id !== id);
+    const balance = Number(state.balances[id] || 0);
+    const choices = destinations.map((item, index) => `${index + 1}. ${item.name}`).join('\\n');
+    const selection = prompt(
+      `Before deleting "${c.name}", choose where its remaining balance (${peso(balance)}) and linked items should go:\\n\\n${choices}\\n\\nEnter the destination number:`
+    );
+    if (selection === null) return;
+    const destinationIndex = Number(selection.trim()) - 1;
+    if (!Number.isInteger(destinationIndex) || destinationIndex < 0 || destinationIndex >= destinations.length) {
+      return toast('Please enter a valid destination number. Nothing was deleted.');
+    }
+    const destination = destinations[destinationIndex];
+    if (!confirm(`Transfer ${peso(balance)} from "${c.name}" to "${destination.name}" and delete "${c.name}"? Historical transactions will remain in your records.`)) return;
+
+    // Move the complete remaining balance (including a negative balance, if any).
+    state.balances[destination.id] = Number(state.balances[destination.id] || 0) + balance;
+    delete state.balances[id];
+    CATEGORIES = CATEGORIES.filter(x => x.id !== id);
+    // Keep active lists connected to a valid category; historical transactions stay untouched.
+    state.wishes.forEach(w => { if (w.category === id) w.category = destination.id; });
+    (state.bills || []).forEach(b => { if (b.category === id) b.category = destination.id; });
+    (state.paidBills || []).forEach(b => { if (b.category === id) b.category = destination.id; });
+    (state.reminderGroups || []).forEach(g => { if (g.category === id) g.category = destination.id; });
+    renderCategorySettings(); render(); save();
+    toast(`Balance transferred to ${destination.name}. Category deleted.`);
+
+  });
+  document.getElementById('saveCategorySettings').addEventListener('click', () => {
+    const updated = CATEGORIES.map(c => ({...c,
+      name:document.querySelector(`[data-category-name="${CSS.escape(c.id)}"]`)?.value.trim() || c.name,
+      percent:Number(document.querySelector(`[data-category-percent="${CSS.escape(c.id)}"]`)?.value),
+      icon:document.querySelector(`[data-category-icon="${CSS.escape(c.id)}"]`)?.value.trim() || '✦'
+    }));
+    if (updated.some(c => !c.name || !Number.isFinite(c.percent) || c.percent < 0 || c.percent > 100)) return toast('Check category names and percentages.');
+    const totalPercent = updated.reduce((sum,c)=>sum+c.percent,0);
+    if (Math.abs(totalPercent-100) > 0.001) return toast(`Category percentages must total 100%. Current total: ${totalPercent.toFixed(1)}%.`);
+    CATEGORIES = updated; save(); render(); refreshCategorySelects(); renderCategorySettings();
+    document.getElementById('categorySettingsPanel').hidden = true; toast('Category settings saved.');
+  });
+  document.getElementById('paidCategoryFilter').addEventListener('change', renderPaidBills);
+
+  document.getElementById('wishForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const name = document.getElementById('wishName').value.trim();
+    if (!name) return;
+    state.wishes.push({id:makeId(), name, category:document.getElementById('wishCategory').value, amount:Number(document.getElementById('wishAmount').value)||0, priority:document.getElementById('wishPriority').value, done:false});
+    save(); render(); e.target.reset(); toast('Added to your buy list.');
+  });
+  function setupToggle(buttonId, panelId) {
+    const button = document.getElementById(buttonId);
+    const panel = document.getElementById(panelId);
+    button.addEventListener('click', () => {
+      const opening = panel.hidden;
+      panel.hidden = !opening;
+      button.setAttribute('aria-expanded', String(opening));
+    });
+  }
+  const billsPanel = document.getElementById('billsPanel');
+  const billDeckCover = document.getElementById('billDeckCover');
+  const billPreviewList = document.getElementById('billPreviewList');
+  function openBillsPanel(groupId) {
+    if (groupId) activeReminderGroupId = groupId;
+    billsPanel.hidden = false;
+    billDeckCover.hidden = true;
+    billFormWrap.hidden = true;
+    document.getElementById('reminderGroupForm').hidden = true;
+    renderBills();
+  }
+  function closeBillsPanel() {
+    billsPanel.hidden = true;
+    billDeckCover.hidden = false;
+  }
+  billPreviewList.addEventListener('click', e => {
+    const emptyAction = e.target.closest('[data-empty-add]');
+    if (emptyAction) {
+      const groupId = emptyAction.dataset.emptyAdd;
+      openBillsPanel(groupId);
+      billFormWrap.hidden = false;
+      document.getElementById('reminderGroupForm').hidden = true;
+      document.getElementById('billName').focus();
+      return;
+    }
+    const card = e.target.closest('[data-preview-open]');
+    if (!card) return;
+    openBillsPanel(card.dataset.previewOpen);
+  });
+  document.getElementById('billList').addEventListener('click', e => {
+    const addButton = e.target.closest('[data-add-reminder-to]');
+    if (!addButton) return;
+    activeReminderGroupId = addButton.dataset.addReminderTo;
+    document.getElementById('reminderGroupForm').hidden = true;
+    billFormWrap.hidden = false;
+    document.getElementById('billName').focus();
+  });
+  document.getElementById('billBackBtn').addEventListener('click', closeBillsPanel);
+  setupToggle('shoppingToggle', 'shoppingPanel');
+  setupToggle('reportsToggle', 'reportsPanel');
+  setupToggle('activityToggle', 'activityPanel');
+  document.getElementById('recentActivityMoreBtn')?.addEventListener('click', () => {
+    showAllRecentTransactions = !showAllRecentTransactions;
+    renderTransactions();
+  });
+
+  document.getElementById('wishCategoryTabs').addEventListener('click', e => {
+    const button = e.target.closest('[data-wish-filter]');
+    if (!button) return;
+    selectedWishCategory = button.dataset.wishFilter;
+    renderWishes();
+  });
+
+  document.addEventListener('click', e => {
+    const billExpand = e.target.closest('[data-bill-expand]');
+    if (billExpand) {
+      expandedBillId = expandedBillId === billExpand.dataset.billExpand ? null : billExpand.dataset.billExpand;
+      renderBills();
+      return;
+    }
+    const paidExpense = e.target.closest('[data-paid-expense]');
+    if (paidExpense) {
+      expandedPaidExpenseName = expandedPaidExpenseName === paidExpense.dataset.paidExpense ? null : paidExpense.dataset.paidExpense;
+      renderPaidBills();
+      return;
+    }
+    const paidHistory = e.target.closest('[data-paid-history]');
+    if (paidHistory) {
+      expandedPaidBillName = expandedPaidBillName === paidHistory.dataset.paidHistory ? null : paidHistory.dataset.paidHistory;
+      renderPaidBills();
+      return;
+    }
+    const renameGroup = e.target.closest('[data-rename-reminder-group]');
+    if (renameGroup) {
+      const group = (state.reminderGroups || []).find(g => g.id === renameGroup.dataset.renameReminderGroup); if (!group) return;
+      const name = prompt('Rename this reminder list:', group.name); if (name && name.trim()) { group.name = name.trim().slice(0,45); save(); renderBills(); }
+      return;
+    }
+    const editGroup = e.target.closest('[data-edit-reminder-group]');
+    if (editGroup) {
+      const group = (state.reminderGroups || []).find(g => g.id === editGroup.dataset.editReminderGroup); if (!group) return;
+      const choices = CATEGORIES.map((c,i)=>`${i+1}. ${c.name}`).join('\n');
+      const answer = prompt(`Choose the category this reminder list deducts from by entering its number:\n${choices}`, String(Math.max(0,CATEGORIES.findIndex(c=>c.id===group.category)+1)));
+      if (answer === null) return; const chosen = CATEGORIES[Number(answer)-1];
+      if (!chosen) return toast('That category number is not valid.');
+      group.category = chosen.id;
+      (state.bills || []).forEach(b => { if ((b.reminderGroupId || 'default-reminders') === group.id) b.category = chosen.id; });
+      save(); renderBills(); toast(`Reminder list now deducts from ${chosen.name}.`); return;
+    }
+    const deleteGroup = e.target.closest('[data-delete-reminder-group]');
+    if (deleteGroup) {
+      const id = deleteGroup.dataset.deleteReminderGroup; const groups = state.reminderGroups || [];
+      if (groups.length <= 1) return toast('Keep at least one reminder list.');
+      if (!confirm('Delete this reminder list? Its reminders will move to the first remaining list.')) return;
+      const fallback = groups.find(g => g.id !== id); state.bills.forEach(b => { if ((b.reminderGroupId || 'default-reminders') === id) { b.reminderGroupId = fallback.id; if (!b.category) b.category = fallback.category; } });
+      state.reminderGroups = groups.filter(g => g.id !== id); save(); renderBills(); return;
+    }
+    const delT = e.target.closest('[data-delete-transaction]');
+    if (delT) {
+      const t = state.transactions.find(x => x.id === delT.dataset.deleteTransaction); if (!t) return;
+      const promptText = t.type === 'income' ? 'Delete this income? Its distributed amount will be removed from all categories.' : 'Delete this expense? Its amount will be returned to the category.';
+      if (!confirm(promptText)) return;
+      transactionBalanceEffect(state.balances, t, 'remove', CATEGORIES);
+      state.deletedTransactionIds = Array.isArray(state.deletedTransactionIds) ? state.deletedTransactionIds : [];
+      if (!state.deletedTransactionIds.includes(String(t.id))) state.deletedTransactionIds.push(String(t.id));
+      if (t.wishId) { const linkedWish = state.wishes.find(w => w.id === t.wishId); if (linkedWish) { linkedWish.done = false; linkedWish.purchaseTransactionId = null; linkedWish.purchasedAt = null; } }
+      if (t.billPaymentId) {
+        state.paidBills = (state.paidBills || []).filter(b => b.transactionId !== t.id && b.id !== t.billPaymentId);
+      }
+      state.transactions = state.transactions.filter(x => x.id !== t.id); save(); render(); toast('Transaction deleted and balance adjusted.');
+    }
+    const delW = e.target.closest('[data-delete-wish]');
+    if (delW) { state.wishes = state.wishes.filter(w => w.id !== delW.dataset.deleteWish); save(); render(); }
+    const delB = e.target.closest('[data-delete-bill]');
+    if (delB) {
+      const billId = delB.dataset.deleteBill;
+      if (!confirm('Delete this bill reminder?')) return;
+      state.deletedBillIds = Array.isArray(state.deletedBillIds) ? state.deletedBillIds : [];
+      const removedBills = (state.bills || []).filter(b => String(b.id) === String(billId) || String(b.parentId) === String(billId));
+      if (!state.deletedBillIds.includes(String(billId))) state.deletedBillIds.push(String(billId));
+      removedBills.forEach(b => {
+        const deletedId = String(b.id);
+        if (!state.deletedBillIds.includes(deletedId)) state.deletedBillIds.push(deletedId);
+      });
+      state.bills = (state.bills || []).filter(b => String(b.id) !== String(billId) && String(b.parentId) !== String(billId));
+      save(); renderBills(); toast('Bill reminder deleted.');
+    }
+  });
+  document.addEventListener('change', e => {
+    const check = e.target.closest('[data-wish-check]');
+    if (check) {
+      const w = state.wishes.find(x => x.id === check.dataset.wishCheck);
+      if (w) {
+        if (check.checked && !w.done) {
+          const amount = Number(w.amount) || 0;
+          const cat = w.category;
+          if (!category(cat)) { check.checked = false; toast('This wishlist item uses a category that no longer exists. Edit or remove the item first.'); return; }
+          if (amount > Number(state.balances[cat] || 0) + 0.000001) { check.checked = false; toast(`Not enough in ${category(cat).name}. Available: ${peso(state.balances[cat])} · Needed: ${peso(amount)}`); return; }
+          if (amount > 0) {
+            state.balances[cat] -= amount;
+            const tx = {id:makeId(),type:'expense',amount,date:today(),category:cat,note:`Wishlist purchase: ${w.name}`,wishId:w.id,createdAt:Date.now()};
+            state.transactions.push(tx); w.purchaseTransactionId = tx.id;
+          }
+          w.done = true; w.purchasedAt = today();
+        } else if (!check.checked && w.done) {
+          if (w.purchaseTransactionId) {
+            const tx = state.transactions.find(t => t.id === w.purchaseTransactionId);
+            if (tx) {
+              state.balances[tx.category] = Number(state.balances[tx.category] || 0) + Number(tx.amount || 0);
+              state.deletedTransactionIds = Array.isArray(state.deletedTransactionIds) ? state.deletedTransactionIds : [];
+              if (!state.deletedTransactionIds.includes(String(tx.id))) state.deletedTransactionIds.push(String(tx.id));
+            }
+            state.transactions = state.transactions.filter(t => t.id !== w.purchaseTransactionId);
+          }
+          w.done = false; w.purchasedAt = null; w.purchaseTransactionId = null;
+        }
+        save(); render(); toast(check.checked ? 'Purchased item deducted from its category.' : 'Purchase unchecked and category balance restored.');
+      }
+    }
+    const billCheck = e.target.closest('[data-bill-check]');
+    if (billCheck) {
+      const bill = (state.bills || []).find(x => x.id === billCheck.dataset.billCheck);
+      if (bill) {
+        if (billCheck.checked) {
+          const billAmount = Number(bill.amount) || 0;
+          const billGroup = (state.reminderGroups || []).find(g => g.id === (bill.reminderGroupId || 'default-reminders'));
+          const deductionCategory = bill.category || billGroup?.category || 'bills';
+          const deductionName = category(deductionCategory)?.name || 'selected category';
+          const availableBillsBalance = Number(state.balances[deductionCategory] || 0);
+
+          // Do not allow a reminder payment to make its selected category negative.
+          if (!category(deductionCategory) || billAmount <= 0 || billAmount > availableBillsBalance + 0.000001) {
+            billCheck.checked = false;
+            toast(`Not enough in ${deductionName}. Available: ${peso(availableBillsBalance)} · Needed: ${peso(billAmount)}`);
+            return;
+          }
+
+          // Record the payment as a normal expense so balances, reports,
+          // Recent Activity, and transaction deletion all stay connected.
+          const paymentId = makeId();
+          const paymentDate = today();
+          state.balances[deductionCategory] -= billAmount;
+          if (Math.abs(state.balances[deductionCategory]) < 0.000001) state.balances[deductionCategory] = 0;
+
+          state.transactions.push({
+            id: paymentId,
+            type: 'expense',
+            amount: billAmount,
+            date: paymentDate,
+            category: deductionCategory,
+            note: `Reminder payment: ${bill.name}`,
+            reminderGroupId: bill.reminderGroupId || 'default-reminders',
+            billPaymentId: paymentId,
+            createdAt: Date.now()
+          });
+
+          state.paidBills = state.paidBills || [];
+          state.paidBills.push({
+            id: paymentId, transactionId: paymentId,
+            name: bill.name, amount: billAmount, category:deductionCategory, reminderGroupId:bill.reminderGroupId || 'default-reminders',
+            dueDate: bill.dueDate, paidAt: paymentDate,
+            repeat: bill.repeat || 'once', reminderLeadDays: bill.reminderLeadDays ?? 30, note: bill.note || ''
+          });
+
+          if (bill.repeat && bill.repeat !== 'once') {
+            const nextDate = nextBillDate(bill.dueDate, bill.repeat);
+            if (nextDate) {
+              bill.dueDate = nextDate;
+              bill.paid = false;
+              bill.paidAt = null;
+            } else {
+              state.bills = state.bills.filter(x => x.id !== bill.id);
+            }
+          } else {
+            state.bills = state.bills.filter(x => x.id !== bill.id);
+          }
+          expandedBillId = null;
+        }
+        save(); render();
+        toast(`${bill.name} paid. ${peso(Number(bill.amount) || 0)} deducted from ${category(bill.category || (state.reminderGroups||[]).find(g=>g.id===bill.reminderGroupId)?.category || 'bills')?.name || 'its category'}.`);
+      }
+    }
+  });
+  function csvCell(v) { return '"' + String(v ?? '').replace(/"/g,'""') + '"'; }
+  document.getElementById('csvBtn').addEventListener('click', () => {
+    const report = renderReport();
+    const periodIncome = report.transactions.filter(t => t.type === 'income').reduce((sum,t) => sum + Number(t.amount || 0), 0);
+    const periodExpenses = report.transactions.filter(t => t.type === 'expense').reduce((sum,t) => sum + Number(t.amount || 0), 0);
+    const lines = [
+      ['PesoPlan Financial Report'],
+      ['Period', report.label],
+      ['Generated',new Date().toLocaleString()],
+      [],
+      ['SUMMARY'],
+      ['Money received',periodIncome.toFixed(2)],
+      ['Expenses',periodExpenses.toFixed(2)],
+      ['Net for period',(periodIncome-periodExpenses).toFixed(2)],
+      ['Transaction count',report.transactions.length],
+      [],
+      ['TRANSACTIONS'],
+      ['Date','Type','Description','Category','Amount']
+    ];
+    [...report.transactions].sort((a,b) => a.date.localeCompare(b.date) || (a.createdAt || 0)-(b.createdAt || 0))
+      .forEach(t => lines.push([t.date,t.type,t.note || '',t.category ? category(t.category)?.name : 'All categories',Number(t.amount || 0).toFixed(2)]));
+    const csv = '\\uFEFF' + lines.map(row => row.map(csvCell).join(',')).join('\\r\\n');
+    const filenamePeriod = report.label.toLowerCase().replace(/\s+/g,'-');
+    downloadBlob(csv,`pesoplan-report-${filenamePeriod}.csv`,'text/csv;charset=utf-8;');
+    toast('CSV report downloaded.');
+  });
+  function downloadBlob(content, filename, type) { const blob = new Blob([content],{type}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
+  document.getElementById('printBtn').addEventListener('click', () => {
+    const report = renderReport();
+    const income = report.transactions.filter(t => t.type === 'income').reduce((sum,t) => sum + Number(t.amount || 0), 0);
+    const expenses = report.transactions.filter(t => t.type === 'expense').reduce((sum,t) => sum + Number(t.amount || 0), 0);
+    const rows = [...report.transactions]
+      .sort((a,b) => a.date.localeCompare(b.date) || (a.createdAt || 0)-(b.createdAt || 0))
+      .map(t => `<tr><td>${escapeHTML(t.date || '')}</td><td>${escapeHTML(t.type || '')}</td><td>${escapeHTML(t.note || '')}</td><td>${escapeHTML(t.category ? category(t.category)?.name || '' : 'All categories')}</td><td>${peso(t.amount)}</td></tr>`).join('');
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) { toast('Please allow pop-ups to print this report.'); return; }
+    printWindow.document.write(`<!DOCTYPE html><html><head><title>PesoPlan ${report.mode} report - ${escapeHTML(report.label)}</title><style>
+      body{font-family:Arial,sans-serif;color:#24332d;padding:28px}h1{margin:0 0 5px;color:#315c4c}
+      .muted{color:#68766e;font-size:12px}.totals{display:flex;gap:30px;margin:24px 0}
+      .total{padding:14px;border:1px solid #dfe5dc;border-radius:10px;min-width:180px}
+      .total small{display:block;color:#68766e;text-transform:uppercase;font-size:10px}
+      .total strong{display:block;font-size:22px;margin-top:7px}
+      table{width:100%;border-collapse:collapse;margin-top:18px}th,td{text-align:left;padding:9px;border-bottom:1px solid #dfe5dc;font-size:11px}
+      th{font-size:9px;text-transform:uppercase;color:#68766e}
+      @media print{body{padding:0}}
+    </style><style>
+/* Final override: keep each reminder-list preview as a slightly overlapping three-card deck. */
+.bill-preview-stack .bill-preview-card + .bill-preview-card { margin-top:-13px !important; }
+.bill-preview-stack .bill-preview-card:nth-child(1) { z-index:3; }
+.bill-preview-stack .bill-preview-card:nth-child(2) { z-index:2; }
+.bill-preview-stack .bill-preview-card:nth-child(3) { z-index:1; }
+</style>
+</head><body><h1>PesoPlan</h1><div class="muted">Financial report · ${escapeHTML(report.label)}</div>
+      <div class="totals"><div class="total"><small>Money received</small><strong>${peso(income)}</strong></div><div class="total"><small>Expenses</small><strong>${peso(expenses)}</strong></div><div class="total"><small>Net for period</small><strong>${peso(income-expenses)}</strong></div></div>
+      <p class="muted">${report.transactions.length} transactions · Generated ${new Date().toLocaleString()}</p>
+      <h2>Transactions</h2><table><thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Category</th><th>Amount</th></tr></thead><tbody>${rows || '<tr><td colspan="5">No transactions recorded for this period.</td></tr>'}</tbody></table>
+      </body></html>`);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+  });
+  document.getElementById('backupBtn').addEventListener('click', () => { downloadBlob(JSON.stringify({app:'PesoPlan',version:1,exportedAt:new Date().toISOString(),...state,bills:state.bills || []},null,2),'pesoplan-backup-'+today()+'.json','application/json'); toast('Backup exported.'); });
+  document.getElementById('restoreBtn').addEventListener('click', () => document.getElementById('restoreFile').click());
+  document.getElementById('restoreFile').addEventListener('change', async e => {
+    const file = e.target.files[0]; if (!file) return;
+    try {
+      const data = JSON.parse(await file.text());
+      if (!data.balances || !Array.isArray(data.transactions) || !Array.isArray(data.wishes)) throw new Error('Invalid backup');
+      if (!confirm('Import this backup? It will replace the data currently saved in this browser.')) return;
+      if (Array.isArray(data.categories) && data.categories.length) CATEGORIES = data.categories.map(c=>({...c})); state = {categories:CATEGORIES,reminderGroups:Array.isArray(data.reminderGroups)&&data.reminderGroups.length?data.reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})),balances:{...blankBalances(),...data.balances},transactions:data.transactions,wishes:data.wishes,bills:Array.isArray(data.bills)?data.bills:[],paidBills:Array.isArray(data.paidBills)?data.paidBills:[]}; save(); render(); toast('Backup imported successfully.');
+    } catch (err) { toast('Could not import this file. Please choose a valid PesoPlan backup.'); }
+    e.target.value='';
+  });
+  document.getElementById('todayLabel').textContent = new Date().toLocaleDateString('en-PH',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  document.getElementById('incomeDate').value = today(); document.getElementById('expenseDate').value = today();
+  document.getElementById('reportYear').value = new Date().getFullYear();
+  document.getElementById('reportYear').addEventListener('change', () => {
+    reportView = 'overview'; reportSelectedMonth = null; reportSelectedDay = null;
+    renderReport();
+  });
+  document.getElementById('reportExplorer').addEventListener('click', event => {
+    const metricCard = event.target.closest('[data-report-metric]');
+    if (metricCard) return;
+    const monthButton = event.target.closest('[data-report-month]');
+    if (monthButton) {
+      reportSelectedMonth = monthButton.dataset.reportMonth;
+      reportSelectedDay = null;
+      reportView = 'days';
+      renderReport();
+      return;
+    }
+    const dayButton = event.target.closest('[data-report-day]');
+    if (dayButton) {
+      reportSelectedDay = dayButton.dataset.reportDay;
+      reportView = 'day';
+      renderReport();
+      return;
+    }
+    const backButton = event.target.closest('[data-report-back]');
+    if (backButton) {
+      reportView = backButton.dataset.reportBack;
+      if (reportView === 'overview') { reportSelectedMonth = null; reportSelectedDay = null; }
+      if (reportView === 'months') reportSelectedDay = null;
+      renderReport();
+    }
+  });
+  document.getElementById('reportsPanel').addEventListener('click', event => {
+    const card = event.target.closest('[data-report-metric]');
+    if (!card) return;
+    reportMetric = card.dataset.reportMetric;
+    reportView = 'months'; reportSelectedMonth = null; reportSelectedDay = null;
+    renderReport();
+  });
+  initSelects(); render();
+  initializeCloud();
+})();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .catch(error => console.error("PesoPlan offline setup failed:", error));
+  });
+}
+</script>
+</body>
+</html>

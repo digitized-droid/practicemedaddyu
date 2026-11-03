@@ -1,0 +1,75 @@
+PESOPLAN — FULLER OFFLINE / CLOUD SYNC UPDATE
+
+WHAT THIS UPDATE CHANGES
+- Categories: offline additions, renames, percentage changes, and deletions are synchronized. Adding a category now saves immediately instead of waiting for the category-settings Save button.
+- Income/capital and expenses: transactions are merged by stable IDs. Offline transaction additions are applied once to the cloud balance; deletion markers prevent deleted transactions from returning and reverse their balance effect when needed.
+- Things I want to buy: additions, edits/status changes, and deletions are merged. Deleting an item is recorded so an older cloud copy cannot restore it.
+- Purchase minus logic: checking an item creates an expense transaction and deducts from its category. Unchecking it restores the balance and records the transaction deletion so it will not reappear after sync.
+- Reminders: offline additions and edits are merged by ID and modification time. Deleted reminders use deletion markers.
+- Reminder lists: offline additions, renames, category changes, and deletions are synchronized. Deleting a list records a tombstone; reminders moved to another list are saved as edits.
+- Paid history: payment records are synchronized, and deleted payment history entries are tracked. Paid history shown in the app is also derived from synchronized expense transactions.
+- Year / month / day reports and Recent 10: these are calculated from the synchronized transaction list, so they follow income and expense sync rather than maintaining a separate unsynchronized report copy.
+- Retry handling: changes made while another cloud request is in progress are queued for another upload.
+- Service worker cache version is bumped so the updated app shell replaces the previous cached version.
+
+IMPORTANT DATA NOTES
+- Do not clear browser/site data, uninstall the PWA, or reset the Supabase table.
+- Export a backup before deployment if the app's export feature is available.
+- Keep a copy of the current repository ZIP.
+- Offline changes are first stored in that browser's localStorage. Cloud synchronization requires internet and a signed-in account. Browser storage is device/browser-specific.
+- The sync system uses one JSON row per user. It merges records by stable IDs and timestamps, but it is not a fully atomic multi-device transaction log. Avoid editing the exact same record on two devices at the exact same moment.
+- The app cannot restore data that was already erased from browser storage before this update.
+- This package preserves the Supabase project configuration file supplied in your ZIP. Do not replace its URL/key with a service-role key.
+
+UPLOAD
+1. Open https://github.com/digitized-droid/practicemedaddy
+2. Replace the existing `index.html`, `service-worker.js`, `README.md`, and `UPLOAD-INSTRUCTIONS.txt` with the files in this package.
+3. Keep your existing `supabase-config.js`, `manifest.webmanifest`, and any `icons/` folder/assets. The supplied configuration and manifest are included unchanged in this ZIP for convenience.
+4. Commit and push to the branch used by GitHub Pages (usually `main`).
+5. Wait for GitHub Pages to deploy.
+6. Open https://digitized-droid.github.io/practicemedaddy/ while online and refresh once.
+7. If the installed PWA still shows the previous version, close it fully and reopen it while online. Do not clear site storage.
+
+TEST PLAN
+Use clearly identifiable temporary test records, and do not delete real records during testing.
+
+A. Category settings
+1. While online, confirm the current categories and percentages.
+2. Go offline. Add a test category, change its name/percentage, and save category settings.
+3. Refresh while offline. Confirm the category and percentage remain.
+4. Reconnect, wait for “Synced to cloud”, then refresh online and check that the changes remain.
+5. Open the same account on another device and confirm the category appears there.
+
+B. Income / capital and expenses
+1. Add a small test capital entry online and confirm the balance/report updates.
+2. Go offline and add a small test expense in a category with enough balance.
+3. Refresh offline and confirm the expense and balance remain.
+4. Reconnect, wait for sync, then check the transaction and balance on the other device. Confirm the expense appears once.
+
+C. Things I want to buy
+1. Add a temporary item while offline and confirm it remains after an offline refresh.
+2. Reconnect and confirm it appears online/on the other device.
+3. Test checking the item: its category balance should decrease once.
+4. Test unchecking it: the amount should be restored once, and the purchase transaction should not return after sync.
+5. Delete a temporary item offline and confirm it stays deleted after reconnecting.
+
+D. Reminders and reminder lists
+1. Add a reminder offline; reconnect and confirm it syncs.
+2. Edit a reminder offline if the UI offers an edit action; confirm the newest version syncs.
+3. Delete a temporary reminder offline; confirm it stays deleted after reconnecting.
+4. Add and rename a reminder list offline; confirm the changes sync.
+5. Delete a temporary reminder list and confirm it stays deleted. Confirm reminders reassigned to the fallback list remain there.
+
+E. Reports, Recent 10, and Paid history
+1. Add test income and expense entries with dates in different months/years.
+2. Confirm year, month, and day report filters show the same transactions and totals online and offline.
+3. Confirm Recent 10 shows the latest ten transactions (and View more still works).
+4. Pay a temporary reminder and confirm the payment appears in Recent Activity, reports, and Paid history.
+5. Confirm the paid record appears on the other device after sync.
+
+If an item does not sync, do not repeatedly add/delete it. Keep the local data intact, export a backup if possible, and note the exact step and the cloud status message.
+
+VALIDATION PERFORMED FOR THIS PACKAGE
+- JavaScript syntax check passed.
+- A local merge test passed for category changes, transaction/balance reconciliation, wishlist add/edit/delete, bill add/edit/delete, and reminder-list add/delete.
+- A live Supabase round-trip and multi-device test cannot be performed from the source ZIP alone; complete the test plan after deployment.
