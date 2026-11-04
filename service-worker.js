@@ -1,10 +1,11 @@
 /* PesoPlan offline app shell for GitHub Pages. Keep this file beside index.html. */
-const CACHE_NAME = "pesoplan-shell-v5-full-offline-sync";
+const CACHE_NAME = "pesoplan-shell-v6-themes-reminders-reset";
 const APP_SHELL = [
   new URL("./", self.registration.scope).href,
   new URL("./index.html", self.registration.scope).href,
   new URL("./manifest.webmanifest", self.registration.scope).href,
-  new URL("./supabase-config.js", self.registration.scope).href
+  new URL("./supabase-config.js", self.registration.scope).href,
+  new URL("./logos/1.png", self.registration.scope).href
 ];
 
 self.addEventListener("install", event => {

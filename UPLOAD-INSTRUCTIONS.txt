@@ -1,76 +1,47 @@
-PESOPLAN — FULLER OFFLINE / CLOUD SYNC UPDATE
+PESOPLAN — THEMES, ALL-REMINDERS MANAGER, AND SAFE RESET UPDATE
 
-WHAT THIS UPDATE CHANGES
-- Categories: offline additions, renames, percentage changes, and deletions are synchronized. Adding a category now saves immediately instead of waiting for the category-settings Save button.
-- Income/capital and expenses: transactions are merged by stable IDs. Offline transaction additions are applied once to the cloud balance; deletion markers prevent deleted transactions from returning and reverse their balance effect when needed.
-- Things I want to buy: additions, edits/status changes, and deletions are merged. Deleting an item is recorded so an older cloud copy cannot restore it.
-- Purchase minus logic: checking an item creates an expense transaction and deducts from its category. Unchecking it restores the balance and records the transaction deletion so it will not reappear after sync.
-- Reminders: offline additions and edits are merged by ID and modification time. Deleted reminders use deletion markers.
-- Reminder lists: offline additions, renames, category changes, and deletions are synchronized. Deleting a list records a tombstone; reminders moved to another list are saved as edits.
-- Paid history: payment records are synchronized, and deleted payment history entries are tracked. Paid history shown in the app is also derived from synchronized expense transactions.
-- Year / month / day reports and Recent 10: these are calculated from the synchronized transaction list, so they follow income and expense sync rather than maintaining a separate unsynchronized report copy.
-- Retry handling: changes made while another cloud request is in progress are queued for another upload.
-- Service worker cache version is bumped so the updated app shell replaces the previous cached version.
+WHAT'S NEW
+- 50 live color themes, grouped by collection in the theme selector.
+- Selecting a theme previews it immediately; Apply theme saves the selection in localStorage.
+- The selected theme updates the header, page, cards, forms, controls, buttons, dialogs, and other shared color roles.
+- The header logo follows the selected theme number: logos/1.png through logos/50.png. Missing numbered logos fall back to logos/1.png.
+- All unpaid reminders now appear in a dedicated manager, including reminders whose personal "Show reminder" window has not started. They can be marked paid or deleted there. Existing repeat schedules and urgent-bill visibility rules remain intact.
+- A confirmed full data reset restores default categories and clears tracker records. It uses deletion markers and a newer category timestamp so the reset can sync instead of old cloud records reappearing.
 
-IMPORTANT DATA NOTES
-- Do not clear browser/site data, uninstall the PWA, or reset the Supabase table.
-- Export a backup before deployment if the app's export feature is available.
-- Keep a copy of the current repository ZIP.
-- Offline changes are first stored in that browser's localStorage. Cloud synchronization requires internet and a signed-in account. Browser storage is device/browser-specific.
-- The sync system uses one JSON row per user. It merges records by stable IDs and timestamps, but it is not a fully atomic multi-device transaction log. Avoid editing the exact same record on two devices at the exact same moment.
-- The app cannot restore data that was already erased from browser storage before this update.
-- This package preserves the Supabase project configuration file supplied in your ZIP. Do not replace its URL/key with a service-role key.
+FILES
+Replace these repository files with the matching files from this package:
+- index.html
+- service-worker.js
+- README.md
+- UPLOAD-INSTRUCTIONS.txt
 
-UPLOAD
-1. Open https://github.com/digitized-droid/practicemedaddy
-2. Replace the existing `index.html`, `service-worker.js`, `README.md`, and `UPLOAD-INSTRUCTIONS.txt` with the files in this package.
-3. Keep your existing `supabase-config.js`, `manifest.webmanifest`, and any `icons/` folder/assets. The supplied configuration and manifest are included unchanged in this ZIP for convenience.
-4. Commit and push to the branch used by GitHub Pages (usually `main`).
+Keep these existing files and folders:
+- supabase-config.js
+- manifest.webmanifest
+- any existing icons/ assets
+- logos/ folder (merge the supplied logos/1.png into it; do not delete your other numbered logo files)
+
+The package includes logos/1.png. Add your own logo images logos/2.png through logos/50.png when ready. Do not rename them; the theme number is used as the filename.
+
+DEPLOY
+1. Before deploying, use PesoPlan's Export backup feature while online.
+2. Open https://github.com/digitized-droid/practicemedaddy
+3. Replace the four files listed above. Merge the logos folder rather than deleting existing logo files.
+4. Commit and push to the branch used by GitHub Pages (usually main).
 5. Wait for GitHub Pages to deploy.
 6. Open https://digitized-droid.github.io/practicemedaddy/ while online and refresh once.
-7. If the installed PWA still shows the previous version, close it fully and reopen it while online. Do not clear site storage.
+7. Close and reopen the installed PWA while online if it still shows the previous version. The service-worker cache version has been updated.
 
-TEST PLAN
-Use clearly identifiable temporary test records, and do not delete real records during testing.
-
-A. Category settings
-1. While online, confirm the current categories and percentages.
-2. Go offline. Add a test category, change its name/percentage, and save category settings.
-3. Refresh while offline. Confirm the category and percentage remain.
-4. Reconnect, wait for “Synced to cloud”, then refresh online and check that the changes remain.
-5. Open the same account on another device and confirm the category appears there.
-
-B. Income / capital and expenses
-1. Add a small test capital entry online and confirm the balance/report updates.
-2. Go offline and add a small test expense in a category with enough balance.
-3. Refresh offline and confirm the expense and balance remain.
-4. Reconnect, wait for sync, then check the transaction and balance on the other device. Confirm the expense appears once.
-
-C. Things I want to buy
-1. Add a temporary item while offline and confirm it remains after an offline refresh.
-2. Reconnect and confirm it appears online/on the other device.
-3. Test checking the item: its category balance should decrease once.
-4. Test unchecking it: the amount should be restored once, and the purchase transaction should not return after sync.
-5. Delete a temporary item offline and confirm it stays deleted after reconnecting.
-
-D. Reminders and reminder lists
-1. Add a reminder offline; reconnect and confirm it syncs.
-2. Edit a reminder offline if the UI offers an edit action; confirm the newest version syncs.
-3. Delete a temporary reminder offline; confirm it stays deleted after reconnecting.
-4. Add and rename a reminder list offline; confirm the changes sync.
-5. Delete a temporary reminder list and confirm it stays deleted. Confirm reminders reassigned to the fallback list remain there.
-
-E. Reports, Recent 10, and Paid history
-1. Add test income and expense entries with dates in different months/years.
-2. Confirm year, month, and day report filters show the same transactions and totals online and offline.
-3. Confirm Recent 10 shows the latest ten transactions (and View more still works).
-4. Pay a temporary reminder and confirm the payment appears in Recent Activity, reports, and Paid history.
-5. Confirm the paid record appears on the other device after sync.
-
-If an item does not sync, do not repeatedly add/delete it. Keep the local data intact, export a backup if possible, and note the exact step and the cloud status message.
+IMPORTANT DATA NOTES
+- Do not clear browser/site data, uninstall the PWA, or reset the Supabase table as a deployment step.
+- Keep the existing Supabase project URL and publishable/anon key. Never put a service-role key in browser code.
+- Theme choice is stored locally in this browser using a separate localStorage key and does not modify financial records.
+- Offline changes remain in that browser until it reconnects. Cloud sync requires internet and a signed-in account.
+- Full tracker reset is destructive. It has a confirmation step and will synchronize its deletion markers when signed in and online. Export a backup first.
+- The cloud merge is ID/timestamp based, not a fully atomic multi-device transaction log. Avoid editing the same record on multiple devices at exactly the same time.
 
 VALIDATION PERFORMED FOR THIS PACKAGE
 - JavaScript syntax check passed.
-- A local merge test passed for category changes, transaction/balance reconciliation, wishlist add/edit/delete, bill add/edit/delete, and reminder-list add/delete.
-- A live Supabase round-trip and multi-device test cannot be performed from the source ZIP alone; complete the test plan after deployment.
-\n\nLOGO ASSET\nPlace `1.png` in the same folder as `index.html` before deployment. The supplied ZIP did not include this image, so add your original logo file alongside the HTML file.\n
+- The 50 theme definitions were parsed from the supplied theme specification; all nine color roles are present for every theme.
+- The existing transaction, category, wishlist, bill, paid-history, and cloud-merge code paths were retained.
+- Live multi-device Supabase testing cannot be performed from this ZIP alone. After deployment, test offline changes and cloud sync using temporary records before relying on the reset function.
