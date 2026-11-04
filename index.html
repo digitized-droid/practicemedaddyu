@@ -35,7 +35,28 @@ button { cursor: pointer; }
 #app { min-height: 100vh; width: 100%; background-color: var(--site-background); color: var(--site-on-background); border-radius: 0; }
 .topbar { background: var(--site-primary); color: var(--site-on-primary); padding: calc(18px * var(--site-spacing-scale)) max(22px, calc((100vw - 1180px)/2)); display:flex; justify-content:space-between; align-items:center; gap:16px; }
 .brand { display:flex; align-items:center; gap:12px; }
-.brand-mark { width:48px; height:48px; flex:0 0 48px; border-radius:14px; background:var(--site-secondary); color:var(--site-on-secondary); display:grid; place-items:center; overflow:hidden; padding:3px; }\n.brand-mark img { display:block; width:100%; height:100%; max-width:100%; max-height:100%; object-fit:contain; object-position:center; }
+.brand-mark {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    border-radius: 14px;
+    background: var(--site-secondary);
+    color: var(--site-on-secondary);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    padding: 0px;
+}
+.brand-mark img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+}
+
 .brand h1 { margin:0; font-family:var(--site-font-heading); font-size:calc(25px * var(--site-heading-scale)); letter-spacing:-.5px; }
 .brand small { display:block; color:rgba(255,255,255,.72); font-size:11px; letter-spacing:1.5px; text-transform:uppercase; margin-top:2px; }
 .top-actions { display:flex; align-items:center; gap:10px; color:rgba(255,255,255,.82); font-size:12px; }
@@ -108,8 +129,50 @@ td strong { font-size:11px; }
 .empty { color:var(--muted); text-align:center; padding:25px 10px; font-size:12px; }
 .report-actions { display:flex; flex-wrap:wrap; gap:8px; }
 .report-note { color:var(--muted); font-size:11px; line-height:1.6; margin:0 0 14px; }
-.toast { position:fixed; bottom:22px; left:50%; transform:translate(-50%,20px); opacity:0; pointer-events:none; background:linear-gradient(125deg,#fffefa,#f4eee0); color:#24332d; border:1px solid rgba(49,92,76,.16); padding:11px 16px; border-radius:10px; font-size:12px; box-shadow:0 9px 20px rgba(32,48,39,.10); transition:.25s; z-index:10; }
+.toast {
+  position:fixed; bottom:22px; left:50%;
+  transform:translate(-50%,20px); opacity:0; pointer-events:none;
+  background:linear-gradient(115deg,#fffefa,#f3ecdc);
+  color:#24332d; border:1px solid rgba(49,92,76,.16);
+  padding:13px 19px; border-radius:16px; font-size:13px;
+  font-weight:700; box-shadow:0 9px 20px rgba(32,48,39,.13);
+  transition:opacity .25s ease,transform .25s ease; z-index:50;
+  width:max-content; max-width:min(calc(100vw - 32px),480px);
+  line-height:1.45; text-align:center;
+}
 .toast.show { opacity:1; transform:translate(-50%,0); }
+
+.confirm-overlay {
+  position:fixed; inset:0; z-index:100; display:grid;
+  place-items:center; padding:18px;
+  background:rgba(25,38,31,.38); backdrop-filter:blur(3px);
+}
+.confirm-overlay[hidden] { display:none!important; }
+.confirm-dialog {
+  width:min(100%,430px); padding:22px;
+  border:1px solid rgba(49,92,76,.18); border-radius:18px;
+  background:linear-gradient(125deg,#fffefa,#f3ecdc);
+  color:#24332d; box-shadow:0 18px 45px rgba(32,48,39,.2);
+}
+.confirm-dialog-title {
+  display:flex; align-items:center; gap:10px; margin:0 0 8px;
+  color:#24332d; font-size:16px; font-weight:850;
+}
+.confirm-dialog-star { color:#315c4c; font-size:20px; }
+.confirm-dialog-message { margin:0; color:#68766e; font-size:13px; line-height:1.6; }
+.confirm-dialog-actions { display:flex; justify-content:flex-end; gap:9px; margin-top:20px; }
+.confirm-dialog-actions button {
+  min-width:88px; border:0; border-radius:999px; padding:10px 16px;
+  font:inherit; font-size:12px; font-weight:800; cursor:pointer;
+}
+.confirm-cancel { background:#e9e5d9; color:#405348; }
+.confirm-accept { background:#315c4c; color:#fffefa; }
+.confirm-dialog-actions button:hover { filter:brightness(.96); transform:translateY(-1px); }
+.confirm-dialog-actions button:focus-visible { outline:3px solid rgba(49,92,76,.28); outline-offset:3px; }
+@media(max-width:480px) {
+  .confirm-dialog { padding:19px; }
+  .confirm-dialog-actions button { flex:1; }
+}
 .section-toggle { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; text-align:left; }
 .section-toggle .toggle-copy { display:flex; flex-direction:column; gap:4px; }
 .section-toggle .toggle-title { font-size:14px; font-weight:800; }
@@ -216,7 +279,8 @@ td strong { font-size:11px; }
 @media print { .report-year-control,.report-nav,.report-actions { display:none!important; }.report-explorer { border:0; padding:0; } }
 
 @media(max-width:850px) { .summary-grid{grid-template-columns:1fr 1fr}.summary-card.primary{grid-column:1/-1}.category-grid{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr} }
-@media(max-width:600px) { main{padding:22px 14px 40px}.topbar{padding:14px}.top-actions .pill{display:none}.welcome{align-items:start;flex-direction:column}.summary-grid,.actions-grid{grid-template-columns:1fr}.summary-card.primary{grid-column:auto}.inline-form{grid-template-columns:1fr 1fr}.inline-form .field:first-child{grid-column:1/-1}.inline-form button{grid-column:1/-1}.category-grid{gap:9px}.panel{padding:16px}.brand h1{font-size:22px} }
+@media(max-width:600px) { main{padding:22px 14px 40px}.topbar{padding:14px}.top-actions .pill{display:none}.welcome{align-items:start;flex-direction:column}.summary-grid,.actions-grid{grid-template-columns:1fr}.summary-card.primary{grid-column:auto}.inline-form{grid-template-columns:1fr 1fr}.inline-form .field:first-child{grid-column:1/-1}.inline-form button{grid-column:1/-1}.category-grid{gap:9px}.panel{padding:16px}
+.brand h1{font-size:22px} }
 @media print { body{background:white!important;color:#111!important}.topbar{background:#315c4c!important;print-color-adjust:exact}.no-print, .actions-grid, #shoppingPanel, .footer{display:none!important} main{padding:10px;max-width:none}.panel,.summary-card,.category-card{box-shadow:none;break-inside:avoid}.summary-grid{grid-template-columns:repeat(3,1fr)}.category-grid{grid-template-columns:repeat(4,1fr)} }
 .bill-group {
   margin-top: 12px;
@@ -786,7 +850,21 @@ td strong { font-size:11px; }
   </div>
 </div>
 
-<div class="toast" id="toast" role="status"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="confirm-overlay" id="confirmOverlay" hidden>
+  <section class="confirm-dialog" role="alertdialog" aria-modal="true"
+           aria-labelledby="confirmDialogTitle" aria-describedby="confirmDialogMessage">
+    <h3 class="confirm-dialog-title" id="confirmDialogTitle">
+      <span class="confirm-dialog-star" aria-hidden="true">✦</span>
+      <span>Please confirm</span>
+    </h3>
+    <p class="confirm-dialog-message" id="confirmDialogMessage"></p>
+    <div class="confirm-dialog-actions">
+      <button class="confirm-cancel" id="confirmCancel" type="button">Cancel</button>
+      <button class="confirm-accept" id="confirmAccept" type="button">Confirm</button>
+    </div>
+  </section>
+</div>
 <script>
 (() => {
   const DEFAULT_CATEGORIES = [
@@ -1328,8 +1406,44 @@ td strong { font-size:11px; }
     }
   }
   function toast(message) {
-    const el = document.getElementById('toast'); el.textContent = message; el.classList.add('show');
-    clearTimeout(toast.timer); toast.timer = setTimeout(() => el.classList.remove('show'), 2400);
+    const el = document.getElementById('toast');
+    el.textContent = message;
+    el.classList.add('show');
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => el.classList.remove('show'), 2800);
+  }
+
+  function showConfirm(message) {
+    return new Promise(resolve => {
+      const overlay = document.getElementById('confirmOverlay');
+      const messageEl = document.getElementById('confirmDialogMessage');
+      const cancelBtn = document.getElementById('confirmCancel');
+      const acceptBtn = document.getElementById('confirmAccept');
+      messageEl.textContent = message;
+      overlay.hidden = false;
+
+      const finish = result => {
+        overlay.hidden = true;
+        cancelBtn.removeEventListener('click', cancel);
+        acceptBtn.removeEventListener('click', accept);
+        overlay.removeEventListener('click', outsideClick);
+        document.removeEventListener('keydown', keyHandler);
+        resolve(result);
+      };
+      const cancel = () => finish(false);
+      const accept = () => finish(true);
+      const outsideClick = event => { if (event.target === overlay) finish(false); };
+      const keyHandler = event => {
+        if (event.key === 'Escape') finish(false);
+        if (event.key === 'Enter') finish(true);
+      };
+
+      cancelBtn.addEventListener('click', cancel);
+      acceptBtn.addEventListener('click', accept);
+      overlay.addEventListener('click', outsideClick);
+      document.addEventListener('keydown', keyHandler);
+      acceptBtn.focus();
+    });
   }
   function category(id) { return CATEGORIES.find(c => c.id === id); }
   function total() { return CATEGORIES.reduce((sum,c) => sum + Number(state.balances[c.id] || 0), 0); }
@@ -1479,7 +1593,7 @@ td strong { font-size:11px; }
 
     rows.innerHTML = visible.length ? visible.map(t => {
       const isIncome = t.type === 'income';
-      return `<tr><td>${escapeHTML(t.date)}</td><td class="${isIncome?'type-income':'type-expense'}">${isIncome?'Money received':'Expense'}</td><td><strong>${escapeHTML(t.note || (isIncome?'Added capital':'Purchase'))}</strong></td><td>${isIncome?(t.category ? escapeHTML(category(t.category)?.name || '—') : 'All categories'):escapeHTML(category(t.category)?.name || '—')}</td><td class="${isIncome?'type-income':'type-expense'}">${isIncome?'+':'−'}${peso(t.amount)}</td><td class="no-print"><button class="icon-btn" title="Delete transaction and reverse its effect" data-delete-transaction="${t.id}">✕</button></td></tr>`;
+      return `<tr><td>${escapeHTML(t.date)}</td><td class="${isIncome?'type-income':'type-expense'}">${isIncome?'Money received':'Expense'}</td><td><strong>${escapeHTML(t.note || (isIncome?'Added capital':'Purchase'))}</strong></td><td>${isIncome?'All categories':escapeHTML(category(t.category)?.name || '—')}</td><td class="${isIncome?'type-income':'type-expense'}">${isIncome?'+':'−'}${peso(t.amount)}</td><td class="no-print"><button class="icon-btn" title="Delete transaction and reverse its effect" data-delete-transaction="${t.id}">✕</button></td></tr>`;
     }).join('') : '<tr><td colspan="6" class="empty">No transactions yet. Add money received or record your first expense.</td></tr>';
 
     const hasMoreThanLimit = sorted.length > RECENT_ACTIVITY_LIMIT;
@@ -1980,7 +2094,7 @@ td strong { font-size:11px; }
     renderWishes();
   });
 
-  document.addEventListener('click', e => {
+  document.addEventListener('click', async e => {
     const billExpand = e.target.closest('[data-bill-expand]');
     if (billExpand) {
       expandedBillId = expandedBillId === billExpand.dataset.billExpand ? null : billExpand.dataset.billExpand;
@@ -2020,7 +2134,7 @@ td strong { font-size:11px; }
     if (deleteGroup) {
       const id = deleteGroup.dataset.deleteReminderGroup; const groups = state.reminderGroups || [];
       if (groups.length <= 1) return toast('Keep at least one reminder list.');
-      if (!confirm('Delete this reminder list? Its reminders will move to the first remaining list.')) return;
+      if (!await showConfirm('Delete this reminder list? Its reminders will move to the first remaining list.')) return;
       const fallback = groups.find(g => g.id !== id); state.bills.forEach(b => { if ((b.reminderGroupId || 'default-reminders') === id) { b.reminderGroupId = fallback.id; if (!b.category) b.category = fallback.category; } });
       state.reminderGroups = groups.filter(g => g.id !== id); save(); renderBills(); return;
     }
@@ -2028,7 +2142,7 @@ td strong { font-size:11px; }
     if (delT) {
       const t = state.transactions.find(x => x.id === delT.dataset.deleteTransaction); if (!t) return;
       const promptText = t.type === 'income' ? 'Delete this income? Its distributed amount will be removed from all categories.' : 'Delete this expense? Its amount will be returned to the category.';
-      if (!confirm(promptText)) return;
+      if (!await showConfirm(promptText)) return;
       transactionBalanceEffect(state.balances, t, 'remove', CATEGORIES);
       state.deletedTransactionIds = Array.isArray(state.deletedTransactionIds) ? state.deletedTransactionIds : [];
       if (!state.deletedTransactionIds.includes(String(t.id))) state.deletedTransactionIds.push(String(t.id));
@@ -2043,7 +2157,7 @@ td strong { font-size:11px; }
     const delB = e.target.closest('[data-delete-bill]');
     if (delB) {
       const billId = delB.dataset.deleteBill;
-      if (!confirm('Delete this bill reminder?')) return;
+      if (!await showConfirm('Delete this bill reminder?')) return;
       state.deletedBillIds = Array.isArray(state.deletedBillIds) ? state.deletedBillIds : [];
       const removedBills = (state.bills || []).filter(b => String(b.id) === String(billId) || String(b.parentId) === String(billId));
       if (!state.deletedBillIds.includes(String(billId))) state.deletedBillIds.push(String(billId));
@@ -2218,7 +2332,7 @@ td strong { font-size:11px; }
     try {
       const data = JSON.parse(await file.text());
       if (!data.balances || !Array.isArray(data.transactions) || !Array.isArray(data.wishes)) throw new Error('Invalid backup');
-      if (!confirm('Import this backup? It will replace the data currently saved in this browser.')) return;
+      if (!await showConfirm('Import this backup? It will replace the data currently saved in this browser.')) return;
       if (Array.isArray(data.categories) && data.categories.length) CATEGORIES = data.categories.map(c=>({...c})); state = {categories:CATEGORIES,reminderGroups:Array.isArray(data.reminderGroups)&&data.reminderGroups.length?data.reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})),balances:{...blankBalances(),...data.balances},transactions:data.transactions,wishes:data.wishes,bills:Array.isArray(data.bills)?data.bills:[],paidBills:Array.isArray(data.paidBills)?data.paidBills:[]}; save(); render(); toast('Backup imported successfully.');
     } catch (err) { toast('Could not import this file. Please choose a valid PesoPlan backup.'); }
     e.target.value='';
