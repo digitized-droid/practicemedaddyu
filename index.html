@@ -742,6 +742,79 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 }
 </style>
 
+
+<style id="theme-contrast-fixes">
+/* Theme-aware reminder cards: keep previews and expanded details readable
+   in every PesoPlan palette, including the dark aesthetic themes. */
+.bill-preview-card,
+.bill-preview-card:nth-child(1),
+.bill-preview-card:nth-child(2),
+.bill-preview-card:nth-child(3) {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--line) !important;
+  box-shadow: 0 8px 18px rgba(0,0,0,.12);
+}
+.bill-preview-name,
+.bill-preview-amount {
+  color: var(--text) !important;
+}
+.bill-preview-due {
+  color: var(--muted) !important;
+}
+.bill-preview-star,
+.bill-preview-hint span {
+  color: var(--good) !important;
+}
+.bill-preview-empty,
+.bill-preview-empty-action {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--line) !important;
+}
+.bill-preview-empty-action span,
+.bill-preview-empty-action small {
+  color: var(--muted) !important;
+}
+.bill-card {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--line) !important;
+}
+.bill-card-name,
+.bill-card-amount {
+  color: var(--text) !important;
+}
+.bill-card-due,
+.bill-card-meta {
+  color: var(--muted) !important;
+}
+.bill-card-star {
+  color: var(--good) !important;
+}
+.bill-card-details {
+  border-top-color: var(--line) !important;
+}
+.upcoming-reminder-row {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--line) !important;
+}
+.upcoming-reminder-row strong,
+.upcoming-reminder-amount {
+  color: var(--text) !important;
+}
+.upcoming-reminder-row span,
+.upcoming-reminder-row small {
+  color: var(--muted) !important;
+}
+/* The brand name sits on the themed header, so use its high-contrast
+   on-primary color just like the other header text. */
+.topbar .brand h1 {
+  color: var(--site-on-primary) !important;
+}
+</style>
+
 </head>
 <body>
 <div id="app">
