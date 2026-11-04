@@ -616,81 +616,7 @@ td strong { font-size:11px; }
 
 .recent-activity-more { display:flex; justify-content:center; padding:14px 0 2px; }
 .recent-activity-more .btn { min-width:190px; }
-\n
-
-/* FIXED REMINDER APPEARANCE
-   Reminder cards intentionally keep this warm, readable palette in every site theme.
-   The dashboard and all other sections remain theme-aware. */
-.reminder-group {
-  background:#fffefa !important;
-  color:#24332d !important;
-  border:1px solid #d9e1d9 !important;
-}
-.reminder-group-head,
-.reminder-group-head strong { color:#24332d !important; }
-.reminder-group-head small { color:#68766e !important; }
-.reminder-group-actions button {
-  background:#edf3ee !important;
-  color:#294638 !important;
-  border:1px solid #d4e0d6 !important;
-}
-.bill-preview-card,
-.bill-preview-card:visited,
-.bill-preview-card:hover,
-.bill-preview-card:focus {
-  color:#24332d !important;
-}
-.bill-preview-card:nth-child(1) { background:linear-gradient(115deg,#fffefa,#f3ecdc) !important; }
-.bill-preview-card:nth-child(2) { background:linear-gradient(115deg,#eaf2ed,#d5e7dc) !important; }
-.bill-preview-card:nth-child(3) { background:linear-gradient(115deg,#fff0e8,#f1d7c9) !important; }
-.bill-preview-star { color:#315c4c !important; }
-.bill-preview-name,.bill-preview-amount { color:#24332d !important; }
-.bill-preview-due { color:#68766e !important; }
-.bill-preview-empty {
-  background:#fffefa !important;
-  color:#53645a !important;
-  border-color:#cbd8cd !important;
-}
-#billList .upcoming-reminder-row {
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
-  gap:8px 14px;
-  align-items:center;
-  margin:9px 0;
-  padding:13px 15px;
-  border:1px solid #d9e1d9 !important;
-  border-radius:14px;
-  background:#fffefa !important;
-  color:#24332d !important;
-}
-#billList .upcoming-reminder-row:nth-child(3n+2) {
-  background:#edf4ee !important;
-  border-color:#d2e0d4 !important;
-}
-#billList .upcoming-reminder-row:nth-child(3n) {
-  background:#fff1e9 !important;
-  border-color:#ead8cb !important;
-}
-#billList .upcoming-reminder-main strong,
-#billList .upcoming-reminder-amount { color:#24332d !important; }
-#billList .upcoming-reminder-main span,
-#billList .upcoming-reminder-main small { color:#68766e !important; }
-#billList .upcoming-reminder-actions { color:#294638 !important; }
-#billList .upcoming-reminder-actions label { color:#53645a !important; }
-#billList .upcoming-reminder-actions button {
-  background:#315c4c !important;
-  color:#fff !important;
-  border-color:#315c4c !important;
-}
-#billList .upcoming-reminder-actions input { accent-color:#315c4c; }
-@media(max-width:560px) {
-  #billList .upcoming-reminder-row { padding:11px 12px; }
-}
-
-/* The PesoPlan wordmark follows the active theme like the other headings. */
-.brand h1 { color:var(--text) !important; }
-
-</style>
+\n</style>
 
 <meta name="theme-color" content="#315c4c">
 <meta name="description" content="PesoPlan — a thoughtful personal budget tracker.">
@@ -813,6 +739,79 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
  .upcoming-reminder-row { grid-template-columns:minmax(0,1fr) auto; }
  .upcoming-reminder-actions { justify-content:space-between; }
  .theme-preview-swatches span { width:19px; }
+}
+</style>
+
+
+<style id="theme-contrast-fixes">
+/* Theme-aware reminder cards: keep previews and expanded details readable
+   in every PesoPlan palette, including the dark aesthetic themes. */
+.bill-preview-card,
+.bill-preview-card:nth-child(1),
+.bill-preview-card:nth-child(2),
+.bill-preview-card:nth-child(3) {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--line) !important;
+  box-shadow: 0 8px 18px rgba(0,0,0,.12);
+}
+.bill-preview-name,
+.bill-preview-amount {
+  color: var(--text) !important;
+}
+.bill-preview-due {
+  color: var(--muted) !important;
+}
+.bill-preview-star,
+.bill-preview-hint span {
+  color: var(--good) !important;
+}
+.bill-preview-empty,
+.bill-preview-empty-action {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--line) !important;
+}
+.bill-preview-empty-action span,
+.bill-preview-empty-action small {
+  color: var(--muted) !important;
+}
+.bill-card {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--line) !important;
+}
+.bill-card-name,
+.bill-card-amount {
+  color: var(--text) !important;
+}
+.bill-card-due,
+.bill-card-meta {
+  color: var(--muted) !important;
+}
+.bill-card-star {
+  color: var(--good) !important;
+}
+.bill-card-details {
+  border-top-color: var(--line) !important;
+}
+.upcoming-reminder-row {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border-color: var(--line) !important;
+}
+.upcoming-reminder-row strong,
+.upcoming-reminder-amount {
+  color: var(--text) !important;
+}
+.upcoming-reminder-row span,
+.upcoming-reminder-row small {
+  color: var(--muted) !important;
+}
+/* The brand name sits on the themed header, so use its high-contrast
+   on-primary color just like the other header text. */
+.topbar .brand h1 {
+  color: var(--site-on-primary) !important;
 }
 </style>
 
