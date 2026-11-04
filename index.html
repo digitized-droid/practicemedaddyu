@@ -610,6 +610,7 @@ td strong { font-size:11px; }
 <style>
 .cloud-account-btn { border:1px solid rgba(255,255,255,.35); background:transparent; color:white; border-radius:999px; padding:8px 12px; font-size:11px; font-weight:700; }
 .cloud-account-btn:hover { background:rgba(255,255,255,.12); }
+@media(max-width:620px){.top-actions{flex-wrap:wrap;justify-content:flex-end}.cloud-account-btn{padding:7px 9px;font-size:10px}}
 .cloud-modal { position:fixed; inset:0; z-index:30; background:rgba(15,25,20,.58); display:grid; place-items:center; padding:18px; }
 .cloud-modal[hidden] { display:none!important; }
 .cloud-dialog { width:min(100%,430px); background:var(--surface); color:var(--text); border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 24px 70px rgba(0,0,0,.22); }
@@ -622,6 +623,15 @@ td strong { font-size:11px; }
 #cloudAccountSummary { font-size:11px; color:var(--muted); overflow-wrap:anywhere; margin:10px 0; }
 .category-delete-modal { position:fixed; inset:0; z-index:40; display:grid; place-items:center; padding:18px; background:rgba(15,25,20,.62); }
 .category-delete-modal[hidden] { display:none!important; }
+.app-popup-modal { position:fixed; inset:0; z-index:45; display:grid; place-items:center; padding:18px; background:rgba(15,25,20,.62); }
+.app-popup-modal[hidden] { display:none!important; }
+.app-popup-dialog { width:min(100%,720px); max-height:min(90vh,820px); overflow:auto; background:var(--surface); color:var(--text); border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 24px 70px rgba(0,0,0,.25); }
+.app-popup-dialog h3 { margin:0 0 7px; font-family:var(--site-font-heading); font-size:23px; }
+.app-popup-dialog .popup-intro { color:var(--muted); font-size:12px; line-height:1.6; margin:0 0 14px; }
+.app-popup-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:10px; }
+.app-popup-close { border:0; background:var(--surface-soft); color:var(--text); border-radius:10px; width:36px; height:36px; font-size:22px; cursor:pointer; flex:0 0 auto; }
+.popup-open-btn { white-space:nowrap; }
+
 .category-delete-dialog { width:min(100%,480px); max-height:min(90vh,720px); overflow:auto; background:var(--surface); color:var(--text); border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 24px 70px rgba(0,0,0,.25); }
 .category-delete-dialog h3 { margin:0 0 7px; font-family:var(--site-font-heading); font-size:23px; }
 .category-delete-dialog p { color:var(--muted); font-size:12px; line-height:1.6; margin:0 0 14px; }
@@ -712,7 +722,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <div id="app">
   <header class="topbar">
     <div class="brand"><div class="brand-mark"><img src="logos/1.png" alt="PesoPlan logo"></div><div><h1>PesoPlan</h1><small>Your money, thoughtfully divided</small></div></div>
-    <div class="top-actions"><span class="pill">PERSONAL BUDGET</span><span id="saveStatus">● Saved on this device</span><button class="cloud-account-btn" id="cloudAccountBtn" type="button">☁ Connect account</button></div>
+    <div class="top-actions"><span class="pill">PERSONAL BUDGET</span><span id="saveStatus">● Saved on this device</span><button class="cloud-account-btn" id="cloudAccountBtn" type="button">☁ Connect account</button><button class="cloud-account-btn" id="openAppSettingsBtn" type="button" aria-haspopup="dialog">⚙ Settings</button></div>
   </header>
   <main>
     <div class="welcome">
@@ -731,7 +741,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
         <div class="bill-preview-hint">TAP A STACK TO OPEN THAT REMINDER LIST <span>↗</span></div>
       </div>
       <div id="billsPanel" class="collapsible-content" hidden style="margin-top:18px">
-          <div class="panel-head"><div><h3 id="reminderPanelTitle">Payment reminders</h3><div class="panel-desc">Create as many reminder lists as you need, each with its own deduction category.</div></div><span class="tag" id="billCount">0 REMINDERS</span></div>
+          <div class="panel-head"><div><h3 id="reminderPanelTitle">Payment reminders</h3><div class="panel-desc">Create as many reminder lists as you need, each with its own deduction category.</div></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="tag" id="billCount">0 REMINDERS</span><button class="btn btn-quiet popup-open-btn" id="openReminderSettingsBtn" type="button" aria-haspopup="dialog">⚙ Reminder settings</button></div></div>
           <div class="bill-panel-back-row"><button class="btn btn-quiet" id="billBackBtn" type="button">← Back to cards</button></div>
           <div class="bill-add-area no-print" style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-quiet" id="addReminderGroupToggle" type="button">＋ New reminder list</button></div>
           <form id="reminderGroupForm" class="inline-form no-print" hidden style="margin:12px 0;padding:14px;border:1px solid var(--line);border-radius:13px;background:var(--surface-soft)"><div class="field full"><strong>Create a separate reminder list</strong><div class="panel-desc">Give this list its own name and choose which category will be deducted when its reminders are marked paid.</div></div><div class="field"><label for="reminderGroupName">Reminder list name</label><input id="reminderGroupName" maxlength="45" placeholder="e.g. School deadlines" required></div><div class="field"><label for="reminderGroupCategory">Deduct from category</label><select id="reminderGroupCategory"></select></div><button class="btn btn-primary" type="submit">Create list</button></form>
@@ -749,10 +759,6 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
               <div style="display:flex;gap:8px;margin-top:13px"><button class="btn btn-primary" type="submit">Save reminder</button><button class="btn btn-quiet" id="billCancelBtn" type="button">Cancel</button></div>
             </form>
           </div>
-          <section class="all-reminders-manager" aria-labelledby="allRemindersTitle">
-            <div class="all-reminders-heading"><div><h4 id="allRemindersTitle">All upcoming reminders</h4><p class="panel-desc">Every unpaid reminder is listed here, even when its personal reminder window has not started yet.</p></div><span class="tag" id="allReminderCount">0 UPCOMING</span></div>
-            <div id="allUpcomingReminders"><div class="empty">Loading all reminders…</div></div>
-          </section>
           <div class="bill-deck" id="billList"></div>
         </div>
     </section>
@@ -879,30 +885,6 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       <div class="paid-bills-list" id="paidBillsList"></div>
     </section>
 
-    <section class="section" id="appSettingsSection">
-      <div class="panel app-settings-panel">
-        <div class="panel-head"><div><h3>⚙ PesoPlan settings</h3><div class="panel-desc">Customize the appearance and manage your saved tracker data.</div></div><span class="tag">SETTINGS</span></div>
-        <section class="settings-subsection">
-          <div class="settings-subhead"><div><h4>Website theme</h4><p class="panel-desc">Choose from 50 coordinated color combinations. Selecting a theme previews it immediately.</p></div><span class="settings-theme-number" id="themeNumberLabel">01 / 50</span></div>
-          <label class="sr-only" for="themeSelect">Choose a PesoPlan theme</label>
-          <select id="themeSelect" class="settings-theme-select"></select>
-          <div class="theme-preview" id="themePreview" aria-live="polite">
-            <div class="theme-preview-swatches" id="themePreviewSwatches"></div>
-            <div><strong id="themePreviewName">Original PesoPlan</strong><small id="themePreviewCollection">Original collection</small></div>
-          </div>
-          <div class="settings-actions">
-            <button class="btn btn-primary" type="button" id="applyThemeBtn">Apply theme</button>
-            <button class="btn btn-quiet" type="button" id="resetThemeBtn">Reset to original theme</button>
-          </div>
-          <p class="settings-note">Matching logo files are loaded from <code>logos/1.png</code> through <code>logos/50.png</code>. If a numbered logo has not been uploaded yet, PesoPlan uses the original logo.</p>
-        </section>
-        <section class="settings-subsection">
-          <div class="settings-subhead"><div><h4>Reset PesoPlan data</h4><p class="panel-desc">Restore the default categories and clear reminders, wishlist items, transactions, balances, reports, and paid history.</p></div></div>
-          <p class="settings-warning">This removes the current tracker records from this device and, when signed in, synchronizes the reset to your cloud account. Export a backup first if you may need these records later.</p>
-          <button class="btn btn-danger" type="button" id="resetAllDataBtn">Reset all tracker data</button>
-        </section>
-      </div>
-    </section>
     <div class="footer">PesoPlan · A simple way to keep your pesos organized</div>
   </main>
 </div>
@@ -943,6 +925,45 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       <button class="btn btn-danger btn-block" id="cloudSignOutBtn" type="button">Sign out</button>
     </div>
     <div class="cloud-status" id="cloudModalStatus" role="status"></div>
+  </div>
+</div>
+
+
+<div class="app-popup-modal" id="appSettingsModal" hidden>
+  <div class="app-popup-dialog" role="dialog" aria-modal="true" aria-labelledby="appSettingsTitle">
+    <div class="app-popup-head"><div><h3 id="appSettingsTitle">⚙ PesoPlan settings</h3><p class="popup-intro">Customize the appearance and manage your saved tracker data.</p></div><button class="app-popup-close" type="button" data-close-popup="appSettingsModal" aria-label="Close settings">×</button></div>
+    
+        <div class="panel-head"><div><h3>⚙ PesoPlan settings</h3><div class="panel-desc">Customize the appearance and manage your saved tracker data.</div></div><span class="tag">SETTINGS</span></div>
+        <section class="settings-subsection">
+          <div class="settings-subhead"><div><h4>Website theme</h4><p class="panel-desc">Choose from 50 coordinated color combinations. Selecting a theme previews it immediately.</p></div><span class="settings-theme-number" id="themeNumberLabel">01 / 50</span></div>
+          <label class="sr-only" for="themeSelect">Choose a PesoPlan theme</label>
+          <select id="themeSelect" class="settings-theme-select"></select>
+          <div class="theme-preview" id="themePreview" aria-live="polite">
+            <div class="theme-preview-swatches" id="themePreviewSwatches"></div>
+            <div><strong id="themePreviewName">Original PesoPlan</strong><small id="themePreviewCollection">Original collection</small></div>
+          </div>
+          <div class="settings-actions">
+            <button class="btn btn-primary" type="button" id="applyThemeBtn">Apply theme</button>
+            <button class="btn btn-quiet" type="button" id="resetThemeBtn">Reset to original theme</button>
+          </div>
+          <p class="settings-note">Matching logo files are loaded from <code>logos/1.png</code> through <code>logos/50.png</code>. If a numbered logo has not been uploaded yet, PesoPlan uses the original logo.</p>
+        </section>
+        <section class="settings-subsection">
+          <div class="settings-subhead"><div><h4>Reset PesoPlan data</h4><p class="panel-desc">Restore the default categories and clear reminders, wishlist items, transactions, balances, reports, and paid history.</p></div></div>
+          <p class="settings-warning">This removes the current tracker records from this device and, when signed in, synchronizes the reset to your cloud account. Export a backup first if you may need these records later.</p>
+          <button class="btn btn-danger" type="button" id="resetAllDataBtn">Reset all tracker data</button>
+        </section>
+
+  </div>
+</div>
+<div class="app-popup-modal" id="reminderSettingsModal" hidden>
+  <div class="app-popup-dialog" role="dialog" aria-modal="true" aria-labelledby="reminderSettingsTitle">
+    <div class="app-popup-head"><div><h3 id="reminderSettingsTitle">⚙ Reminder settings</h3><p class="popup-intro">View and manage every unpaid reminder, including bills whose reminder display date has not arrived yet.</p></div><button class="app-popup-close" type="button" data-close-popup="reminderSettingsModal" aria-label="Close reminder settings">×</button></div>
+              <section class="all-reminders-manager" aria-labelledby="allRemindersTitle">
+            <div class="all-reminders-heading"><div><h4 id="allRemindersTitle">All upcoming reminders</h4><p class="panel-desc">Every unpaid reminder is listed here, even when its personal reminder window has not started yet.</p></div><span class="tag" id="allReminderCount">0 UPCOMING</span></div>
+            <div id="allUpcomingReminders"><div class="empty">Loading all reminders…</div></div>
+          </section>
+
   </div>
 </div>
 
@@ -2289,6 +2310,39 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   setupToggle('reportsToggle', 'reportsPanel');
 
   setupToggle('activityToggle', 'activityPanel');
+
+  function openPesoPlanPopup(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+    modal.hidden = false;
+    document.body.classList.add('popup-open');
+    const close = modal.querySelector('[data-close-popup]');
+    close?.focus();
+  }
+  function closePesoPlanPopup(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+    modal.hidden = true;
+    if (!document.querySelector('.app-popup-modal:not([hidden])')) document.body.classList.remove('popup-open');
+  }
+  document.getElementById('openAppSettingsBtn')?.addEventListener('click', () => openPesoPlanPopup('appSettingsModal'));
+  document.getElementById('openReminderSettingsBtn')?.addEventListener('click', () => {
+    renderAllUpcomingReminders();
+    openPesoPlanPopup('reminderSettingsModal');
+  });
+  document.querySelectorAll('[data-close-popup]').forEach(btn => btn.addEventListener('click', () => closePesoPlanPopup(btn.dataset.closePopup)));
+  ['appSettingsModal','reminderSettingsModal'].forEach(id => {
+    const modal = document.getElementById(id);
+    modal?.addEventListener('click', event => { if (event.target === modal) closePesoPlanPopup(id); });
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      ['appSettingsModal','reminderSettingsModal'].forEach(id => {
+        const modal = document.getElementById(id);
+        if (modal && !modal.hidden) closePesoPlanPopup(id);
+      });
+    }
+  });
   initializeThemeSettings();
   document.getElementById('resetAllDataBtn')?.addEventListener('click', async () => {
     const confirmed = await showConfirm('Reset ALL PesoPlan tracker data? This clears balances, categories back to defaults, reminders and reminder lists, wishlist items, transactions, reports, and paid history. If you are signed in, the reset will also sync to your cloud account. This cannot be undone unless you have a backup.');
