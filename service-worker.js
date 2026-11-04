@@ -1,5 +1,5 @@
 /* PesoPlan offline app shell for GitHub Pages. Keep this file beside index.html. */
-const CACHE_NAME = "pesoplan-shell-v6-theme-reset";
+const CACHE_NAME = "pesoplan-shell-v5-full-offline-sync";
 const APP_SHELL = [
   new URL("./", self.registration.scope).href,
   new URL("./index.html", self.registration.scope).href,

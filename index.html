@@ -599,127 +599,7 @@ td strong { font-size:11px; }
 
 .recent-activity-more { display:flex; justify-content:center; padding:14px 0 2px; }
 .recent-activity-more .btn { min-width:190px; }
-\n
-/* Centralized theme surfaces: every palette updates the complete interface. */
-
-/* Theme-aware reminders, confirmation dialogs, and status surfaces. */
-.confirm-overlay { z-index: 1300 !important; }
-.toast {
-  background: var(--surface) !important;
-  color: var(--text) !important;
-  border: 1px solid var(--line) !important;
-}
-.confirm-dialog {
-  background: var(--surface) !important;
-  color: var(--text) !important;
-  border-color: var(--line) !important;
-}
-.confirm-dialog-title { color: var(--text) !important; }
-.confirm-dialog-message { color: var(--muted) !important; }
-.confirm-dialog-star, .bill-card-star, .bill-preview-star { color: var(--site-primary) !important; }
-.confirm-cancel { background: var(--surface-soft) !important; color: var(--text) !important; }
-.confirm-accept { background: var(--site-primary) !important; color: var(--site-on-primary) !important; }
-.bill-deck-front { background: var(--site-primary) !important; color: var(--site-on-primary) !important; }
-.bill-deck-back-one { background: var(--site-secondary) !important; }
-.bill-deck-back-two { background: var(--surface-soft) !important; }
-.bill-deck-back-three { background: var(--site-primary) !important; }
-.bill-deck-star, .bill-deck-open { color: var(--site-secondary) !important; }
-.bill-card {
-  background: var(--surface) !important;
-  border-color: var(--line) !important;
-}
-.bill-card:nth-child(4n+1), .bill-card:nth-child(4n+2),
-.bill-card:nth-child(4n+3), .bill-card:nth-child(4n) {
-  background: var(--surface-soft) !important;
-}
-.bill-card-name, .bill-card-amount, .bill-preview-name, .bill-preview-amount {
-  color: var(--text) !important;
-}
-.bill-card-due, .bill-card-meta, .bill-preview-due { color: var(--muted) !important; }
-.bill-card-details { border-color: var(--line) !important; }
-.bill-paid-check { color: var(--good) !important; }
-.bill-preview-card, .bill-preview-card:nth-child(1),
-.bill-preview-card:nth-child(2), .bill-preview-card:nth-child(3) {
-  background: var(--surface-soft) !important;
-  border-color: var(--line) !important;
-}
-.bill-preview-empty {
-  background: var(--surface) !important;
-  color: var(--text) !important;
-  border-color: var(--line) !important;
-}
-
-:root {
-  --surface: #FFFFFF;
-  --surface-soft: #E8EFE8;
-  --text: #182C26;
-  --muted: #687B72;
-  --line: #D9E1D8;
-  --good: #287a55;
-  --bad: #b64d45;
-}
-body, #app { background: var(--site-background); color: var(--site-on-background); }
-.topbar { background: var(--site-primary); color: var(--site-on-primary); }
-.summary-card, .panel, .category-card, .bill-card, .wish-card, .report-card,
-.transaction-card, .modal-card, .category-settings-panel {
-  background-color: var(--surface);
-  color: var(--text);
-  border-color: var(--line);
-}
-input, select, textarea {
-  background: var(--surface);
-  color: var(--text);
-  border-color: var(--line);
-}
-input:focus, select:focus, textarea:focus, button:focus-visible, a:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--site-secondary) 78%, transparent);
-  outline-offset: 2px;
-}
-.tag, .soft, .category-icon, .filter-chip, .report-filter {
-  background-color: var(--surface-soft);
-}
-.theme-overlay {
-  position: fixed; inset: 0; z-index: 1200; display: flex; align-items: center;
-  justify-content: center; padding: 18px; background: rgba(12,18,16,.58);
-}
-.theme-overlay[hidden] { display: none !important; }
-.theme-dialog {
-  width: min(1080px, 100%); max-height: min(88vh, 900px); overflow: auto;
-  background: var(--surface); color: var(--text); border: 1px solid var(--line);
-  border-radius: 18px; padding: 22px; box-shadow: 0 24px 80px rgba(0,0,0,.25);
-}
-.theme-dialog-head { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:16px; }
-.theme-dialog-head h2 { margin:0; font-size:24px; }
-.theme-dialog-head p { margin:5px 0 0; color:var(--muted); font-size:12px; }
-.theme-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:10px; }
-.theme-choice {
-  display:block; width:100%; min-width:0; text-align:left; border:1px solid var(--line);
-  border-radius:13px; padding:11px; background:var(--surface); color:var(--text);
-  transition:border-color .15s, transform .15s, box-shadow .15s;
-}
-.theme-choice:hover { transform:translateY(-1px); border-color:var(--site-primary); }
-.theme-choice[aria-pressed="true"] { border:2px solid var(--site-primary); box-shadow:0 0 0 2px color-mix(in srgb,var(--site-primary) 16%,transparent); padding:10px; }
-.theme-choice-name { display:flex; justify-content:space-between; align-items:center; gap:6px; font-size:12px; font-weight:800; }
-.theme-choice-group { display:block; margin-top:3px; color:var(--muted); font-size:10px; }
-.theme-swatches { display:flex; overflow:hidden; height:25px; margin-top:9px; border-radius:7px; border:1px solid var(--line); }
-.theme-swatches span { flex:1; }
-.theme-dialog-foot { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; margin-top:18px; padding-top:14px; border-top:1px solid var(--line); }
-.theme-dialog-foot small { color:var(--muted); }
-.theme-reset-danger { border:1px solid #c94b43 !important; color:#a52f2b !important; background:transparent !important; }
-.top-actions .theme-open-btn { border:1px solid rgba(255,255,255,.42); background:rgba(255,255,255,.12); color:inherit; border-radius:999px; padding:8px 12px; font-size:12px; font-weight:700; }
-.top-actions .theme-open-btn:hover { background:rgba(255,255,255,.2); }
-@media (max-width:720px) {
-  .theme-overlay { padding:8px; }
-  .theme-dialog { padding:15px; max-height:94vh; }
-  .theme-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
-  .theme-choice { padding:9px; }
-  .top-actions { flex-wrap:wrap; justify-content:flex-end; }
-}
-@media (max-width:430px) {
-  .theme-grid { grid-template-columns:1fr; }
-}
-
-</style>
+\n</style>
 
 <meta name="theme-color" content="#315c4c">
 <meta name="description" content="PesoPlan — a thoughtful personal budget tracker.">
@@ -764,8 +644,8 @@ input:focus, select:focus, textarea:focus, button:focus-visible, a:focus-visible
 <body>
 <div id="app">
   <header class="topbar">
-    <div class="brand"><div class="brand-mark"><img id="brandLogo" src="logos/1.png" alt="PesoPlan logo"></div><div><h1>PesoPlan</h1><small>Your money, thoughtfully divided</small></div></div>
-    <div class="top-actions"><span class="pill">PERSONAL BUDGET</span><span id="saveStatus">● Saved on this device</span><button class="theme-open-btn" id="openThemesBtn" type="button">⚙ Settings & Themes</button><button class="cloud-account-btn" id="cloudAccountBtn" type="button">☁ Connect account</button></div>
+    <div class="brand"><div class="brand-mark"><img src="1.png" alt="PesoPlan logo"></div><div><h1>PesoPlan</h1><small>Your money, thoughtfully divided</small></div></div>
+    <div class="top-actions"><span class="pill">PERSONAL BUDGET</span><span id="saveStatus">● Saved on this device</span><button class="cloud-account-btn" id="cloudAccountBtn" type="button">☁ Connect account</button></div>
   </header>
   <main>
     <div class="welcome">
@@ -999,73 +879,6 @@ input:focus, select:focus, textarea:focus, button:focus-visible, a:focus-visible
   let CATEGORIES = DEFAULT_CATEGORIES.map(c => ({...c}));
   const DEFAULT_REMINDER_GROUPS = [{id:'default-reminders',name:'Urgent bills',category:'bills'}];
   const KEY = 'pesoplan_data_v1';
-
-  const THEMES = [{"id":1,"name":"Original PesoPlan","group":"Original PesoPlan","colors":{"Header":"#263B65","Background":"#F3F1E9","Card":"#FFFFFF","Primary Text":"#182C26","Muted Text":"#687B72","Accent":"#E9BD70","Accent Text":"#352819","Border":"#D9E1D8","Soft":"#E8EFE8"}},{"id":2,"name":"Royal Contrast","group":"Complementary","colors":{"Header":"#315B45","Background":"#F7F0EF","Card":"#FFFFFF","Primary Text":"#26392F","Muted Text":"#718096","Accent":"#E8B85C","Accent Text":"#30220C","Border":"#D9DCE6","Soft":"#E9EDF7"}},{"id":3,"name":"Forest & Rose","group":"Complementary","colors":{"Header":"#24566B","Background":"#F5F1EA","Card":"#FFFFFF","Primary Text":"#183342","Muted Text":"#837574","Accent":"#D78F9B","Accent Text":"#351C23","Border":"#E7D8DA","Soft":"#F5E5E8"}},{"id":4,"name":"Ocean Sunset","group":"Complementary","colors":{"Header":"#563D5C","Background":"#F1F2E9","Card":"#FFFFFF","Primary Text":"#332B36","Muted Text":"#71818A","Accent":"#E9A16D","Accent Text":"#452713","Border":"#D8E1E2","Soft":"#F8E9DF"}},{"id":5,"name":"Plum & Sage","group":"Complementary","colors":{"Header":"#743E58","Background":"#F4F0ED","Card":"#FFFFFF","Primary Text":"#392633","Muted Text":"#827A80","Accent":"#A7B98A","Accent Text":"#27331D","Border":"#DFE2D5","Soft":"#EAF0DF"}},{"id":6,"name":"Berry & Mint","group":"Complementary","colors":{"Header":"#293746","Background":"#F7F2E9","Card":"#FFFFFF","Primary Text":"#25313B","Muted Text":"#887782","Accent":"#8FCBB2","Accent Text":"#173A2B","Border":"#E5DCE1","Soft":"#E4F2EB"}},{"id":7,"name":"Ink & Tangerine","group":"Complementary","colors":{"Header":"#24645F","Background":"#F5F0EB","Card":"#FFFFFF","Primary Text":"#203D3A","Muted Text":"#7B858B","Accent":"#ED985C","Accent Text":"#42230F","Border":"#E4DED3","Soft":"#FBEBDD"}},{"id":8,"name":"Teal & Coral","group":"Complementary","colors":{"Header":"#304E83","Background":"#F5F1E9","Card":"#FFFFFF","Primary Text":"#202F4B","Muted Text":"#778681","Accent":"#E98F7F","Accent Text":"#46231D","Border":"#DFDEDA","Soft":"#F8E5E0"}},{"id":9,"name":"Cobalt & Apricot","group":"Complementary","colors":{"Header":"#586044","Background":"#F3F0E9","Card":"#FFFFFF","Primary Text":"#353A2B","Muted Text":"#78839A","Accent":"#EFAE7C","Accent Text":"#472A16","Border":"#DDE0E8","Soft":"#F9EBDD"}},{"id":10,"name":"Olive & Lavender","group":"Complementary","colors":{"Header":"#343A35","Background":"#F5F4E9","Card":"#FFFFFF","Primary Text":"#242A25","Muted Text":"#828477","Accent":"#B6A3D2","Accent Text":"#322343","Border":"#E0DED7","Soft":"#EEE8F5"}},{"id":11,"name":"Charcoal & Lemon","group":"Complementary","colors":{"Header":"#24594B","Background":"#EFF4EB","Card":"#FFFFFF","Primary Text":"#242A25","Muted Text":"#7B817A","Accent":"#D9D96A","Accent Text":"#30300D","Border":"#E2E2D1","Soft":"#F1F1D9"}},{"id":12,"name":"Evergreen Flow","group":"Analogous","colors":{"Header":"#506747","Background":"#F2F3E9","Card":"#FFFFFF","Primary Text":"#303C2C","Muted Text":"#718279","Accent":"#82B99B","Accent Text":"#173728","Border":"#D9E5DA","Soft":"#E1F0E4"}},{"id":13,"name":"Moss Garden","group":"Analogous","colors":{"Header":"#286B69","Background":"#EEF5F2","Card":"#FFFFFF","Primary Text":"#1E3E3C","Muted Text":"#7C8675","Accent":"#A8BC78","Accent Text":"#293519","Border":"#DEE4D4","Soft":"#EAF0DA"}},{"id":14,"name":"Sea Glass","group":"Analogous","colors":{"Header":"#176D70","Background":"#EDF5F4","Card":"#FFFFFF","Primary Text":"#193C40","Muted Text":"#718A85","Accent":"#82C5B5","Accent Text":"#173A32","Border":"#D8E7E2","Soft":"#E1F2EC"}},{"id":15,"name":"Tropical Tide","group":"Analogous","colors":{"Header":"#315F88","Background":"#F0F3F8","Card":"#FFFFFF","Primary Text":"#24364B","Muted Text":"#718A8D","Accent":"#55B9A6","Accent Text":"#123A33","Border":"#D6E6E4","Soft":"#DDF2EB"}},{"id":16,"name":"Blue Horizon","group":"Analogous","colors":{"Header":"#3D5483","Background":"#F0F0F7","Card":"#FFFFFF","Primary Text":"#28314A","Muted Text":"#74849A","Accent":"#83A9CF","Accent Text":"#1B344F","Border":"#DCE3ED","Soft":"#E4ECF6"}},{"id":17,"name":"Twilight Blue","group":"Analogous","colors":{"Header":"#66517C","Background":"#F5F0F7","Card":"#FFFFFF","Primary Text":"#382F43","Muted Text":"#7B8299","Accent":"#A1A9D5","Accent Text":"#2A3053","Border":"#DFE0EC","Soft":"#E8E9F6"}},{"id":18,"name":"Lavender Haze","group":"Analogous","colors":{"Header":"#78445C","Background":"#F7F0F1","Card":"#FFFFFF","Primary Text":"#402B36","Muted Text":"#887D91","Accent":"#B7A0CF","Accent Text":"#342244","Border":"#E5DDEA","Soft":"#F0E8F5"}},{"id":19,"name":"Berry Orchard","group":"Analogous","colors":{"Header":"#814C4D","Background":"#F7F0EC","Card":"#FFFFFF","Primary Text":"#422E2C","Muted Text":"#8B7880","Accent":"#C58BA4","Accent Text":"#452337","Border":"#E9DDE2","Soft":"#F4E5EB"}},{"id":20,"name":"Rosewood","group":"Analogous","colors":{"Header":"#68703A","Background":"#F5F4E8","Card":"#FFFFFF","Primary Text":"#383D27","Muted Text":"#8C7B75","Accent":"#D49A83","Accent Text":"#48291F","Border":"#E8DDD6","Soft":"#F5E7DF"}},{"id":21,"name":"Citrus Grove","group":"Analogous","colors":{"Header":"#657443","Background":"#F4F2E8","Card":"#FFFFFF","Primary Text":"#343D2B","Muted Text":"#85866F","Accent":"#C2C96B","Accent Text":"#353912","Border":"#E4E3D0","Soft":"#F0F0D9"}},{"id":22,"name":"Sunlit Meadow","group":"Analogous","colors":{"Header":"#244D40","Background":"#F0F4F0","Card":"#FFFFFF","Primary Text":"#343D2B","Muted Text":"#838875","Accent":"#D0B95F","Accent Text":"#3D3212","Border":"#E5E0D1","Soft":"#F2EEDB"}},{"id":23,"name":"Forest Mist","group":"Monochromatic","colors":{"Header":"#647D6A","Background":"#F2F5F0","Card":"#FFFFFF","Primary Text":"#303E33","Muted Text":"#74847B","Accent":"#78A58D","Accent Text":"#193B2B","Border":"#D9E4DC","Soft":"#E2EEE5"}},{"id":24,"name":"Sage Layers","group":"Monochromatic","colors":{"Header":"#145A45","Background":"#EAF2ED","Card":"#FFFFFF","Primary Text":"#193B2D","Muted Text":"#829086","Accent":"#A5BDA9","Accent Text":"#27392A","Border":"#DCE5DC","Soft":"#EAF1E9"}},{"id":25,"name":"Emerald Depth","group":"Monochromatic","colors":{"Header":"#3C806A","Background":"#EFF7F2","Card":"#FFFFFF","Primary Text":"#254237","Muted Text":"#6D8679","Accent":"#65A98A","Accent Text":"#123C2C","Border":"#D2E2D8","Soft":"#DCEEE3"}},{"id":26,"name":"Mint Fresh","group":"Monochromatic","colors":{"Header":"#203F5A","Background":"#EDF2F6","Card":"#FFFFFF","Primary Text":"#233546","Muted Text":"#78968A","Accent":"#91CBB0","Accent Text":"#1C4938","Border":"#D8EAE0","Soft":"#E1F3E9"}},{"id":27,"name":"Deep Ocean","group":"Monochromatic","colors":{"Header":"#6287A5","Background":"#F0F5F8","Card":"#FFFFFF","Primary Text":"#304453","Muted Text":"#75899A","Accent":"#7199B7","Accent Text":"#18364D","Border":"#D9E2EA","Soft":"#E1EBF2"}},{"id":28,"name":"Powder Blue","group":"Monochromatic","colors":{"Header":"#343D75","Background":"#F0F1F8","Card":"#FFFFFF","Primary Text":"#292F4B","Muted Text":"#8296A4","Accent":"#A9C8DA","Accent Text":"#254254","Border":"#DCE7ED","Soft":"#E8F1F6"}},{"id":29,"name":"Royal Indigo","group":"Monochromatic","colors":{"Header":"#76638C","Background":"#F5F1F7","Card":"#FFFFFF","Primary Text":"#3E3548","Muted Text":"#7B819E","Accent":"#929CD1","Accent Text":"#242B59","Border":"#DEE0ED","Soft":"#E7E9F6"}},{"id":30,"name":"Lilac Calm","group":"Monochromatic","colors":{"Header":"#A05F70","Background":"#F8F1F2","Card":"#FFFFFF","Primary Text":"#49323A","Muted Text":"#8B8294","Accent":"#B9A6CE","Accent Text":"#392A4C","Border":"#E5DDEA","Soft":"#F0E9F5"}},{"id":31,"name":"Dusty Rose","group":"Monochromatic","colors":{"Header":"#96734E","Background":"#F7F2E9","Card":"#FFFFFF","Primary Text":"#443728","Muted Text":"#967F86","Accent":"#D5A0AC","Accent Text":"#512A37","Border":"#EBDDE1","Soft":"#F5E7EA"}},{"id":32,"name":"Warm Sand","group":"Monochromatic","colors":{"Header":"#18242C","Background":"#202B33","Card":"#2B3942","Primary Text":"#443728","Muted Text":"#92816D","Accent":"#D7B887","Accent Text":"#49351C","Border":"#E9DFCF","Soft":"#F4EBDC"}},{"id":33,"name":"Dark Slate","group":"Aesthetic","colors":{"Header":"#102D28","Background":"#172F2A","Card":"#234139","Primary Text":"#F0F5F0","Muted Text":"#A8B5B9","Accent":"#83B9A6","Accent Text":"#142B24","Border":"#43515A","Soft":"#354B48"}},{"id":34,"name":"Midnight Emerald","group":"Aesthetic","colors":{"Header":"#171C32","Background":"#20253B","Card":"#2B3150","Primary Text":"#F1F1F8","Muted Text":"#A5BDB1","Accent":"#D6B56D","Accent Text":"#32270F","Border":"#3B5B50","Soft":"#304C3E"}},{"id":35,"name":"Nightfall","group":"Aesthetic","colors":{"Header":"#302139","Background":"#382941","Card":"#493653","Primary Text":"#F7F0F7","Muted Text":"#ADB1C8","Accent":"#9B9BE0","Accent Text":"#29294D","Border":"#424966","Soft":"#373C5D"}},{"id":36,"name":"Midnight Plum","group":"Aesthetic","colors":{"Header":"#A77D91","Background":"#FAF3F4","Card":"#FFFFFF","Primary Text":"#493641","Muted Text":"#C0ADC2","Accent":"#D6A4C6","Accent Text":"#46263D","Border":"#634B69","Soft":"#563F5B"}},{"id":37,"name":"Pastel Bloom","group":"Aesthetic","colors":{"Header":"#849B87","Background":"#F4F6EF","Card":"#FFFFFF","Primary Text":"#354338","Muted Text":"#9B8791","Accent":"#E8B9C9","Accent Text":"#513141","Border":"#EEDFE5","Soft":"#F8E9EF"}},{"id":38,"name":"Soft Sage","group":"Aesthetic","colors":{"Header":"#191D2B","Background":"#222638","Card":"#30364B","Primary Text":"#F5F5FC","Muted Text":"#89958B","Accent":"#C3D3B1","Accent Text":"#34452F","Border":"#E1E8DD","Soft":"#EDF3E7"}},{"id":39,"name":"Neon Pulse","group":"Aesthetic","colors":{"Header":"#31536D","Background":"#EEF4F8","Card":"#FFFFFF","Primary Text":"#263C4C","Muted Text":"#AEB4C8","Accent":"#C5F45D","Accent Text":"#26310D","Border":"#484F67","Soft":"#3B493B"}},{"id":40,"name":"Winter Frost","group":"Aesthetic","colors":{"Header":"#4B3428","Background":"#F3EDE5","Card":"#FFFCF7","Primary Text":"#3D3028","Muted Text":"#8296A4","Accent":"#A5CFE0","Accent Text":"#214451","Border":"#D9E5EC","Soft":"#E3F0F5"}},{"id":41,"name":"Coffeehouse","group":"Aesthetic","colors":{"Header":"#9C647A","Background":"#FBF3F5","Card":"#FFFFFF","Primary Text":"#4B303C","Muted Text":"#8D7B6B","Accent":"#C69A69","Accent Text":"#402A17","Border":"#E5D8C8","Soft":"#EFE2D1"}},{"id":42,"name":"Rosewater","group":"Aesthetic","colors":{"Header":"#354F70","Background":"#F1F4F7","Card":"#FFFFFF","Primary Text":"#29394A","Muted Text":"#9A808B","Accent":"#E7AFC1","Accent Text":"#552D3D","Border":"#EEDDE4","Soft":"#F8E7ED"}},{"id":43,"name":"Denim","group":"Aesthetic","colors":{"Header":"#60513D","Background":"#F2EBDD","Card":"#FCF8EE","Primary Text":"#40372A","Muted Text":"#7F8D9C","Accent":"#8FAAC6","Accent Text":"#243B55","Border":"#DCE3E9","Soft":"#E6EDF4"}},{"id":44,"name":"Vintage Paper","group":"Aesthetic","colors":{"Header":"#275A70","Background":"#EDF5F7","Card":"#FFFFFF","Primary Text":"#203C49","Muted Text":"#8E806B","Accent":"#B78B52","Accent Text":"#3F2D16","Border":"#E0D4BE","Soft":"#EEE3CF"}},{"id":45,"name":"Arctic Blue","group":"Aesthetic","colors":{"Header":"#984F3C","Background":"#FAF0E8","Card":"#FFFFFF","Primary Text":"#4C3027","Muted Text":"#78919A","Accent":"#8CC6D4","Accent Text":"#19414A","Border":"#D8E8EC","Soft":"#E0F1F4"}},{"id":46,"name":"Sunset Warmth","group":"Aesthetic","colors":{"Header":"#684332","Background":"#F5EEE4","Card":"#FFFCF7","Primary Text":"#443126","Muted Text":"#987D70","Accent":"#E9A66E","Accent Text":"#512D17","Border":"#EEDDD0","Soft":"#F8E5D5"}},{"id":47,"name":"Pink Princess 🎀","group":"Special Themes","colors":{"Header":"#D95F98","Background":"#FFF0F5","Card":"#FFFFFF","Primary Text":"#542B40","Muted Text":"#967487","Accent":"#FFB6D1","Accent Text":"#542B40","Border":"#F3CADB","Soft":"#FFE0ED"}},{"id":48,"name":"Buttercream Gold","group":"Special Themes","colors":{"Header":"#80652C","Background":"#FBF7E9","Card":"#FFFFFF","Primary Text":"#40351F","Muted Text":"#918568","Accent":"#E7C66F","Accent Text":"#49360D","Border":"#EAE1C9","Soft":"#F5EDDA"}},{"id":49,"name":"Crimson Elegance","group":"Special Themes","colors":{"Header":"#783B43","Background":"#F7F0ED","Card":"#FFFFFF","Primary Text":"#402A2C","Muted Text":"#927A78","Accent":"#D69A91","Accent Text":"#482321","Border":"#E9DCD7","Soft":"#F4E4E0"}},{"id":50,"name":"Blue Serenity","group":"Special Themes","colors":{"Header":"#426783","Background":"#EFF5F9","Card":"#FFFFFF","Primary Text":"#263D50","Muted Text":"#7C91A0","Accent":"#9DC3DC","Accent Text":"#244256","Border":"#DCE7ED","Soft":"#E4EFF6"}}];
-  const THEME_KEY = 'pesoplan_theme_v1';
-  let activeThemeId = Math.min(50, Math.max(1, Number(localStorage.getItem(THEME_KEY) || 1)));
-  const themeById = id => THEMES.find(theme => theme.id === Number(id)) || THEMES[0];
-  const colorLuminance = hex => {
-    const raw = String(hex || '#ffffff').replace('#','');
-    const rgb = [0,2,4].map(i => parseInt(raw.slice(i,i+2),16)/255).map(v => v <= .03928 ? v/12.92 : Math.pow((v+.055)/1.055,2.4));
-    return .2126*rgb[0] + .7152*rgb[1] + .0722*rgb[2];
-  };
-  function applyTheme(id, persist = true) {
-    const theme = themeById(id);
-    activeThemeId = theme.id;
-    const c = theme.colors, root = document.documentElement;
-    const dark = colorLuminance(c.Background) < .18;
-    const headerText = colorLuminance(c.Header) < .179 ? '#FFFFFF' : '#202020';
-    root.style.setProperty('--site-primary', c.Header);
-    root.style.setProperty('--site-on-primary', headerText);
-    root.style.setProperty('--site-secondary', c.Accent);
-    root.style.setProperty('--site-on-secondary', c['Accent Text']);
-    root.style.setProperty('--site-background', c.Background);
-    root.style.setProperty('--site-on-background', c['Primary Text']);
-    root.style.setProperty('--surface', c.Card);
-    root.style.setProperty('--surface-soft', c.Soft);
-    root.style.setProperty('--text', c['Primary Text']);
-    root.style.setProperty('--muted', c['Muted Text']);
-    root.style.setProperty('--line', c.Border);
-    root.style.setProperty('color-scheme', dark ? 'dark' : 'light');
-    const themeMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeMeta) themeMeta.setAttribute('content', c.Header);
-    const logo = document.getElementById('brandLogo');
-    if (logo) {
-      logo.onerror = () => { logo.onerror = null; logo.src = '1.png'; };
-      logo.src = `logos/${theme.id}.png`;
-    }
-    const label = document.getElementById('activeThemeLabel');
-    if (label) label.textContent = `Theme ${String(theme.id).padStart(2,'0')} · ${theme.name}`;
-    if (persist) {
-      try { localStorage.setItem(THEME_KEY, String(theme.id)); } catch (e) {}
-    }
-    document.querySelectorAll('.theme-choice').forEach(button => {
-      button.setAttribute('aria-pressed', String(Number(button.dataset.themeId) === theme.id));
-    });
-  }
-  function renderThemeChoices() {
-    const grid = document.getElementById('themeGrid');
-    if (!grid) return;
-    grid.innerHTML = THEMES.map(theme => {
-      const c = theme.colors;
-      const swatches = [c.Header,c.Background,c.Card,c.Accent,c.Soft,c.Border];
-      return `<button class="theme-choice" type="button" data-theme-id="${theme.id}" aria-pressed="${theme.id === activeThemeId}">
-        <span class="theme-choice-name"><span>${String(theme.id).padStart(2,'0')} · ${escapeHTML(theme.name)}</span>${theme.id === activeThemeId ? '<span aria-label="Selected">✓</span>' : ''}</span>
-        <span class="theme-choice-group">${escapeHTML(theme.group)}</span>
-        <span class="theme-swatches">${swatches.map(color => `<span style="background:${color}"></span>`).join('')}</span>
-      </button>`;
-    }).join('');
-  }
-  function openThemeSettings() {
-    renderThemeChoices();
-    document.getElementById('themeOverlay').hidden = false;
-    document.getElementById('closeThemesBtn').focus();
-  }
-  function closeThemeSettings() {
-    document.getElementById('themeOverlay').hidden = true;
-    document.getElementById('openThemesBtn').focus();
-  }
-
   const peso = n => '₱' + Number(n || 0).toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
   const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
   const makeId = () => (globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function') ? globalThis.crypto.randomUUID() : `pp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -1205,15 +1018,13 @@ input:focus, select:focus, textarea:focus, button:focus-visible, a:focus-visible
     };
 
     const mergedTransactions = mergeByUpdatedAt(localTransactions, remoteTransactions)
-      .filter(t => t && t.id != null && !deletedTransactionIds.has(String(t.id)) && (!resetAt || survivesReset(t)));
+      .filter(t => t && t.id != null && !deletedTransactionIds.has(String(t.id)));
     const transactionMap = new Map(mergedTransactions.map(t => [String(t.id), t]));
     const remoteTransactionIds = new Set(remoteTransactions.filter(t => t && t.id != null).map(t => String(t.id)));
     const localOnly = localTransactions.filter(t => t && t.id != null &&
-      !deletedTransactionIds.has(String(t.id)) && (!resetAt || survivesReset(t)) && !remoteTransactionIds.has(String(t.id)));
+      !deletedTransactionIds.has(String(t.id)) && !remoteTransactionIds.has(String(t.id)));
 
     const localMeta = local._syncMeta || {}, remoteMeta = remote?._syncMeta || {};
-    const resetAt = Math.max(Number(localMeta.resetAt || 0), Number(remoteMeta.resetAt || 0));
-    const survivesReset = item => Number(item?.updatedAt || item?.createdAt || 0) > resetAt;
     const localCategoriesAt = Number(localMeta.categoriesAt || 0);
     const remoteCategoriesAt = Number(remoteMeta.categoriesAt || 0);
     const categoriesSource = !remote || localCategoriesAt > remoteCategoriesAt ? local.categories : remote.categories;
@@ -1252,10 +1063,10 @@ input:focus, select:focus, textarea:focus, button:focus-visible, a:focus-visible
       categories: baseCategories,
       balances,
       transactions: [...transactionMap.values()],
-      wishes: mergeByUpdatedAt(local.wishes, remote.wishes).filter(x => !deletedWishIds.has(String(x.id)) && (!resetAt || survivesReset(x))),
-      bills: mergeByUpdatedAt(local.bills, remote.bills).filter(x => !deletedBillIds.has(String(x.id)) && (!resetAt || survivesReset(x))),
-      paidBills: mergeByUpdatedAt(local.paidBills, remote.paidBills).filter(x => !deletedPaidBillIds.has(String(x.id)) && (!resetAt || survivesReset(x))),
-      reminderGroups: mergeByUpdatedAt(local.reminderGroups, remote.reminderGroups).filter(x => !deletedReminderGroupIds.has(String(x.id)) && (!resetAt || String(x.id) === 'default-reminders' || survivesReset(x))),
+      wishes: mergeByUpdatedAt(local.wishes, remote.wishes).filter(x => !deletedWishIds.has(String(x.id))),
+      bills: mergeByUpdatedAt(local.bills, remote.bills).filter(x => !deletedBillIds.has(String(x.id))),
+      paidBills: mergeByUpdatedAt(local.paidBills, remote.paidBills).filter(x => !deletedPaidBillIds.has(String(x.id))),
+      reminderGroups: mergeByUpdatedAt(local.reminderGroups, remote.reminderGroups).filter(x => !deletedReminderGroupIds.has(String(x.id))),
       deletedTransactionIds: [...deletedTransactionIds],
       deletedBillIds: [...deletedBillIds],
       deletedWishIds: [...deletedWishIds],
@@ -1264,8 +1075,7 @@ input:focus, select:focus, textarea:focus, button:focus-visible, a:focus-visible
       deletedCategoryIds: [...deletedCategoryIds],
       _syncMeta: {
         categoriesAt: Math.max(localCategoriesAt, remoteCategoriesAt),
-        stateAt: Math.max(Number(localMeta.stateAt || 0), Number(remoteMeta.stateAt || 0)),
-        resetAt
+        stateAt: Math.max(Number(localMeta.stateAt || 0), Number(remoteMeta.stateAt || 0))
       }
     } : {
       ...local,
@@ -1635,76 +1445,6 @@ input:focus, select:focus, textarea:focus, button:focus-visible, a:focus-visible
       acceptBtn.focus();
     });
   }
-
-  async function resetAllTrackerData() {
-    const confirmed = await showConfirm('Reset ALL PesoPlan data? This permanently clears balances, transactions, income and expenses, reminders, paid history, wishlist items, custom categories, and report history. The reset will sync to your account when online. This cannot be undone unless you have an exported backup.');
-    if (!confirmed) return;
-
-    let remote = null;
-    if (cloudUser && cloudClient && navigator.onLine) {
-      try {
-        const record = await fetchCloudRecord();
-        remote = record?.data || null;
-      } catch (error) {
-        console.error('PesoPlan reset cloud check failed:', error);
-        toast('Could not verify the cloud backup. No data was reset; please try again when online.');
-        return;
-      }
-    }
-
-    const now = Date.now();
-    const allRecords = key => [
-      ...(Array.isArray(state[key]) ? state[key] : []),
-      ...(Array.isArray(remote?.[key]) ? remote[key] : [])
-    ];
-    const ids = (key, existing = []) => [...new Set([
-      ...(Array.isArray(existing) ? existing.map(String) : []),
-      ...allRecords(key).filter(x => x && x.id != null).map(x => String(x.id))
-    ])];
-    const defaultIds = new Set(DEFAULT_CATEGORIES.map(c => String(c.id)));
-    const removedCategoryIds = [
-      ...(Array.isArray(state.categories) ? state.categories : []),
-      ...(Array.isArray(remote?.categories) ? remote.categories : [])
-    ].filter(c => c && c.id != null && !defaultIds.has(String(c.id))).map(c => String(c.id));
-
-    CATEGORIES = DEFAULT_CATEGORIES.map(c => ({...c}));
-    state = {
-      categories: CATEGORIES,
-      balances: blankBalances(),
-      transactions: [],
-      wishes: [],
-      bills: [],
-      paidBills: [],
-      reminderGroups: DEFAULT_REMINDER_GROUPS.map(g => ({...g})),
-      deletedTransactionIds: ids('transactions', [...(state.deletedTransactionIds || []), ...(remote?.deletedTransactionIds || [])]),
-      deletedBillIds: ids('bills', [...(state.deletedBillIds || []), ...(remote?.deletedBillIds || [])]),
-      deletedWishIds: ids('wishes', [...(state.deletedWishIds || []), ...(remote?.deletedWishIds || [])]),
-      deletedReminderGroupIds: ids('reminderGroups', [...(state.deletedReminderGroupIds || []), ...(remote?.deletedReminderGroupIds || [])]).filter(id => id !== 'default-reminders'),
-      deletedPaidBillIds: ids('paidBills', [...(state.deletedPaidBillIds || []), ...(remote?.deletedPaidBillIds || [])]),
-      deletedCategoryIds: [...new Set([...(state.deletedCategoryIds || []), ...(remote?.deletedCategoryIds || []), ...removedCategoryIds])],
-      _syncMeta: {
-        categoriesAt: now,
-        stateAt: now,
-        resetAt: now
-      }
-    };
-    selectedWishCategory = 'all';
-    expandedBillId = null;
-    activeReminderGroupId = null;
-    expandedPaidBillName = null;
-    expandedPaidExpenseName = null;
-    reportView = 'overview';
-    reportMetric = 'income';
-    reportSelectedMonth = null;
-    reportSelectedDay = null;
-    applyTheme(1);
-    save();
-    render();
-    refreshCategorySelects();
-    closeThemeSettings();
-    toast('PesoPlan has been reset. Your default categories and original theme are restored.');
-  }
-
   function category(id) { return CATEGORIES.find(c => c.id === id); }
   function total() { return CATEGORIES.reduce((sum,c) => sum + Number(state.balances[c.id] || 0), 0); }
   function sumType(type) { return state.transactions.filter(t => t.type === type).reduce((s,t) => s + Number(t.amount), 0); }
@@ -2580,28 +2320,7 @@ input:focus, select:focus, textarea:focus, button:focus-visible, a:focus-visible
       <div class="totals"><div class="total"><small>Money received</small><strong>${peso(income)}</strong></div><div class="total"><small>Expenses</small><strong>${peso(expenses)}</strong></div><div class="total"><small>Net for period</small><strong>${peso(income-expenses)}</strong></div></div>
       <p class="muted">${report.transactions.length} transactions · Generated ${new Date().toLocaleString()}</p>
       <h2>Transactions</h2><table><thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Category</th><th>Amount</th></tr></thead><tbody>${rows || '<tr><td colspan="5">No transactions recorded for this period.</td></tr>'}</tbody></table>
-      
-<div class="theme-overlay" id="themeOverlay" hidden>
-  <section class="theme-dialog" role="dialog" aria-modal="true" aria-labelledby="themeDialogTitle">
-    <div class="theme-dialog-head">
-      <div><h2 id="themeDialogTitle">Choose your PesoPlan theme</h2>
-        <p>Choose any of the 50 palettes. Your selection updates the website and matching logo immediately.</p></div>
-      <button class="btn btn-quiet" id="closeThemesBtn" type="button" aria-label="Close theme settings">✕</button>
-    </div>
-    <div class="theme-grid" id="themeGrid"></div>
-    <div class="theme-dialog-foot">
-      <small id="activeThemeLabel">Theme 1 · Original PesoPlan</small>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-quiet" id="resetThemeBtn" type="button">Restore original theme</button>
-        <button class="btn btn-primary" id="closeThemesApplyBtn" type="button">Done</button>
-        <button class="btn theme-reset-danger" id="resetAllDataBtn" type="button">Reset all data</button>
-      </div>
-    </div>
-    <small style="display:block;margin-top:9px;color:var(--muted)">Reset all data permanently clears this tracker’s saved financial records and restores the default categories. Export a backup first if you may need your records later.</small>
-  </section>
-</div>
-
-</body></html>`);
+      </body></html>`);
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
@@ -2658,30 +2377,6 @@ input:focus, select:focus, textarea:focus, button:focus-visible, a:focus-visible
     reportView = 'months'; reportSelectedMonth = null; reportSelectedDay = null;
     renderReport();
   });
-
-  document.getElementById('openThemesBtn').addEventListener('click', openThemeSettings);
-  document.getElementById('closeThemesBtn').addEventListener('click', closeThemeSettings);
-  document.getElementById('closeThemesApplyBtn').addEventListener('click', closeThemeSettings);
-  document.getElementById('themeOverlay').addEventListener('click', event => {
-    if (event.target.id === 'themeOverlay') closeThemeSettings();
-  });
-  document.getElementById('themeGrid').addEventListener('click', event => {
-    const choice = event.target.closest('[data-theme-id]');
-    if (!choice) return;
-    applyTheme(Number(choice.dataset.themeId));
-    renderThemeChoices();
-  });
-  document.getElementById('resetThemeBtn').addEventListener('click', () => {
-    applyTheme(1);
-    renderThemeChoices();
-    toast('Original PesoPlan theme restored.');
-  });
-  document.getElementById('resetAllDataBtn').addEventListener('click', resetAllTrackerData);
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && !document.getElementById('themeOverlay').hidden) closeThemeSettings();
-  });
-
-  applyTheme(activeThemeId, false);
   initSelects(); render();
   initializeCloud();
 })();
