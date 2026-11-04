@@ -1,0 +1,12 @@
+PesoPlan theme logo files
+
+Place your matching PNG files in this folder:
+  logos/1.png   = Original PesoPlan (theme 1)
+  logos/2.png   = Royal Contrast (theme 2)
+  ...
+  logos/50.png  = Blue Serenity (theme 50)
+
+The theme selector uses the selected theme number as the logo filename.
+The supplied original logo is included as logos/1.png. If a numbered logo
+has not been added yet, the website falls back to the original 1.png logo.
+Keep the logos folder beside index.html when uploading the website.
