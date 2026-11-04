@@ -35,7 +35,8 @@ button { cursor: pointer; }
 #app { min-height: 100vh; width: 100%; background-color: var(--site-background); color: var(--site-on-background); border-radius: 0; }
 .topbar { background: var(--site-primary); color: var(--site-on-primary); padding: calc(18px * var(--site-spacing-scale)) max(22px, calc((100vw - 1180px)/2)); display:flex; justify-content:space-between; align-items:center; gap:16px; }
 .brand { display:flex; align-items:center; gap:12px; }
-.brand-mark { width:42px; height:42px; flex:0 0 42px; border-radius:14px; background:var(--site-secondary); color:var(--site-on-secondary); display:grid; place-items:center; overflow:hidden; }\n.brand-mark img { display:block; width:100%; height:100%; object-fit:contain; }
+.brand-mark { width:52px; height:52px; flex:0 0 52px; border-radius:14px; background:var(--site-primary); display:grid; place-items:center; overflow:hidden; padding:2px; }
+.brand-mark img { display:block; width:100%; height:100%; max-width:100%; max-height:100%; object-fit:contain; object-position:center; }
 .brand h1 { margin:0; font-family:var(--site-font-heading); font-size:calc(25px * var(--site-heading-scale)); letter-spacing:-.5px; }
 .brand small { display:block; color:rgba(255,255,255,.72); font-size:11px; letter-spacing:1.5px; text-transform:uppercase; margin-top:2px; }
 .top-actions { display:flex; align-items:center; gap:10px; color:rgba(255,255,255,.82); font-size:12px; }
@@ -108,7 +109,7 @@ td strong { font-size:11px; }
 .empty { color:var(--muted); text-align:center; padding:25px 10px; font-size:12px; }
 .report-actions { display:flex; flex-wrap:wrap; gap:8px; }
 .report-note { color:var(--muted); font-size:11px; line-height:1.6; margin:0 0 14px; }
-.toast { position:fixed; bottom:22px; left:50%; transform:translate(-50%,20px); opacity:0; pointer-events:none; background:#263a30; color:white; padding:11px 16px; border-radius:10px; font-size:12px; box-shadow:var(--shadow); transition:.25s; z-index:10; }
+.toast { position:fixed; bottom:22px; left:50%; transform:translate(-50%,20px); opacity:0; pointer-events:none; background:var(--surface); color:var(--text); border:1px solid var(--line); padding:11px 16px; border-radius:14px; font-size:12px; font-weight:700; box-shadow:var(--shadow); transition:.25s; z-index:10; }
 .toast.show { opacity:1; transform:translate(-50%,0); }
 .section-toggle { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; text-align:left; }
 .section-toggle .toggle-copy { display:flex; flex-direction:column; gap:4px; }
@@ -535,7 +536,8 @@ td strong { font-size:11px; }
 
 .recent-activity-more { display:flex; justify-content:center; padding:14px 0 2px; }
 .recent-activity-more .btn { min-width:190px; }
-\n</style>
+
+</style>
 
 <meta name="theme-color" content="#315c4c">
 <meta name="description" content="PesoPlan — a thoughtful personal budget tracker.">
@@ -1479,7 +1481,7 @@ td strong { font-size:11px; }
 
     rows.innerHTML = visible.length ? visible.map(t => {
       const isIncome = t.type === 'income';
-      return `<tr><td>${escapeHTML(t.date)}</td><td class="${isIncome?'type-income':'type-expense'}">${isIncome?'Money received':'Expense'}</td><td><strong>${escapeHTML(t.note || (isIncome?'Added capital':'Purchase'))}</strong></td><td>${isIncome?'All categories':escapeHTML(category(t.category)?.name || '—')}</td><td class="${isIncome?'type-income':'type-expense'}">${isIncome?'+':'−'}${peso(t.amount)}</td><td class="no-print"><button class="icon-btn" title="Delete transaction and reverse its effect" data-delete-transaction="${t.id}">✕</button></td></tr>`;
+      return `<tr><td>${escapeHTML(t.date)}</td><td class="${isIncome?'type-income':'type-expense'}">${isIncome?'Money received':'Expense'}</td><td><strong>${escapeHTML(t.note || (isIncome?'Added capital':'Purchase'))}</strong></td><td>${isIncome ? (t.category ? escapeHTML(category(t.category)?.name || 'Uncategorized') : 'All categories') : escapeHTML(category(t.category)?.name || '—')}</td><td class="${isIncome?'type-income':'type-expense'}">${isIncome?'+':'−'}${peso(t.amount)}</td><td class="no-print"><button class="icon-btn" title="Delete transaction and reverse its effect" data-delete-transaction="${t.id}">✕</button></td></tr>`;
     }).join('') : '<tr><td colspan="6" class="empty">No transactions yet. Add money received or record your first expense.</td></tr>';
 
     const hasMoreThanLimit = sorted.length > RECENT_ACTIVITY_LIMIT;
@@ -2008,8 +2010,10 @@ td strong { font-size:11px; }
     const editGroup = e.target.closest('[data-edit-reminder-group]');
     if (editGroup) {
       const group = (state.reminderGroups || []).find(g => g.id === editGroup.dataset.editReminderGroup); if (!group) return;
-      const choices = CATEGORIES.map((c,i)=>`${i+1}. ${c.name}`).join('\n');
-      const answer = prompt(`Choose the category this reminder list deducts from by entering its number:\n${choices}`, String(Math.max(0,CATEGORIES.findIndex(c=>c.id===group.category)+1)));
+      const choices = CATEGORIES.map((c,i)=>`${i+1}. ${c.name}`).join('
+');
+      const answer = prompt(`Choose the category this reminder list deducts from by entering its number:
+${choices}`, String(Math.max(0,CATEGORIES.findIndex(c=>c.id===group.category)+1)));
       if (answer === null) return; const chosen = CATEGORIES[Number(answer)-1];
       if (!chosen) return toast('That category number is not valid.');
       group.category = chosen.id;
@@ -2171,7 +2175,8 @@ td strong { font-size:11px; }
     ];
     [...report.transactions].sort((a,b) => a.date.localeCompare(b.date) || (a.createdAt || 0)-(b.createdAt || 0))
       .forEach(t => lines.push([t.date,t.type,t.note || '',t.category ? category(t.category)?.name : 'All categories',Number(t.amount || 0).toFixed(2)]));
-    const csv = '\\uFEFF' + lines.map(row => row.map(csvCell).join(',')).join('\\r\\n');
+    const csv = '\\uFEFF' + lines.map(row => row.map(csvCell).join(',')).join('\\r\
+');
     const filenamePeriod = report.label.toLowerCase().replace(/\s+/g,'-');
     downloadBlob(csv,`pesoplan-report-${filenamePeriod}.csv`,'text/csv;charset=utf-8;');
     toast('CSV report downloaded.');
