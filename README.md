@@ -11,3 +11,4 @@ This build includes expanded offline/cloud synchronization for:
 - Reports and recent activity (derived from synchronized transactions)
 
 See `UPLOAD-INSTRUCTIONS.txt` before deploying.
+\n\nLogo asset: place the supplied `1.png` image in the same folder as `index.html`. The header displays it in the original 42 × 42 px brand-mark area.\n

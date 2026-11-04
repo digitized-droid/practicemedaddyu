@@ -35,7 +35,7 @@ button { cursor: pointer; }
 #app { min-height: 100vh; width: 100%; background-color: var(--site-background); color: var(--site-on-background); border-radius: 0; }
 .topbar { background: var(--site-primary); color: var(--site-on-primary); padding: calc(18px * var(--site-spacing-scale)) max(22px, calc((100vw - 1180px)/2)); display:flex; justify-content:space-between; align-items:center; gap:16px; }
 .brand { display:flex; align-items:center; gap:12px; }
-.brand-mark { width:42px; height:42px; border-radius:14px; background:var(--site-secondary); color:var(--site-on-secondary); display:grid; place-items:center; font-size:22px; font-weight:800; }
+.brand-mark { width:42px; height:42px; flex:0 0 42px; border-radius:14px; background:var(--site-secondary); color:var(--site-on-secondary); display:grid; place-items:center; overflow:hidden; }\n.brand-mark img { display:block; width:100%; height:100%; object-fit:contain; }
 .brand h1 { margin:0; font-family:var(--site-font-heading); font-size:calc(25px * var(--site-heading-scale)); letter-spacing:-.5px; }
 .brand small { display:block; color:rgba(255,255,255,.72); font-size:11px; letter-spacing:1.5px; text-transform:uppercase; margin-top:2px; }
 .top-actions { display:flex; align-items:center; gap:10px; color:rgba(255,255,255,.82); font-size:12px; }
@@ -580,7 +580,7 @@ td strong { font-size:11px; }
 <body>
 <div id="app">
   <header class="topbar">
-    <div class="brand"><div class="brand-mark">₱</div><div><h1>PesoPlan</h1><small>Your money, thoughtfully divided</small></div></div>
+    <div class="brand"><div class="brand-mark"><img src="1.png" alt="PesoPlan logo"></div><div><h1>PesoPlan</h1><small>Your money, thoughtfully divided</small></div></div>
     <div class="top-actions"><span class="pill">PERSONAL BUDGET</span><span id="saveStatus">● Saved on this device</span><button class="cloud-account-btn" id="cloudAccountBtn" type="button">☁ Connect account</button></div>
   </header>
   <main>
@@ -624,11 +624,12 @@ td strong { font-size:11px; }
     <section class="capital-expense-container">
     <section class="actions-grid">
       <div class="panel">
-        <div class="panel-head"><div><h3>＋ Add money received</h3><div class="panel-desc">Every amount you add is distributed automatically.</div></div><span class="tag">INCOME</span></div>
+        <div class="panel-head"><div><h3>＋ Add money received</h3><div class="panel-desc">Choose All Categories to distribute automatically, or add the full amount to one category.</div></div><span class="tag">INCOME</span></div>
         <form id="incomeForm">
           <div class="field-grid">
             <div class="field"><label for="incomeAmount">Amount (₱)</label><input id="incomeAmount" type="number" min="0.01" step="0.01" placeholder="e.g. 100" required></div>
             <div class="field"><label for="incomeDate">Date received</label><input id="incomeDate" type="date" required></div>
+            <div class="field"><label for="incomeCategory">Add money to</label><select id="incomeCategory"><option value="all">All Categories (distribute automatically)</option></select></div>
             <div class="field full"><label for="incomeNote">Source / Note (optional)</label><input id="incomeNote" type="text" maxlength="80" placeholder="e.g. Allowance, gift, extra income"></div>
           </div>
           <button class="btn btn-primary btn-block" type="submit">Add to my capital</button>
@@ -923,7 +924,6 @@ td strong { font-size:11px; }
 
     const localTransactions = Array.isArray(local.transactions) ? local.transactions : [];
     const remoteTransactions = Array.isArray(remote?.transactions) ? remote.transactions : [];
-    const transactionMap = new Map();
     const mergeByUpdatedAt = (localItems, remoteItems) => {
       const map = new Map();
       (Array.isArray(remoteItems) ? remoteItems : []).forEach(item => {
@@ -939,12 +939,12 @@ td strong { font-size:11px; }
       return [...map.values()];
     };
 
-    remoteTransactions.forEach(t => {
-      if (t && t.id != null && !deletedTransactionIds.has(String(t.id))) transactionMap.set(String(t.id), t);
-    });
+    const mergedTransactions = mergeByUpdatedAt(localTransactions, remoteTransactions)
+      .filter(t => t && t.id != null && !deletedTransactionIds.has(String(t.id)));
+    const transactionMap = new Map(mergedTransactions.map(t => [String(t.id), t]));
+    const remoteTransactionIds = new Set(remoteTransactions.filter(t => t && t.id != null).map(t => String(t.id)));
     const localOnly = localTransactions.filter(t => t && t.id != null &&
-      !deletedTransactionIds.has(String(t.id)) && !transactionMap.has(String(t.id)));
-    localOnly.forEach(t => transactionMap.set(String(t.id), t));
+      !deletedTransactionIds.has(String(t.id)) && !remoteTransactionIds.has(String(t.id)));
 
     const localMeta = local._syncMeta || {}, remoteMeta = remote?._syncMeta || {};
     const localCategoriesAt = Number(localMeta.categoriesAt || 0);
@@ -953,13 +953,31 @@ td strong { font-size:11px; }
     const baseCategories = (Array.isArray(categoriesSource) && categoriesSource.length
       ? categoriesSource : (Array.isArray(local.categories) && local.categories.length ? local.categories : CATEGORIES))
       .filter(c => c && c.id != null && !deletedCategoryIds.has(String(c.id))).map(c => ({...c}));
-    const balances = {...blankBalances(), ...(remote?.balances || local.balances || {})};
+    const localCategoryChangesNewer = Boolean(remote) && localCategoriesAt > remoteCategoriesAt;
+    const balances = {
+      ...blankBalances(),
+      ...(remote
+        ? (localCategoryChangesNewer ? (local.balances || {}) : (remote.balances || {}))
+        : (local.balances || {}))
+    };
 
-    // Reconcile balances using transaction IDs, not by adding two complete balance snapshots.
+    // Reconcile transaction effects against the chosen balance snapshot.
+    // A newer local category edit/deletion also carries manual balance transfers;
+    // using the older remote snapshot here would silently undo that transfer.
     if (remote) {
-      remoteTransactions.filter(t => t && t.id != null && deletedTransactionIds.has(String(t.id)))
-        .forEach(tx => transactionBalanceEffect(balances, tx, 'remove', baseCategories));
-      localOnly.forEach(tx => transactionBalanceEffect(balances, tx, 'add', baseCategories));
+      if (localCategoryChangesNewer) {
+        const localTransactionIds = new Set(localTransactions.filter(t => t && t.id != null).map(t => String(t.id)));
+        remoteTransactions
+          .filter(tx => tx && tx.id != null && deletedTransactionIds.has(String(tx.id)) && localTransactionIds.has(String(tx.id)))
+          .forEach(tx => transactionBalanceEffect(balances, tx, 'remove', baseCategories));
+        remoteTransactions
+          .filter(tx => tx && tx.id != null && !deletedTransactionIds.has(String(tx.id)) && !localTransactionIds.has(String(tx.id)))
+          .forEach(tx => transactionBalanceEffect(balances, tx, 'add', baseCategories));
+      } else {
+        remoteTransactions.filter(t => t && t.id != null && deletedTransactionIds.has(String(t.id)))
+          .forEach(tx => transactionBalanceEffect(balances, tx, 'remove', baseCategories));
+        localOnly.forEach(tx => transactionBalanceEffect(balances, tx, 'add', baseCategories));
+      }
     }
 
     const merged = remote ? {
@@ -1679,10 +1697,10 @@ td strong { font-size:11px; }
   function addTransaction(t) { state.transactions.push(t); save(); render(); }
   function refreshCategorySelects() {
     const options = CATEGORIES.map(c => `<option value="${escapeHTML(c.id)}">${escapeHTML(c.name)}</option>`).join('');
-    ['expenseCategory','wishCategory','reminderGroupCategory','paidCategoryFilter'].forEach(id => {
+    ['expenseCategory','wishCategory','reminderGroupCategory','paidCategoryFilter','incomeCategory'].forEach(id => {
       const el = document.getElementById(id); if (!el) return;
       const previous = el.value;
-      const prefix = id === 'paidCategoryFilter' ? '<option value="all">All categories</option>' : '';
+      const prefix = (id === 'paidCategoryFilter' || id === 'incomeCategory') ? (id === 'incomeCategory' ? '<option value="all">All Categories (distribute automatically)</option>' : '<option value="all">All categories</option>') : '';
       el.innerHTML = prefix + options;
       if ([...el.options].some(o => o.value === previous)) el.value = previous;
     });
@@ -1700,9 +1718,22 @@ td strong { font-size:11px; }
     const amount = Number(document.getElementById('incomeAmount').value);
     const date = document.getElementById('incomeDate').value;
     if (!Number.isFinite(amount) || amount <= 0 || !date) return toast('Enter a valid amount and date.');
-    CATEGORIES.forEach(c => state.balances[c.id] += amount * c.percent / 100);
-    addTransaction({id:makeId(), type:'income', amount, date, note:document.getElementById('incomeNote').value.trim(), allocations:CATEGORIES.map(c=>({category:c.id,amount:amount*Number(c.percent||0)/100})), createdAt:Date.now()});
-    e.target.reset(); document.getElementById('incomeDate').value = today(); toast('Money added and distributed across your categories.');
+    const selectedCategory = document.getElementById('incomeCategory').value || 'all';
+    let allocations;
+    if (selectedCategory === 'all') {
+      allocations = CATEGORIES.map(c => ({category:c.id, amount:amount * Number(c.percent || 0) / 100}));
+      allocations.forEach(allocation => {
+        state.balances[allocation.category] = Number(state.balances[allocation.category] || 0) + allocation.amount;
+      });
+    } else {
+      const target = category(selectedCategory);
+      if (!target) return toast('Please choose an existing category.');
+      allocations = [{category:target.id, amount}];
+      state.balances[target.id] = Number(state.balances[target.id] || 0) + amount;
+    }
+    addTransaction({id:makeId(), type:'income', amount, date, note:document.getElementById('incomeNote').value.trim(), category:selectedCategory === 'all' ? null : selectedCategory, allocations, createdAt:Date.now()});
+    e.target.reset(); document.getElementById('incomeDate').value = today(); document.getElementById('incomeCategory').value = 'all';
+    toast(selectedCategory === 'all' ? 'Money added and distributed across all categories.' : `Money added to ${category(selectedCategory).name} only.`);
   });
   document.getElementById('expenseForm').addEventListener('submit', e => {
     e.preventDefault();

@@ -73,3 +73,4 @@ VALIDATION PERFORMED FOR THIS PACKAGE
 - JavaScript syntax check passed.
 - A local merge test passed for category changes, transaction/balance reconciliation, wishlist add/edit/delete, bill add/edit/delete, and reminder-list add/delete.
 - A live Supabase round-trip and multi-device test cannot be performed from the source ZIP alone; complete the test plan after deployment.
+\n\nLOGO ASSET\nPlace `1.png` in the same folder as `index.html` before deployment. The supplied ZIP did not include this image, so add your original logo file alongside the HTML file.\n
