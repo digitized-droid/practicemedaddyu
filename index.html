@@ -840,14 +840,71 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
 
 <style id="theme-aware-overview-and-reminder-icons">
-  /* Keep these accents in sync with the currently selected website theme. */
-  .welcome .eyebrow {
-    color: var(--site-primary) !important;
-  }
+  /* Light themes retain their original theme color; dark themes use a
+     lighter accent so the label and reminder icons stay visible. */
+  .welcome .eyebrow,
   .bill-preview-star,
   .bill-card-star {
-    color: var(--site-primary) !important;
+    color: var(--overview-reminder-accent, var(--site-primary)) !important;
   }
+</style>
+
+
+<style id="reminder-editor-spacing-and-mobile-alignment">
+/* Reminder settings: give each reminder its own breathing room and clear layout. */
+.all-reminders-manager { padding:20px; border-radius:18px; }
+.all-reminders-heading { margin-bottom:16px; }
+#allUpcomingReminders { display:grid; gap:12px; }
+.upcoming-reminder-row {
+  display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px 16px;
+  align-items:center; padding:16px; margin:0;
+  border:1px solid var(--line); border-radius:14px;
+  background:var(--surface-soft); min-width:0;
+}
+.upcoming-reminder-main { min-width:0; display:flex; flex-direction:column; gap:5px; }
+.upcoming-reminder-main strong { font-size:14px; overflow-wrap:anywhere; }
+.upcoming-reminder-main span,.upcoming-reminder-main small { color:var(--muted); line-height:1.5; }
+.upcoming-reminder-amount { white-space:nowrap; font-size:15px; align-self:start; }
+.upcoming-reminder-actions {
+  grid-column:1/-1; display:flex; justify-content:flex-end; align-items:center;
+  flex-wrap:wrap; gap:8px; padding-top:10px; border-top:1px solid var(--line);
+}
+.upcoming-reminder-actions label { display:inline-flex; align-items:center; gap:6px; margin-right:auto; font-size:12px; }
+.upcoming-reminder-actions .btn { min-height:36px; padding:8px 13px; }
+.bill-edit-dialog { max-height:90vh; overflow:auto; }
+.bill-edit-dialog .field { margin:12px 0; }
+.bill-edit-dialog input,.bill-edit-dialog select { width:100%; }
+
+/* Keep category controls and buttons on the same visual centerline on phones. */
+.category-setting-row { align-items:center; }
+.category-setting-row input,.category-setting-row button { min-width:0; min-height:42px; margin:0; align-self:center; }
+.category-setting-row .category-delete { white-space:nowrap; padding:9px 10px; line-height:1.2; }
+.wish-edit-dialog .confirm-dialog-actions { align-items:center; flex-wrap:wrap; }
+.wish-edit-dialog .confirm-dialog-actions button { min-height:44px; margin:0; }
+@media(max-width:600px) {
+  .app-popup-modal { padding:10px; }
+  .app-popup-dialog { padding:16px; max-height:94vh; }
+  .all-reminders-manager { padding:13px; }
+  .upcoming-reminder-row { padding:13px; gap:8px 10px; }
+  .upcoming-reminder-actions { justify-content:flex-start; }
+  .upcoming-reminder-actions label { width:100%; margin:0 0 2px; }
+  .category-setting-row {
+    grid-template-columns:minmax(0,1fr) 68px 38px 66px;
+    gap:5px; margin:10px 0;
+  }
+  .category-setting-row input { width:100%; padding:9px 7px; font-size:12px; }
+  .category-setting-row .category-setting-icon { padding:8px 3px; }
+  .category-setting-row .category-delete { width:100%; padding:8px 4px; font-size:11px; }
+  .wish-edit-dialog { padding:18px 16px; }
+  .wish-edit-dialog .confirm-dialog-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .wish-edit-dialog .confirm-dialog-actions button { width:100%; min-width:0; }
+}
+@media(max-width:360px) {
+  .category-setting-row { grid-template-columns:minmax(0,1fr) 58px 34px 60px; gap:4px; }
+  .category-setting-row input { font-size:11px; }
+  .category-setting-row .category-delete { font-size:10px; }
+}
+
 </style>
 
 </head>
@@ -1115,6 +1172,24 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     </form>
   </section>
 </div>
+<div class="confirm-overlay" id="billEditOverlay" hidden>
+  <section class="confirm-dialog wish-edit-dialog bill-edit-dialog" role="dialog" aria-modal="true" aria-labelledby="billEditTitle">
+    <h3 class="confirm-dialog-title" id="billEditTitle"><span class="confirm-dialog-star" aria-hidden="true">✎</span><span>Edit reminder</span></h3>
+    <form id="billEditForm">
+      <p class="panel-desc">Update the reminder details whenever the amount, due date, or schedule changes.</p>
+      <input type="hidden" id="billEditId">
+      <div class="field"><label for="billEditName">Reminder name</label><input id="billEditName" maxlength="80" required></div>
+      <div class="field"><label for="billEditCategory">Deduct from category</label><select id="billEditCategory" required></select></div>
+      <div class="field"><label for="billEditAmount">Amount (₱)</label><input id="billEditAmount" type="number" min="0.01" step="0.01" required></div>
+      <div class="field"><label for="billEditDueDate">Due date</label><input id="billEditDueDate" type="date" required></div>
+      <div class="field"><label for="billEditPriority">Priority</label><select id="billEditPriority"><option>Urgent</option><option>High</option><option>Medium</option><option>Low</option></select></div>
+      <div class="field"><label for="billEditRepeat">Repeat</label><select id="billEditRepeat"><option value="once">One-time event</option><option value="daily">Daily</option><option value="weekdays">Weekdays (Mon–Fri)</option><option value="weekly">Weekly</option><option value="monthly">Monthly (same date)</option><option value="yearly">Yearly</option></select></div>
+      <div class="field"><label for="billEditReminderLead">Show reminder</label><select id="billEditReminderLead"><option value="0">On the due date</option><option value="1">1 day before</option><option value="3">3 days before</option><option value="7">7 days before</option><option value="14">14 days before</option><option value="30">30 days before</option><option value="60">60 days before</option><option value="90">90 days before</option></select></div>
+      <div class="field"><label for="billEditNote">Note (optional)</label><input id="billEditNote" maxlength="120"></div>
+      <div class="confirm-dialog-actions"><button class="confirm-cancel" id="billEditCancel" type="button">Cancel</button><button class="confirm-accept" type="submit">Save changes</button></div>
+    </form>
+  </section>
+</div>
 <div class="confirm-overlay" id="confirmOverlay" hidden>
   <section class="confirm-dialog" role="alertdialog" aria-modal="true"
            aria-labelledby="confirmDialogTitle" aria-describedby="confirmDialogMessage">
@@ -1182,6 +1257,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       '--muted': c['Muted Text'],
       '--line': c.Border,
       '--good': dark ? '#72D6A0' : '#287A55',
+      '--overview-reminder-accent': dark ? '#72D6A0' : c.Header,
       '--bad': dark ? '#FF8B83' : '#B64D45',
       '--shadow': dark ? '0 12px 34px rgba(0,0,0,.18)' : '0 12px 34px rgba(32,48,39,.07)'
     };
@@ -2012,6 +2088,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
         <strong class="upcoming-reminder-amount">${peso(b.amount)}</strong>
         <div class="upcoming-reminder-actions">
           <label><input type="checkbox" data-bill-check="${escapeHTML(b.id)}"> Mark paid</label>
+          <button class="btn btn-quiet" type="button" data-edit-bill="${escapeHTML(b.id)}">✎ Edit</button>
           <button class="btn btn-quiet" type="button" data-delete-bill="${escapeHTML(b.id)}">Delete</button>
         </div>
       </article>`;
@@ -2125,6 +2202,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
                   </div>
                   <div class="bill-card-actions">
                     <label class="bill-paid-check"><input class="priority-check" type="checkbox" data-bill-check="${escapeHTML(b.id)}"> Mark as paid</label>
+                    <button class="btn btn-quiet" type="button" data-edit-bill="${escapeHTML(b.id)}">✎ Edit</button>
                     <button class="icon-btn bill-card-delete" type="button" title="Delete reminder" data-delete-bill="${escapeHTML(b.id)}">✕ Delete</button>
                   </div>
                 </div>
@@ -2421,6 +2499,51 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     state.wishes.push({id:makeId(), name, category:document.getElementById('wishCategory').value, amount:Number(document.getElementById('wishAmount').value)||0, priority:document.getElementById('wishPriority').value, done:false});
     save(); render(); e.target.reset(); toast('Added to your buy list.');
   });
+  function openBillEditor(billId) {
+    const bill = (state.bills || []).find(item => String(item.id) === String(billId));
+    if (!bill || bill.paid) return;
+    const overlay = document.getElementById('billEditOverlay');
+    const categorySelect = document.getElementById('billEditCategory');
+    categorySelect.innerHTML = CATEGORIES.map(c => `<option value="${escapeHTML(c.id)}">${escapeHTML(c.icon || '')} ${escapeHTML(c.name)}</option>`).join('');
+    document.getElementById('billEditId').value = bill.id;
+    document.getElementById('billEditName').value = bill.name || '';
+    const billGroup = (state.reminderGroups || []).find(g => g.id === (bill.reminderGroupId || 'default-reminders'));
+    document.getElementById('billEditCategory').value = bill.category || billGroup?.category || CATEGORIES[0]?.id || '';
+    document.getElementById('billEditAmount').value = Number(bill.amount) || '';
+    document.getElementById('billEditDueDate').value = bill.dueDate || '';
+    document.getElementById('billEditPriority').value = bill.priority || 'Medium';
+    document.getElementById('billEditRepeat').value = bill.repeat || 'once';
+    document.getElementById('billEditReminderLead').value = String(bill.reminderLeadDays ?? 30);
+    document.getElementById('billEditNote').value = bill.note || '';
+    overlay.hidden = false;
+    document.getElementById('billEditName').focus();
+  }
+  document.getElementById('billEditCancel').addEventListener('click', () => { document.getElementById('billEditOverlay').hidden = true; });
+  document.getElementById('billEditOverlay').addEventListener('click', event => { if (event.target.id === 'billEditOverlay') event.currentTarget.hidden = true; });
+  document.getElementById('billEditForm').addEventListener('submit', event => {
+    event.preventDefault();
+    const bill = (state.bills || []).find(item => String(item.id) === String(document.getElementById('billEditId').value));
+    if (!bill) return;
+    const name = document.getElementById('billEditName').value.trim();
+    const amount = Number(document.getElementById('billEditAmount').value);
+    const dueDate = document.getElementById('billEditDueDate').value;
+    const categoryId = document.getElementById('billEditCategory').value;
+    if (!name || !dueDate || !Number.isFinite(amount) || amount <= 0 || !category(categoryId)) {
+      return toast('Please enter a valid reminder name, category, amount, and due date.');
+    }
+    Object.assign(bill, {
+      name, amount, dueDate, category: categoryId,
+      priority: document.getElementById('billEditPriority').value,
+      repeat: document.getElementById('billEditRepeat').value,
+      reminderLeadDays: Number(document.getElementById('billEditReminderLead').value),
+      note: document.getElementById('billEditNote').value.trim(),
+      updatedAt: Date.now()
+    });
+    save(); render();
+    document.getElementById('billEditOverlay').hidden = true;
+    toast('Reminder updated successfully.');
+  });
+
   function openWishEditor(wishId) {
     const wish = state.wishes.find(item => String(item.id) === String(wishId));
     if (!wish) return;
@@ -2664,6 +2787,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       }
       state.transactions = state.transactions.filter(x => x.id !== t.id); save(); render(); toast('Transaction deleted and balance adjusted.');
     }
+    const editB = e.target.closest('[data-edit-bill]');
+    if (editB) { openBillEditor(editB.dataset.editBill); return; }
     const editW = e.target.closest('[data-edit-wish]');
     if (editW) { openWishEditor(editW.dataset.editWish); return; }
     const delW = e.target.closest('[data-delete-wish]');
