@@ -840,12 +840,13 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
 
 <style id="theme-aware-overview-and-reminder-icons">
-  /* Use the theme's readable accent color, including its lighter dark-theme
-     value, for the overview label and reminder stars. */
-  .welcome .eyebrow,
+  /* Keep these accents in sync with the currently selected website theme. */
+  .welcome .eyebrow {
+    color: var(--site-primary) !important;
+  }
   .bill-preview-star,
   .bill-card-star {
-    color: var(--good) !important;
+    color: var(--site-primary) !important;
   }
 </style>
 
