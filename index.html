@@ -672,17 +672,40 @@ td strong { font-size:11px; }
 /* Centralized theme roles: these variables drive every surface and control. */
 :root { color-scheme: light; }
 body, #app, main { background:var(--site-background)!important; color:var(--text)!important; }
-.panel, .summary-card, .category-card, .bill-card, .reminder-group, .confirm-dialog,
+.panel, .summary-card:not(.primary), .category-card, .bill-card, .reminder-group, .confirm-dialog,
 .category-delete-dialog, .modal-card, .report-card, .paid-bill-record,
 .wish-card, .priority-item, .app-settings-panel {
   background:var(--surface)!important; color:var(--text)!important; border-color:var(--line)!important;
 }
+.summary-card.primary {
+  background:var(--site-primary)!important;
+  color:var(--site-on-primary)!important;
+  border-color:transparent!important;
+}
+.summary-card.primary .card-label,
+.summary-card.primary .amount,
+.summary-card.primary .card-note,
+.summary-card.primary .summary-icon { color:var(--site-on-primary)!important; }
+
 .topbar { background:var(--site-primary)!important; color:var(--site-on-primary)!important; }
 .topbar .brand-mark { background:var(--site-secondary)!important; color:var(--site-on-secondary)!important; }
 h1,h2,h3,h4,h5,strong,b,label,th,.category-name,.category-balance,.amount,.card-label { color:var(--text); }
 p,.sub,.panel-desc,.report-note,.card-note,.muted,.footer,small { color:var(--muted); }
-.btn-primary, .btn-secondary, .section-toggle[aria-expanded="true"], .bill-group-add {
-  background:var(--site-secondary)!important; color:var(--site-on-secondary)!important; border-color:var(--site-secondary)!important;
+.btn-primary {
+  background:var(--site-primary)!important;
+  color:var(--site-on-primary)!important;
+  border-color:var(--site-primary)!important;
+}
+.btn-secondary, .section-toggle[aria-expanded="true"], .bill-group-add {
+  background:var(--site-secondary)!important;
+  color:var(--site-on-secondary)!important;
+  border-color:var(--site-secondary)!important;
+}
+.actions-grid > .panel:first-child {
+  background:color-mix(in srgb, var(--site-primary) 7%, var(--surface))!important;
+}
+.actions-grid > .panel:nth-child(2) {
+  background:color-mix(in srgb, var(--site-secondary) 13%, var(--surface))!important;
 }
 .btn-quiet, .icon-btn, .reminder-group-actions button, .wish-category-tabs button {
   background:var(--surface-soft)!important; color:var(--text)!important; border-color:var(--line)!important;

@@ -1,0 +1,519 @@
+PESOPLAN WEBSITE ELEMENT INVENTORY
+Source: ExpenseUtility-main/index.html
+
+DOCUMENT STRUCTURE
+html: 1 element(s)
+head: 1 element(s)
+body: 1 element(s)
+header: 1 element(s)
+main: 1 element(s)
+section: 14 element(s)
+form: 7 element(s)
+
+ALL ELEMENT IDS
+#theme-contrast-fixes <style> classes=(none)
+#theme-aware-overview-and-reminder-icons <style> classes=(none)
+#app <div> classes=(none)
+#saveStatus <span> classes=(none)
+#cloudAccountBtn <button> classes=cloud-account-btn
+#openAppSettingsBtn <button> classes=cloud-account-btn
+#todayLabel <div> classes=date-label
+#totalBalance <div> classes=amount
+#billsSection <section> classes=section
+#billDeckCover <div> classes=bill-deck-cover
+#billPreviewList <div> classes=bill-preview-lists
+#billsPanel <div> classes=collapsible-content
+#reminderPanelTitle <h3> classes=(none)
+#billCount <span> classes=tag
+#openReminderSettingsBtn <button> classes=btn btn-quiet popup-open-btn
+#billBackBtn <button> classes=btn btn-quiet
+#addReminderGroupToggle <button> classes=btn btn-quiet
+#reminderGroupForm <form> classes=inline-form no-print
+#reminderGroupName <input> classes=(none)
+#reminderGroupCategory <select> classes=(none)
+#billFormWrap <div> classes=bill-form-wrap no-print
+#billForm <form> classes=(none)
+#billName <input> classes=(none)
+#billAmount <input> classes=(none)
+#billDueDate <input> classes=(none)
+#billPriority <select> classes=(none)
+#billRepeat <select> classes=(none)
+#billReminderLead <select> classes=(none)
+#billNote <input> classes=(none)
+#billCancelBtn <button> classes=btn btn-quiet
+#billList <div> classes=bill-deck
+#incomeForm <form> classes=(none)
+#incomeAmount <input> classes=(none)
+#incomeDate <input> classes=(none)
+#incomeCategory <select> classes=(none)
+#incomeNote <input> classes=(none)
+#expenseForm <form> classes=(none)
+#expenseAmount <input> classes=(none)
+#expenseDate <input> classes=(none)
+#expenseCategory <select> classes=(none)
+#expenseNote <input> classes=(none)
+#categorySettingsToggle <button> classes=btn btn-quiet category-settings-btn
+#categorySettingsPanel <div> classes=category-settings-panel no-print
+#categorySettingsRows <div> classes=(none)
+#addCategoryForm <form> classes=inline-form
+#newCategoryName <input> classes=(none)
+#newCategoryPercent <input> classes=(none)
+#newCategoryIcon <input> classes=(none)
+#saveCategorySettings <button> classes=btn btn-primary
+#cancelCategorySettings <button> classes=btn btn-quiet
+#categoryGrid <div> classes=category-grid
+#shoppingToggle <button> classes=btn btn-quiet btn-block section-toggle
+#shoppingPanel <div> classes=collapsible-content
+#wishForm <form> classes=inline-form no-print
+#wishName <input> classes=(none)
+#wishCategory <select> classes=(none)
+#wishAmount <input> classes=(none)
+#wishPriority <select> classes=(none)
+#wishCategoryTabs <div> classes=wish-category-tabs no-print
+#wishList <div> classes=priority-list
+#reportsToggle <button> classes=btn btn-quiet btn-block section-toggle
+#reportsPanel <div> classes=collapsible-content
+#reportYear <input> classes=(none)
+#reportPeriodHeading <div> classes=report-heading
+#totalIncomeCard <button> classes=summary-card report-total-card
+#totalIncome <span> classes=amount
+#incomeReportNote <span> classes=card-note
+#totalExpensesCard <button> classes=summary-card report-total-card
+#totalExpenses <span> classes=amount
+#expenseReportNote <span> classes=card-note
+#reportExplorer <div> classes=report-explorer
+#reportBreadcrumbs <div> classes=report-nav
+#reportCalendarContent <div> classes=(none)
+#reportDayDetails <div> classes=report-day-details
+#csvBtn <button> classes=btn btn-primary
+#printBtn <button> classes=btn btn-quiet
+#backupBtn <button> classes=btn btn-quiet
+#restoreBtn <button> classes=btn btn-quiet
+#restoreFile <input> classes=(none)
+#transactionCount <strong> classes=(none)
+#wishCount <strong> classes=(none)
+#billReportCount <strong> classes=(none)
+#activityToggle <button> classes=btn btn-quiet btn-block section-toggle
+#activityPanel <div> classes=collapsible-content
+#transactionRows <tbody> classes=(none)
+#recentActivityMoreWrap <div> classes=recent-activity-more no-print
+#recentActivityMoreBtn <button> classes=btn btn-quiet
+#paidBillsSection <section> classes=section panel
+#paidBillCount <span> classes=tag
+#paidCategoryFilter <select> classes=(none)
+#paidBillsList <div> classes=paid-bills-list
+#categoryDeleteModal <div> classes=category-delete-modal
+#categoryDeleteTitle <h3> classes=(none)
+#categoryDeleteDescription <p> classes=(none)
+#categoryDeleteBalance <strong> classes=(none)
+#categoryDeleteSource <span> classes=panel-desc
+#categoryDeleteDestinationName <input> classes=(none)
+#categoryDeleteDestinationOptions <datalist> classes=(none)
+#cancelCategoryDelete <button> classes=btn btn-quiet
+#confirmCategoryDelete <button> classes=btn btn-danger
+#cloudModal <div> classes=cloud-modal
+#cloudCloseBtn <button> classes=close-cloud
+#cloudTitle <h3> classes=(none)
+#cloudIntro <p> classes=(none)
+#cloudAuthFields <div> classes=(none)
+#cloudEmail <input> classes=(none)
+#cloudPassword <input> classes=(none)
+#cloudSignInBtn <button> classes=btn btn-primary
+#cloudSignUpBtn <button> classes=btn btn-secondary
+#cloudSignedIn <div> classes=(none)
+#cloudAccountSummary <div> classes=(none)
+#cloudSignOutBtn <button> classes=btn btn-danger btn-block
+#cloudModalStatus <div> classes=cloud-status
+#appSettingsModal <div> classes=app-popup-modal
+#themeNumberLabel <span> classes=settings-theme-number
+#themeSelect <select> classes=settings-theme-select
+#themePreview <div> classes=theme-preview
+#themePreviewSwatches <div> classes=theme-preview-swatches
+#themePreviewName <strong> classes=(none)
+#themePreviewCollection <small> classes=(none)
+#applyThemeBtn <button> classes=btn btn-primary
+#resetThemeBtn <button> classes=btn btn-quiet
+#resetAllDataBtn <button> classes=btn btn-danger
+#reminderSettingsModal <div> classes=app-popup-modal
+#reminderSettingsTitle <h3> classes=(none)
+#allRemindersTitle <h4> classes=(none)
+#allReminderCount <span> classes=tag
+#allUpcomingReminders <div> classes=(none)
+#toast <div> classes=toast
+#wishEditOverlay <div> classes=confirm-overlay
+#wishEditTitle <h3> classes=confirm-dialog-title
+#wishEditForm <form> classes=(none)
+#wishEditId <input> classes=(none)
+#wishEditName <input> classes=(none)
+#wishEditCategory <select> classes=(none)
+#wishEditAmount <input> classes=(none)
+#wishEditPriority <select> classes=(none)
+#wishEditCancel <button> classes=confirm-cancel
+#confirmOverlay <div> classes=confirm-overlay
+#confirmDialogTitle <h3> classes=confirm-dialog-title
+#confirmDialogMessage <p> classes=confirm-dialog-message
+#confirmCancel <button> classes=confirm-cancel
+#confirmAccept <button> classes=confirm-accept
+
+ALL CSS CLASS NAMES
+.actions-grid
+.all-reminders-heading
+.all-reminders-manager
+.amount
+.app-popup-close
+.app-popup-dialog
+.app-popup-head
+.app-popup-modal
+.bill-add-area
+.bill-deck
+.bill-deck-cover
+.bill-form-grid
+.bill-form-wrap
+.bill-panel-back-row
+.bill-preview-hint
+.bill-preview-lists
+.brand
+.brand-mark
+.btn
+.btn-block
+.btn-danger
+.btn-primary
+.btn-quiet
+.btn-secondary
+.capital-expense-container
+.card-label
+.card-note
+.category-delete-actions
+.category-delete-dialog
+.category-delete-modal
+.category-grid
+.category-settings-btn
+.category-settings-panel
+.category-transfer-summary
+.close-cloud
+.cloud-account-btn
+.cloud-dialog
+.cloud-dialog-actions
+.cloud-modal
+.cloud-status
+.collapsible-content
+.confirm-accept
+.confirm-cancel
+.confirm-dialog
+.confirm-dialog-actions
+.confirm-dialog-message
+.confirm-dialog-star
+.confirm-dialog-title
+.confirm-overlay
+.date-label
+.empty
+.eyebrow
+.field
+.field-grid
+.footer
+.full
+.inline-form
+.no-print
+.paid-bills-list
+.paid-filter
+.panel
+.panel-desc
+.panel-head
+.pill
+.popup-intro
+.popup-open-btn
+.primary
+.priority-list
+.recent-activity-more
+.report-actions
+.report-count-row
+.report-day-details
+.report-explorer
+.report-heading
+.report-nav
+.report-note
+.report-open-hint
+.report-overview-grid
+.report-total-card
+.report-year-control
+.section
+.section-toggle
+.settings-actions
+.settings-note
+.settings-subhead
+.settings-subsection
+.settings-theme-number
+.settings-theme-select
+.settings-warning
+.sr-only
+.sub
+.summary-card
+.summary-grid
+.summary-icon
+.table-wrap
+.tag
+.theme-preview
+.theme-preview-swatches
+.toast
+.toggle-arrow
+.toggle-copy
+.toggle-desc
+.toggle-title
+.top-actions
+.topbar
+.welcome
+.wish-category-tabs
+.wish-edit-dialog
+
+FORMS, LABELS, INPUTS, SELECTS, TEXTAREAS AND BUTTONS
+
+FORM #reminderGroupForm classes=inline-form no-print
+  <label> for="reminderGroupName" text="Reminder list name"
+  <input> id="reminderGroupName" placeholder="e.g. School deadlines"
+  <label> for="reminderGroupCategory" text="Deduct from category"
+  <select> id="reminderGroupCategory"
+  <button> type="submit" class="btn btn-primary" text="Create list"
+
+FORM #billForm classes=
+  <label> for="billName" text="Name of reminder / bill / subscription"
+  <input> id="billName" placeholder="e.g. Internet, project deadline, subscription"
+  <label> for="billAmount" text="Amount (₱)"
+  <input> id="billAmount" type="number" placeholder="0.00"
+  <label> for="billDueDate" text="Due date"
+  <input> id="billDueDate" type="date"
+  <label> for="billPriority" text="Payment priority"
+  <select> id="billPriority" text="Urgent High Medium Low"
+  <label> for="billRepeat" text="Repeat"
+  <select> id="billRepeat" text="One-time event Daily Weekdays (Mon–Fri) Weekly Monthly (same date) Yearly"
+  <label> for="billReminderLead" text="Show reminder"
+  <select> id="billReminderLead" text="On the due date 1 day before 3 days before 7 days before 14 days before 30 days before 60 days before 90 days before"
+  <label> for="billNote" text="Note (optional)"
+  <input> id="billNote" placeholder="e.g. Account details or payment instructions"
+  <button> type="submit" class="btn btn-primary" text="Save reminder"
+  <button> id="billCancelBtn" type="button" class="btn btn-quiet" text="Cancel"
+
+FORM #incomeForm classes=
+  <label> for="incomeAmount" text="Amount (₱)"
+  <input> id="incomeAmount" type="number" placeholder="e.g. 100"
+  <label> for="incomeDate" text="Date received"
+  <input> id="incomeDate" type="date"
+  <label> for="incomeCategory" text="Add money to"
+  <select> id="incomeCategory" text="All Categories (distribute automatically)"
+  <label> for="incomeNote" text="Source / Note (optional)"
+  <input> id="incomeNote" type="text" placeholder="e.g. Allowance, gift, extra income"
+  <button> type="submit" class="btn btn-primary btn-block" text="Add to my capital"
+
+FORM #expenseForm classes=
+  <label> for="expenseAmount" text="Amount (₱)"
+  <input> id="expenseAmount" type="number" placeholder="e.g. 25"
+  <label> for="expenseDate" text="Date purchased"
+  <input> id="expenseDate" type="date"
+  <label> for="expenseCategory" text="Expense category"
+  <select> id="expenseCategory"
+  <label> for="expenseNote" text="What did you buy?"
+  <input> id="expenseNote" type="text" placeholder="e.g. Hair clip"
+  <button> type="submit" class="btn btn-secondary btn-block" text="Save expense"
+
+FORM #addCategoryForm classes=inline-form
+  <label> for="newCategoryName" text="New category name"
+  <input> id="newCategoryName" placeholder="e.g. Transportation"
+  <label> for="newCategoryPercent" text="Allocation %"
+  <input> id="newCategoryPercent" type="number" value="0"
+  <label> for="newCategoryIcon" text="Icon"
+  <input> id="newCategoryIcon" value="✦"
+  <button> type="submit" class="btn btn-secondary" text="＋ Add category"
+
+FORM #wishForm classes=inline-form no-print
+  <label> for="wishName" text="Item"
+  <input> id="wishName" placeholder="What do you want to buy?"
+  <label> for="wishCategory" text="Category"
+  <select> id="wishCategory"
+  <label> for="wishAmount" text="Estimated ₱"
+  <input> id="wishAmount" type="number" placeholder="0.00"
+  <button> type="submit" class="btn btn-primary" text="＋ Add"
+
+FORM #wishEditForm classes=
+  <input> id="wishEditId" type="hidden"
+  <label> for="wishEditName" text="Item"
+  <input> id="wishEditName"
+  <label> for="wishEditCategory" text="Category"
+  <select> id="wishEditCategory"
+  <label> for="wishEditAmount" text="Estimated amount (₱)"
+  <input> id="wishEditAmount" type="number"
+  <label> for="wishEditPriority" text="Priority"
+  <select> id="wishEditPriority" text="High Medium Low"
+  <button> id="wishEditCancel" type="button" class="confirm-cancel" text="Cancel"
+  <button> type="submit" class="confirm-accept" text="Save changes"
+
+VISIBLE TEXT CONTENT (unique)
+html
+PesoPlan — Personal Budget Tracker
+PesoPlan
+Your money, thoughtfully divided
+PERSONAL BUDGET
+● Saved on this device
+☁ Connect account
+⚙ Settings
+Your financial overview
+Make every peso count.
+Track what comes in, what goes out, and what remains for each part of your life.
+◈
+Available capital
+₱0.00
+Your current total across all categories
+Loading reminder lists…
+TAP A STACK TO OPEN THAT REMINDER LIST
+↗
+Payment reminders
+Create as many reminder lists as you need, each with its own deduction category.
+0 REMINDERS
+⚙ Reminder settings
+← Back to cards
+＋ New reminder list
+Create a separate reminder list
+Give this list its own name and choose which category will be deducted when its reminders are marked paid.
+Reminder list name
+Deduct from category
+Create list
+Name of reminder / bill / subscription
+Amount (₱)
+Due date
+Payment priority
+Urgent
+High
+Medium
+Low
+Repeat
+One-time event
+Daily
+Weekdays (Mon–Fri)
+Weekly
+Monthly (same date)
+Yearly
+Show reminder
+On the due date
+1 day before
+3 days before
+7 days before
+14 days before
+30 days before
+60 days before
+90 days before
+Note (optional)
+Save reminder
+Cancel
+＋ Add money received
+Choose All Categories to distribute automatically, or add the full amount to one category.
+INCOME
+Date received
+Add money to
+All Categories (distribute automatically)
+Source / Note (optional)
+Add to my capital
+− Record an expense
+Only the selected category and your total capital will decrease.
+EXPENSE
+Date purchased
+Expense category
+What did you buy?
+Save expense
+My category balances
+Your incoming money is split using your chosen percentages.
+100% ALLOCATION
+Edit category names and allocation percentages, or add and remove categories. Percentages must total exactly 100% before saving.
+New category name
+Allocation %
+Icon
+＋ Add category
+Save category settings
+♡ Things I want to buy
+Open your wishlist, organized by category.
+⌄
+My shopping list
+Add items and view them one category at a time.
+WISHLIST
+Item
+Category
+Estimated ₱
+＋ Add
+Priority for next item
+▤ Reports & data
+View totals, transaction counts, and export your records.
+Select year
+Financial overview
+Total money received
+For the selected year
+↘
+Total expenses
+Your entries are saved automatically in this browser on this device. Download a CSV report to keep a copy, or print this page to save a simple PDF report.
+↓ Download CSV report
+▤ Print / Save PDF
+Export backup
+Import backup
+Transactions in this view
+0
+Current wishlist items
+Current urgent bill reminders
+Tip: Export a backup regularly, especially before clearing browser data or changing devices.
+◷ Recent activity
+Show your money received and expenses, newest first.
+Date
+Type
+Description
+Amount
+Action
+View more transactions
+✓ Paid history
+Expenses are grouped by category and then by bill or expense name. Open a name to see its payment history.
+0 PAYMENTS
+Show paid items by category
+All categories
+PesoPlan · A simple way to keep your pesos organized
+Transfer and delete category
+Move the remaining balance and all linked records before deleting this category.
+Remaining balance to transfer
+Type the destination category name
+Enter the name of an existing category, for example Food.
+Its current balance, unpaid bills, paid-bill records, wishlist items, reminder lists, and transaction records will be reassigned to the destination category. Your records will be kept.
+Transfer & delete
+×
+Sync PesoPlan
+Sign in with the same account on your phone and computer to access the same budget records.
+Email address
+Password
+Sign in
+Create account
+Sign out
+PesoPlan settings
+Customize the appearance and manage your saved tracker data.
+Website theme
+Choose from 50 coordinated color combinations. Selecting a theme previews it immediately.
+01 / 50
+Choose a PesoPlan theme
+Original PesoPlan
+Original collection
+Apply theme
+Reset to original theme
+Matching logo files are loaded from
+logos/1.png
+through
+logos/50.png
+. If a numbered logo has not been uploaded yet, PesoPlan uses the original logo.
+Reset PesoPlan data
+Restore the default categories and clear reminders, wishlist items, transactions, balances, reports, and paid history.
+This removes the current tracker records from this device and, when signed in, synchronizes the reset to your cloud account. Export a backup first if you may need these records later.
+Reset all tracker data
+View and manage every unpaid reminder, including bills whose reminder display date has not arrived yet.
+All upcoming reminders
+Every unpaid reminder is listed here, even when its personal reminder window has not started yet.
+0 UPCOMING
+Loading all reminders…
+✎
+Edit wishlist estimation
+Update the details whenever your planned price or priorities change. Editing a purchased item will not change its recorded transaction.
+Estimated amount (₱)
+Priority
+Save changes
+✦
+Please confirm
+Confirm
