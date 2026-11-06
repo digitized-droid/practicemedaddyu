@@ -25,7 +25,7 @@ Keep these existing files and folders:
 The package includes logos/1.png. Add your own logo images logos/2.png through logos/50.png when ready. Do not rename them; the theme number is used as the filename.
 
 DEPLOY
-1. Before deploying, use PesoPlan's Export backup feature while online.
+1. Before deploying, use EUnify's Export backup feature while online.
 2. Open https://github.com/digitized-droid/practicemedaddy
 3. Replace the four files listed above. Merge the logos folder rather than deleting existing logo files.
 4. Commit and push to the branch used by GitHub Pages (usually main).
@@ -48,4 +48,4 @@ VALIDATION PERFORMED FOR THIS PACKAGE
 - Live multi-device Supabase testing cannot be performed from this ZIP alone. After deployment, test offline changes and cloud sync using temporary records before relying on the reset function.
 
 INSTRUCTION VISUALS
-The instruction guide now uses separate files in instruction-images/. To add your own visuals, replace the matching JPG file and keep its filename. Do not use one shared practiceinstructionimage.jpg for all features. Images are displayed with contain sizing and padding, so their full contents remain visible without cropping. The service worker refreshes the images while online and saves the newest versions for offline use. After replacing an image, open PesoPlan once while connected. See instruction-images/README.txt for the exact mapping.
+The instruction guide now uses separate files in instruction-images/. To add your own visuals, replace the matching JPG file and keep its filename. Do not use one shared practiceinstructionimage.jpg for all features. Images are displayed with contain sizing and padding, so their full contents remain visible without cropping. The service worker refreshes the images while online and saves the newest versions for offline use. After replacing an image, open EUnify once while connected. See instruction-images/README.txt for the exact mapping.

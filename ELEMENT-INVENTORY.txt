@@ -347,8 +347,8 @@ FORM #wishEditForm classes=
 
 VISIBLE TEXT CONTENT (unique)
 html
-PesoPlan — Personal Budget Tracker
-PesoPlan
+EUnify — Personal Budget Tracker
+EUnify
 Your money, thoughtfully divided
 PERSONAL BUDGET
 ● Saved on this device
@@ -468,7 +468,7 @@ Expenses are grouped by category and then by bill or expense name. Open a name t
 0 PAYMENTS
 Show paid items by category
 All categories
-PesoPlan · A simple way to keep your pesos organized
+EUnify · A simple way to keep your pesos organized
 Transfer and delete category
 Move the remaining balance and all linked records before deleting this category.
 Remaining balance to transfer
@@ -477,20 +477,20 @@ Enter the name of an existing category, for example Food.
 Its current balance, unpaid bills, paid-bill records, wishlist items, reminder lists, and transaction records will be reassigned to the destination category. Your records will be kept.
 Transfer & delete
 ×
-Sync PesoPlan
+Sync EUnify
 Sign in with the same account on your phone and computer to access the same budget records.
 Email address
 Password
 Sign in
 Create account
 Sign out
-PesoPlan settings
+EUnify settings
 Customize the appearance and manage your saved tracker data.
 Website theme
 Choose from 50 coordinated color combinations. Selecting a theme previews it immediately.
 01 / 50
-Choose a PesoPlan theme
-Original PesoPlan
+Choose a EUnify theme
+Original EUnify
 Original collection
 Apply theme
 Reset to original theme
@@ -498,8 +498,8 @@ Matching logo files are loaded from
 logos/1.png
 through
 logos/50.png
-. If a numbered logo has not been uploaded yet, PesoPlan uses the original logo.
-Reset PesoPlan data
+. If a numbered logo has not been uploaded yet, EUnify uses the original logo.
+Reset EUnify data
 Restore the default categories and clear reminders, wishlist items, transactions, balances, reports, and paid history.
 This removes the current tracker records from this device and, when signed in, synchronizes the reset to your cloud account. Export a backup first if you may need these records later.
 Reset all tracker data

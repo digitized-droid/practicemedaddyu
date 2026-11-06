@@ -1,4 +1,4 @@
-/* PesoPlan offline app shell for GitHub Pages. Keep this file beside index.html. */
+/* EUnify offline app shell for GitHub Pages. Keep this file beside index.html. */
 const CACHE_NAME = "pesoplan-shell-v11-instruction-image-slots";
 const APP_SHELL = [
   new URL("./", self.registration.scope).href,
@@ -28,7 +28,7 @@ self.addEventListener("install", event => {
         const response = await fetch(url, { cache: "reload" });
         if (response.ok) await cache.put(url, response);
       } catch (error) {
-        console.warn("PesoPlan: could not pre-cache", url, error);
+        console.warn("EUnify: could not pre-cache", url, error);
       }
     }
     await self.skipWaiting();
@@ -63,7 +63,7 @@ self.addEventListener("fetch", event => {
       } catch (error) {
         return (await caches.match(new URL("./index.html", self.registration.scope).href)) ||
           (await caches.match(new URL("./", self.registration.scope).href)) ||
-          new Response("PesoPlan is not available offline yet. Open it once while connected to the internet.", {
+          new Response("EUnify is not available offline yet. Open it once while connected to the internet.", {
             status: 503, headers: { "Content-Type": "text/plain; charset=utf-8" }
           });
       }
@@ -81,7 +81,7 @@ self.addEventListener("fetch", event => {
         if (response && response.ok) await cache.put(request, response.clone());
         return response;
       } catch (error) {
-        return (await cache.match(request)) || new Response("This PesoPlan guide image is not cached yet.", { status: 503 });
+        return (await cache.match(request)) || new Response("This EUnify guide image is not cached yet.", { status: 503 });
       }
     })());
     return;
@@ -99,7 +99,7 @@ self.addEventListener("fetch", event => {
       }
       return response;
     } catch (error) {
-      return new Response("This PesoPlan resource is not cached yet.", { status: 503 });
+      return new Response("This EUnify resource is not cached yet.", { status: 503 });
     }
   })());
 });

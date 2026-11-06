@@ -1,7 +1,7 @@
-PesoPlan theme logo files
+EUnify theme logo files
 
 Place your matching PNG files in this folder:
-  logos/1.png   = Original PesoPlan (theme 1)
+  logos/1.png   = Original EUnify (theme 1)
   logos/2.png   = Royal Contrast (theme 2)
   ...
   logos/50.png  = Blue Serenity (theme 50)

@@ -1,6 +1,6 @@
-# PesoPlan
+# EUnify
 
-PesoPlan is a browser-based personal budget tracker with offline local storage and Supabase cloud sync.
+EUnify is a browser-based personal budget tracker with offline local storage and Supabase cloud sync.
 
 This update adds:
 - 50 live website themes with matching numbered logo selection (`logos/1.png` through `logos/50.png`).

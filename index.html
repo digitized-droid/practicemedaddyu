@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PesoPlan — Personal Budget Tracker</title>
+<title>EUnify — Personal Budget Tracker</title>
 <style>
 :root {
   --site-primary: #315c4c;
@@ -617,7 +617,7 @@ td strong { font-size:11px; }
 .recent-activity-more { display:flex; justify-content:center; padding:14px 0 2px; }
 .recent-activity-more .btn { min-width:190px; }
 
-/* Circular, draggable PesoPlan guide bubble. It stays flush with the far-right edge. */
+/* Circular, draggable EUnify guide bubble. It stays flush with the far-right edge. */
 #guideBubble {
   position:fixed;
   right:0;
@@ -722,7 +722,7 @@ td strong { font-size:11px; }
 </style>
 
 <meta name="theme-color" content="#315c4c">
-<meta name="description" content="PesoPlan — a thoughtful personal budget tracker.">
+<meta name="description" content="EUnify — a thoughtful personal budget tracker.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <script src="supabase-config.js"></script>
@@ -871,7 +871,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
 <style id="theme-contrast-fixes">
 /* Theme-aware reminder cards: keep previews and expanded details readable
-   in every PesoPlan palette, including the dark aesthetic themes. */
+   in every EUnify palette, including the dark aesthetic themes. */
 .bill-preview-card,
 .bill-preview-card:nth-child(1),
 .bill-preview-card:nth-child(2),
@@ -1029,7 +1029,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <body>
 <div id="app">
   <header class="topbar">
-    <div class="brand"><div class="brand-mark"><img src="logos/1.png" alt="PesoPlan logo"></div><div><h1>PesoPlan</h1><small>Your money, thoughtfully divided</small></div></div>
+    <div class="brand"><div class="brand-mark"><img src="logos/1.png" alt="EUnify logo"></div><div><h1>EUnify</h1><small>Your money, thoughtfully divided</small></div></div>
     <div class="top-actions"><span class="pill">PERSONAL BUDGET</span><span id="saveStatus">● Saved on this device</span><button class="cloud-account-btn" id="cloudAccountBtn" type="button">☁ Connect account</button><button class="cloud-account-btn" id="openAppSettingsBtn" type="button" aria-haspopup="dialog">⚙ Settings</button></div>
   </header>
   <main>
@@ -1193,7 +1193,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       <div class="paid-bills-list" id="paidBillsList"></div>
     </section>
 
-    <div class="footer">PesoPlan · A simple way to keep your pesos organized</div>
+    <div class="footer">EUnify · A simple way to keep your pesos organized</div>
   </main>
 </div>
 
@@ -1218,7 +1218,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <div class="cloud-modal" id="cloudModal" hidden>
   <div class="cloud-dialog" role="dialog" aria-modal="true" aria-labelledby="cloudTitle">
     <button class="close-cloud" id="cloudCloseBtn" type="button" aria-label="Close">×</button>
-    <h3 id="cloudTitle">Sync PesoPlan</h3>
+    <h3 id="cloudTitle">Connect your EUnify account</h3>
     <p id="cloudIntro">Sign in with the same account on your phone and computer to access the same budget records.</p>
     <div id="cloudAuthFields">
       <div class="field"><label for="cloudEmail">Email address</label><input id="cloudEmail" type="email" autocomplete="email" placeholder="you\@example.com"></div>
@@ -1241,20 +1241,20 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   <div class="app-popup-dialog" role="dialog" aria-modal="true" aria-labelledby="appSettingsTitle">
     <div class="app-popup-head"><div></div></div>
     
-        <div class="panel-head"><div><h3>PesoPlan settings</h3><div class="panel-desc">Customize the appearance and manage your saved tracker data.</div></div><button class="app-popup-close" type="button" data-close-popup="appSettingsModal" aria-label="Close settings">×</button></div>
+        <div class="panel-head"><div><h3>EUnify settings</h3><div class="panel-desc">Customize the appearance and manage your saved tracker data.</div></div><button class="app-popup-close" type="button" data-close-popup="appSettingsModal" aria-label="Close settings">×</button></div>
         <section class="settings-subsection">
           <div class="settings-subhead"><div><h4>Website theme</h4><p class="panel-desc">Choose from 50 coordinated color combinations. Selecting a theme previews it immediately.</p></div><span class="settings-theme-number" id="themeNumberLabel">01 / 50</span></div>
-          <label class="sr-only" for="themeSelect">Choose a PesoPlan theme</label>
+          <label class="sr-only" for="themeSelect">Choose an EUnify theme</label>
           <select id="themeSelect" class="settings-theme-select"></select>
           <div class="theme-preview" id="themePreview" aria-live="polite">
             <div class="theme-preview-swatches" id="themePreviewSwatches"></div>
-            <div><strong id="themePreviewName">Original PesoPlan</strong><small id="themePreviewCollection">Original collection</small></div>
+            <div><strong id="themePreviewName">Original EUnify</strong><small id="themePreviewCollection">Original collection</small></div>
           </div>
           <div class="settings-actions">
             <button class="btn btn-primary" type="button" id="applyThemeBtn">Apply theme</button>
             <button class="btn btn-quiet" type="button" id="resetThemeBtn">Reset to original theme</button>
           </div>
-          <p class="settings-note">Matching logo files are loaded from <code>logos/1.png</code> through <code>logos/50.png</code>. If a numbered logo has not been uploaded yet, PesoPlan uses the original logo.</p>
+          <p class="settings-note">Matching logo files are loaded from <code>logos/1.png</code> through <code>logos/50.png</code>. If a numbered logo has not been uploaded yet, EUnify uses the original logo.</p>
         </section>
         <section class="settings-subsection" aria-labelledby="guideBubbleSettingsTitle">
           <div class="settings-subhead"><div><h4 id="guideBubbleSettingsTitle">Instruction bubble</h4><p class="panel-desc">Show or hide the circular floating guide on the side of the website. Your choice is saved on this device and synchronized to your cloud account when connected.</p></div></div>
@@ -1264,7 +1264,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
           </div>
         </section>
         <section class="settings-subsection">
-          <div class="settings-subhead"><div><h4>Reset PesoPlan data</h4><p class="panel-desc">Restore the default categories and clear reminders, wishlist items, transactions, balances, reports, and paid history.</p></div></div>
+          <div class="settings-subhead"><div><h4>Reset EUnify data</h4><p class="panel-desc">Restore the default categories and clear reminders, wishlist items, transactions, balances, reports, and paid history.</p></div></div>
           <p class="settings-warning">This removes the current tracker records from this device and, when signed in, synchronizes the reset to your cloud account. Export a backup first if you may need these records later.</p>
           <button class="btn btn-danger" type="button" id="resetAllDataBtn">Reset all tracker data</button>
         </section>
@@ -1285,17 +1285,23 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
 <div class="guide-overlay" id="guideWelcomeOverlay" hidden>
   <section class="guide-dialog" role="dialog" aria-modal="true" aria-labelledby="guideWelcomeTitle">
-    <h3 id="guideWelcomeTitle">Welcome to PesoPlan! 👋</h3>
-    <p>Welcome! PesoPlan has a round instruction bubble attached to the far-right edge of the page, just below the header. Select <strong>Got it</strong>, then tap that bubble to open the feature guide. Choose any item in the list to jump to that part of the website and read its instructions.</p>
+    <h3 id="guideWelcomeTitle">Welcome to EUnify! 👋</h3>
+    <p>Welcome to EUnify! We're happy to have you here.
+
+Managing your money doesn't have to be complicated. We're here to help you get familiar with the website and discover how each feature can make budgeting easier.
+
+Need a little help along the way? Just tap the floating guide button on the right side of your screen. From there, you can explore our helpful guides and learn how to use each feature. Simply choose a topic, and we'll take you through it step by step!
+
+Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     <div class="guide-dialog-actions"><button type="button" id="guideWelcomeGotIt">Got it</button></div>
   </section>
 </div>
-<button class="guide-bubble" id="guideBubble" type="button" aria-label="Open PesoPlan instruction guide" aria-expanded="false" aria-controls="guideMenu" title="Open instruction guide" hidden>
+<button class="guide-bubble" id="guideBubble" type="button" aria-label="Open EUnify instruction guide" aria-expanded="false" aria-controls="guideMenu" title="Open instruction guide" hidden>
   <img id="guideBubbleLogo" src="logos/1.png" alt=""><span class="guide-bubble-label">HELP</span>
 </button>
 <div class="guide-menu" id="guideMenu" hidden>
   <h3>How can I help?</h3>
-  <p>Select a feature to open that part of PesoPlan and see its instructions.</p>
+  <p>Not sure where to start? Don't worry! Choose a feature below, and I'll show you how it works and how you can make the most of it.</p>
   <div class="guide-feature-list" id="guideFeatureList"></div>
 </div>
 <div class="guide-overlay" id="guideExplanationOverlay" hidden>
@@ -1466,7 +1472,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       state.themeId = 1;
       state.themeUpdatedAt = Date.now();
       save();
-      toast('Original PesoPlan theme restored.');
+      toast('Original EUnify theme restored.');
     });
     const guideToggle = document.getElementById('toggleGuideBubbleBtn');
     guideToggle?.addEventListener('click', () => {
@@ -1740,7 +1746,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       }
       setCloudStatus('● Synced to cloud' + (merge.added ? ` · ${merge.added} offline transaction${merge.added===1?'':'s'} merged` : ''));
     } catch (error) {
-      console.error('PesoPlan cloud save:', error);
+      console.error('EUnify cloud save:', error);
       setCloudStatus('● Saved on this device · cloud sync pending');
     } finally {
       cloudBusy = false;
@@ -1817,7 +1823,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
         setCloudStatus('● Cloud data is up to date');
       }
     } catch (error) {
-      console.error('PesoPlan cloud load:', error);
+      console.error('EUnify cloud load:', error);
       setCloudStatus('● Offline · changes saved on this device');
     } finally {
       cloudBusy = false;
@@ -1833,7 +1839,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       const ownerKey = KEY + '_owner';
       const previousOwner = localStorage.getItem(ownerKey);
       if (previousOwner !== nextUser.id) {
-        // Remove every prior PesoPlan browser-data key before loading this account.
+        // Remove every prior EUnify browser-data key before loading this account.
         try {
           for (let i = localStorage.length - 1; i >= 0; i--) {
             const key = localStorage.key(i);
@@ -1885,7 +1891,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       cloudPollTimer = setInterval(() => pullCloudData(false), 15000);
       closeCloudModal();
     } catch (error) {
-      console.error('PesoPlan cloud initialization:', error);
+      console.error('EUnify cloud initialization:', error);
       setCloudStatus('● Could not load cloud data · local data is safe');
       cloudModalStatus.textContent = 'Could not connect to your cloud database. Check your setup and SQL policies. Your local browser data has not been deleted.';
     }
@@ -2016,7 +2022,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       document.getElementById('saveStatus').textContent = cloudUser ? '● Saved on this device · syncing…' : '● Saved on this device';
       queueCloudSave();
     } catch (error) {
-      console.error('PesoPlan local save:', error);
+      console.error('EUnify local save:', error);
       document.getElementById('saveStatus').textContent = '● Browser storage unavailable';
       toast('Your browser blocked saving. Please allow site storage or export a backup.');
     }
@@ -2843,7 +2849,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   });
   initializeThemeSettings();
   document.getElementById('resetAllDataBtn')?.addEventListener('click', async () => {
-    const confirmed = await showConfirm('Reset ALL PesoPlan tracker data? This clears balances, categories back to defaults, reminders and reminder lists, wishlist items, transactions, reports, and paid history. If you are signed in, the reset will also sync to your cloud account. This cannot be undone unless you have a backup.');
+    const confirmed = await showConfirm('Reset ALL EUnify tracker data? This clears balances, categories back to defaults, reminders and reminder lists, wishlist items, transactions, reports, and paid history. If you are signed in, the reset will also sync to your cloud account. This cannot be undone unless you have a backup.');
     if (!confirmed) return;
     const now = Date.now();
     const oldCategories = Array.isArray(CATEGORIES) ? CATEGORIES : [];
@@ -2903,7 +2909,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     refreshReminderGroupSelect();
     const reportYear = document.getElementById('reportYear');
     if (reportYear) reportYear.value = String(new Date().getFullYear());
-    toast('PesoPlan has been reset. Your reset will sync when cloud connection is available.');
+    toast('EUnify has been reset. Your reset will sync when cloud connection is available.');
   });
   document.getElementById('recentActivityMoreBtn')?.addEventListener('click', () => {
     showAllRecentTransactions = !showAllRecentTransactions;
@@ -3097,7 +3103,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     const periodIncome = report.transactions.filter(t => t.type === 'income').reduce((sum,t) => sum + Number(t.amount || 0), 0);
     const periodExpenses = report.transactions.filter(t => t.type === 'expense').reduce((sum,t) => sum + Number(t.amount || 0), 0);
     const lines = [
-      ['PesoPlan Financial Report'],
+      ['EUnify Financial Report'],
       ['Period', report.label],
       ['Generated',new Date().toLocaleString()],
       [],
@@ -3114,7 +3120,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       .forEach(t => lines.push([t.date,t.type,t.note || '',t.category ? category(t.category)?.name : 'All categories',Number(t.amount || 0).toFixed(2)]));
     const csv = '\\uFEFF' + lines.map(row => row.map(csvCell).join(',')).join('\\r\\n');
     const filenamePeriod = report.label.toLowerCase().replace(/\s+/g,'-');
-    downloadBlob(csv,`pesoplan-report-${filenamePeriod}.csv`,'text/csv;charset=utf-8;');
+    downloadBlob(csv,`eunify-report-${filenamePeriod}.csv`,'text/csv;charset=utf-8;');
     toast('CSV report downloaded.');
   });
   function downloadBlob(content, filename, type) { const blob = new Blob([content],{type}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
@@ -3127,7 +3133,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       .map(t => `<tr><td>${escapeHTML(t.date || '')}</td><td>${escapeHTML(t.type || '')}</td><td>${escapeHTML(t.note || '')}</td><td>${escapeHTML(t.category ? category(t.category)?.name || '' : 'All categories')}</td><td>${peso(t.amount)}</td></tr>`).join('');
     const printWindow = window.open('', '_blank');
     if (!printWindow) { toast('Please allow pop-ups to print this report.'); return; }
-    printWindow.document.write(`<!DOCTYPE html><html><head><title>PesoPlan ${report.mode} report - ${escapeHTML(report.label)}</title><style>
+    printWindow.document.write(`<!DOCTYPE html><html><head><title>EUnify ${report.mode} report - ${escapeHTML(report.label)}</title><style>
       body{font-family:Arial,sans-serif;color:#24332d;padding:28px}h1{margin:0 0 5px;color:#315c4c}
       .muted{color:#68766e;font-size:12px}.totals{display:flex;gap:30px;margin:24px 0}
       .total{padding:14px;border:1px solid #dfe5dc;border-radius:10px;min-width:180px}
@@ -3143,7 +3149,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .bill-preview-stack .bill-preview-card:nth-child(2) { z-index:2; }
 .bill-preview-stack .bill-preview-card:nth-child(3) { z-index:1; }
 </style>
-</head><body><h1>PesoPlan</h1><div class="muted">Financial report · ${escapeHTML(report.label)}</div>
+</head><body><h1>EUnify</h1><div class="muted">Financial report · ${escapeHTML(report.label)}</div>
       <div class="totals"><div class="total"><small>Money received</small><strong>${peso(income)}</strong></div><div class="total"><small>Expenses</small><strong>${peso(expenses)}</strong></div><div class="total"><small>Net for period</small><strong>${peso(income-expenses)}</strong></div></div>
       <p class="muted">${report.transactions.length} transactions · Generated ${new Date().toLocaleString()}</p>
       <h2>Transactions</h2><table><thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Category</th><th>Amount</th></tr></thead><tbody>${rows || '<tr><td colspan="5">No transactions recorded for this period.</td></tr>'}</tbody></table>
@@ -3152,7 +3158,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     printWindow.focus();
     printWindow.print();
   });
-  document.getElementById('backupBtn').addEventListener('click', () => { downloadBlob(JSON.stringify({app:'PesoPlan',version:1,exportedAt:new Date().toISOString(),...state,bills:state.bills || []},null,2),'pesoplan-backup-'+today()+'.json','application/json'); toast('Backup exported.'); });
+  document.getElementById('backupBtn').addEventListener('click', () => { downloadBlob(JSON.stringify({app:'EUnify',version:1,exportedAt:new Date().toISOString(),...state,bills:state.bills || []},null,2),'eunify-backup-'+today()+'.json','application/json'); toast('Backup exported.'); });
   document.getElementById('restoreBtn').addEventListener('click', () => document.getElementById('restoreFile').click());
   document.getElementById('restoreFile').addEventListener('change', async e => {
     const file = e.target.files[0]; if (!file) return;
@@ -3161,7 +3167,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       if (!data.balances || !Array.isArray(data.transactions) || !Array.isArray(data.wishes)) throw new Error('Invalid backup');
       if (!await showConfirm('Import this backup? It will replace the data currently saved in this browser.')) return;
       if (Array.isArray(data.categories) && data.categories.length) CATEGORIES = data.categories.map(c=>({...c})); state = {categories:CATEGORIES,themeId:Number(data.themeId || state.themeId || 1),themeUpdatedAt:Number(data.themeUpdatedAt || Date.now()),guideBubbleEnabled:data.guideBubbleEnabled === undefined ? state.guideBubbleEnabled !== false : data.guideBubbleEnabled !== false,guideBubbleUpdatedAt:Number(data.guideBubbleUpdatedAt || state.guideBubbleUpdatedAt || 0),reminderGroups:Array.isArray(data.reminderGroups)&&data.reminderGroups.length?data.reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})),balances:{...blankBalances(),...data.balances},transactions:data.transactions,wishes:data.wishes,bills:Array.isArray(data.bills)?data.bills:[],paidBills:Array.isArray(data.paidBills)?data.paidBills:[]}; applyTheme(state.themeId,false); updateGuideBubbleSettingUI(); save(); render(); toast('Backup imported successfully.');
-    } catch (err) { toast('Could not import this file. Please choose a valid PesoPlan backup.'); }
+    } catch (err) { toast('Could not import this file. Please choose a valid EUnify backup.'); }
     e.target.value='';
   });
   document.getElementById('todayLabel').textContent = new Date().toLocaleDateString('en-PH',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
@@ -3260,59 +3266,59 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
   const features = [
     {
-      name:'Sign in', target:'cloudAccountBtn', activate:true,
-      text:'Use Sign in to connect your PesoPlan account. Enter the email address and password for your account, or create an account if you are new. Once you are signed in, PesoPlan can synchronize supported budget records with your cloud account so you can continue using the same account on another device. Your device still keeps its offline copy when the internet is unavailable.',
-      image:'instruction-images/sign-in.jpg', imageAlt:'Sign in and cloud account screen in PesoPlan'
+      name:'Sign In', title:"Let's get you signed in!", target:'cloudAccountBtn', activate:true,
+      text:"Want to access your EUnify account? Start by signing in using your registered email address and password. If you're new here, you can create an account to get started!\n\nOnce you're signed in, EUnify can synchronize supported budget records with your cloud account, allowing you to continue using your account on another device. No internet connection? No problem! Your device still keeps its offline copy, so you can continue using your budget tracker even when you're offline.",
+      image:'instruction-images/sign-in.jpg', imageAlt:'Sign in and cloud account screen in EUnify'
     },
     {
-      name:'Settings', target:'openAppSettingsBtn', activate:true,
-      text:'Open Settings to personalize PesoPlan. Choose a website theme and apply it, show or hide the floating instruction bubble, or use the reset controls when you need to manage your tracker data. Theme and guide preferences are saved by PesoPlan; read each confirmation carefully before using a reset option.',
-      image:'instruction-images/settings.jpg', imageAlt:'PesoPlan settings screen and theme options'
+      name:'Settings', title:'Make EUnify yours!', target:'openAppSettingsBtn', activate:true,
+      text:"Everyone has their own preferences, and you can personalize EUnify to match yours!\n\nHead over to Settings to explore the available website themes, choose the look you like, and apply it. You can also show or hide the floating instruction guide whenever you want.\n\nNeed to manage your tracker data? You'll also find reset options here. Just remember to read each confirmation carefully before proceeding, especially when resetting your data.\n\nYour theme and guide preferences are saved by EUnify, so you can enjoy your preferred setup!",
+      image:'instruction-images/settings.jpg', imageAlt:'EUnify settings screen and theme options'
     },
     {
-      name:'Available Capital', target:'availableCapitalSection',
-      text:'Available Capital gives you a quick view of the money currently left in your budget. The summary changes as you record money received, expenses, and payments. Check this area before adding a new expense so you can see the amount currently available across your budget categories.',
-      image:'instruction-images/available-capital.jpg', imageAlt:'Available Capital summary in PesoPlan'
+      name:'Available Capital', title:"Here's how much you have available!", target:'availableCapitalSection',
+      text:"Want to know how much money you currently have left? You can find it right here!\n\nAvailable Capital gives you a quick overview of the money remaining in your budget. As you record money received, expenses, and payments, your available balance automatically changes to reflect your latest records.\n\nMake it a habit to check this section before adding a new expense. That way, you'll always have a better idea of how much money you have available across your budget categories.",
+      image:'instruction-images/available-capital.jpg', imageAlt:'Available Capital summary in EUnify'
     },
     {
-      name:'Reminders', target:'billsSection',
-      text:'Use Reminders to keep track of bills, subscriptions, school expenses, and other payments you need to remember. Add a reminder with its name, amount, category, due date, and priority. When you finish paying it, mark it as paid. PesoPlan records the payment in Paid history and updates the related budget balance.',
-      image:'instruction-images/reminders.jpg', imageAlt:'PesoPlan reminders and upcoming payment list'
+      name:'Reminders', title:'Never miss a payment!', target:'billsSection',
+      text:"Have bills, subscriptions, school expenses, or other payments to take care of? Let EUnify help you remember them!\n\nSimply add a reminder by providing its name, amount, category, due date, and priority. You can keep track of upcoming payments and easily see which ones still need your attention.\n\nOnce you've settled a payment, just mark it as paid. EUnify will record it in your Paid History and update the related budget balance.\n\nStay organized, keep track of your payments, and worry less about forgetting important due dates!",
+      image:'instruction-images/reminders.jpg', imageAlt:'EUnify reminders and upcoming payment list'
     },
     {
-      name:'Add Money Received', target:'incomeForm',
-      text:'Use Add Money Received whenever you receive an allowance, salary, gift, refund, or other funds. Enter the amount and date, then choose where the money should go. Select All Categories to distribute it using your saved allocation percentages, or choose one category to place the full amount there. Add a source or note if helpful, then submit the form to update your capital.',
-      image:'instruction-images/add-money-received.jpg', imageAlt:'Add Money Received form in PesoPlan'
+      name:'Add Money Received', title:"Got some money? Let's add it!", target:'incomeForm',
+      text:"Received your allowance, salary, a gift, refund, or some extra cash? Don't forget to record it in EUnify!\n\nEnter the amount you received and the date, then choose where you'd like the money to go.\n\nYou have two options:\n\n• All Categories: Distribute your money automatically using your saved allocation percentages.\n• One Category: Put the entire amount into a single category of your choice.\n\nYou can also include the source of the money or add a note to keep your records more organized.\n\nOnce everything looks good, submit the form, and your available capital will be updated!",
+      image:'instruction-images/add-money-received.jpg', imageAlt:'Add Money Received form in EUnify'
     },
     {
-      name:'Add an Expense', target:'expenseForm',
-      text:'Use Add an Expense to record money you spend. Enter a short description, amount, date, and the category that paid for it. Check that the selected category is correct before saving. The expense is then included in your budget totals and appears in Recent Activities, helping you keep track of where your money goes.',
-      image:'instruction-images/add-expense.jpg', imageAlt:'Add an Expense form in PesoPlan'
+      name:'Add an Expense', title:"Spent some money? Let's keep track!", target:'expenseForm',
+      text:"Every purchase counts, so let's make sure you keep track of where your money goes!\n\nWhenever you spend money, head over to Add an Expense and enter a short description, the amount, and the date of your purchase. Then, select the category where the money came from.\n\nBefore saving, double-check that you've selected the correct category and entered the right amount.\n\nOnce saved, your expense will automatically be included in your budget totals and appear in Recent Activities.\n\nKeeping track of your spending helps you understand your habits and make smarter budgeting decisions!",
+      image:'instruction-images/add-expense.jpg', imageAlt:'Add an Expense form in EUnify'
     },
     {
-      name:'Categories', target:'categorySettingsToggle', activate:true,
-      text:'Categories organize your money into budget groups, such as Food, Transportation, School, or Savings. Review each category balance to see how much is available. Open the category settings to add or rename a category and adjust its allocation percentage. Make sure the allocation percentages total 100% before saving your changes.',
-      image:'instruction-images/categories.jpg', imageAlt:'PesoPlan category balances and category settings'
+      name:'Categories', title:'Give your money a place!', target:'categorySettingsToggle', activate:true,
+      text:"Want to keep your budget organized? That's what Categories are for!\n\nThink of each category as a separate space for your money. You can organize your budget into groups such as Food, Transportation, School, Savings, and more.\n\nCheck each category to see how much money you have available. You can also open the category settings to add new categories, rename existing ones, or adjust how your money is distributed.\n\nOne important thing to remember: Make sure your allocation percentages add up to exactly 100% before saving your changes.\n\nThat way, every peso has a place in your budget!",
+      image:'instruction-images/categories.jpg', imageAlt:'EUnify category balances and category settings'
     },
     {
-      name:'Wishlist', target:'shoppingToggle', activatePanel:'shoppingPanel',
-      text:'Wishlist is for items or purchases you are planning and saving toward. Add the item name, category, estimated price, and priority. You can update an estimate as prices change and use the list to monitor your goals. When you record a related purchase, follow the app’s purchase flow so the amount is reflected in the appropriate category.',
-      image:'instruction-images/wishlist.jpg', imageAlt:'PesoPlan wishlist items and estimated costs'
+      name:'Wishlist', title:'Dream it, plan it, save for it!', target:'shoppingToggle', activatePanel:'shoppingPanel',
+      text:"Have something you've been wanting to buy? Add it to your Wishlist!\n\nWhether it's a new gadget, school supplies, personal items, or something special you've been saving for, your Wishlist helps you keep track of your planned purchases.\n\nSimply enter the item's name, category, estimated price, and priority. You can update the estimated price whenever it changes and check your list to see which goals you're working toward.\n\nWhen you're finally ready to purchase an item, follow the app's purchase flow so the amount is properly reflected in the appropriate budget category.\n\nA little planning today can help you reach your goals tomorrow!",
+      image:'instruction-images/wishlist.jpg', imageAlt:'EUnify wishlist items and estimated costs'
     },
     {
-      name:'Reports and Data', target:'reportsToggle', activatePanel:'reportsPanel',
-      text:'Reports and Data helps you review your money received, expenses, and other budget activity for a selected year. Use the report controls to explore totals and transaction details. You can download a CSV report, print or save a PDF, or export a backup. Keep a backup somewhere safe, especially before changing devices or clearing browser data.',
-      image:'instruction-images/reports-data.jpg', imageAlt:'PesoPlan reports, yearly totals, and data tools'
+      name:'Reports and Data', title:"Let's take a look at your financial progress!", target:'reportsToggle', activatePanel:'reportsPanel',
+      text:"Curious about how you've been managing your money? Reports and Data is here to help!\n\nThis section gives you a better picture of your financial activity, including the money you've received, your expenses, and other recorded budget activities for your selected year.\n\nExplore your yearly totals and transaction details to see where your money comes from and where it goes.\n\nNeed a copy of your records? You can download a CSV report, print or save a PDF, or export a backup of your data.\n\nHere's a friendly reminder: Keep a backup somewhere safe, especially before switching devices or clearing your browser data. It's always better to have an extra copy of your important records!",
+      image:'instruction-images/reports-data.jpg', imageAlt:'EUnify reports, yearly totals, and data tools'
     },
     {
-      name:'Recent Activities', target:'activityToggle', activatePanel:'activityPanel',
-      text:'Recent Activities shows your recorded money received and expenses, with the newest entries first. Review the date, transaction type, description, category, and amount to check that your records are correct. The list starts with the most recent entries; use View more transactions to browse older activity when available.',
-      image:'instruction-images/recent-activities.jpg', imageAlt:'PesoPlan recent activities transaction list'
+      name:'Recent Activities', title:'Keep an eye on your latest transactions!', target:'activityToggle', activatePanel:'activityPanel',
+      text:"Want to double-check your recent spending or money received? You can find your recorded transactions right here!\n\nRecent Activities keeps your latest money received and expenses in one convenient place, with the newest transactions appearing first.\n\nYou can review important details such as the date, transaction type, description, category, and amount to make sure everything is recorded correctly.\n\nLooking for an older transaction? Simply select View more transactions to browse previous activities when available.\n\nIt's an easy way to stay updated and keep your budget records in check!",
+      image:'instruction-images/recent-activities.jpg', imageAlt:'EUnify recent activities transaction list'
     },
     {
-      name:'Paid History', target:'paidBillsSection',
-      text:'Paid History keeps a record of reminders and expenses that you have marked as paid. Use the category filter to narrow the list, then open a bill or expense name to review its payment history. This section is useful for checking what has already been settled and avoiding duplicate payments.',
-      image:'instruction-images/paid-history.jpg', imageAlt:'PesoPlan paid history list with completed payments'
+      name:'Paid History', title:"Already paid? We've got it recorded!", target:'paidBillsSection',
+      text:"Wondering which bills or expenses you've already settled? You can check them here!\n\nPaid History keeps a record of reminders and expenses that you've marked as paid, making it easier to review your completed payments whenever you need to.\n\nWant to find a specific payment? Use the category filter to narrow down your list, then select a bill or expense name to review its payment history.\n\nThis way, you can keep track of what you've already paid, stay organized, and avoid accidentally paying for something twice.",
+      image:'instruction-images/paid-history.jpg', imageAlt:'EUnify paid history list with completed payments'
     }
   ];
 
@@ -3325,7 +3331,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   });
 
   function showExplanation(feature) {
-    title.textContent = feature.name;
+    title.textContent = feature.title || feature.name;
     description.textContent = feature.text;
     // Every feature points to its own file, so visuals can be replaced independently.
     explanationImageFrame.hidden = !feature.image;
@@ -3335,7 +3341,18 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       explanationImage.src = feature.image;
     }
     explanation.hidden = false;
-    document.getElementById('guideExplanationGotIt')?.focus();
+
+    // Always begin each instruction at the top so its title is visible first.
+    const guideDialog = explanation.querySelector('.guide-dialog');
+    const gotItButton = document.getElementById('guideExplanationGotIt');
+    if (guideDialog) guideDialog.scrollTop = 0;
+
+    // Move keyboard focus without allowing the browser to scroll down to the button.
+    gotItButton?.focus({ preventScroll: true });
+
+    // Reset once more after the dialog becomes visible, in case the browser
+    // restores its previous scroll position while laying out the popup.
+    if (guideDialog) guideDialog.scrollTop = 0;
   }
 
   function openFeature(feature) {
@@ -3446,7 +3463,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./service-worker.js")
-      .catch(error => console.error("PesoPlan offline setup failed:", error));
+      .catch(error => console.error("EUnify offline setup failed:", error));
   });
 }
 </script>

@@ -1,4 +1,4 @@
-PESOPLAN INSTRUCTION IMAGE SLOTS
+EUNIFY INSTRUCTION IMAGE SLOTS
 
 Each feature in the floating instruction guide has its own image file. Replace the matching JPG with your own screenshot or visual, keeping the exact filename and this folder location.
 
