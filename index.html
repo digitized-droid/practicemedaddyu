@@ -616,7 +616,110 @@ td strong { font-size:11px; }
 
 .recent-activity-more { display:flex; justify-content:center; padding:14px 0 2px; }
 .recent-activity-more .btn { min-width:190px; }
-\n</style>
+
+/* Circular, draggable PesoPlan guide bubble. It stays flush with the far-right edge. */
+#guideBubble {
+  position:fixed;
+  right:0;
+  top:90px; /* directly below the header on first load */
+  z-index:9998;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 48px;
+  width:48px;
+  height:48px;
+  min-width:48px;
+  min-height:48px;
+  max-width:48px;
+  max-height:48px;
+  box-sizing:border-box;
+  padding:0;
+  border:2px solid var(--site-secondary);
+  border-radius:50%;
+  background:var(--site-secondary);
+  color:var(--site-on-secondary);
+  box-shadow:0 4px 14px rgba(0,0,0,.24);
+  cursor:grab;
+  touch-action:none;
+  user-select:none;
+  overflow:hidden;
+  font-size:0;
+  line-height:0;
+}
+/* The button has display:flex, so explicitly preserve the HTML hidden state. */
+#guideBubble[hidden] { display:none !important; }
+#guideBubble:active { cursor:grabbing; }
+#guideBubble:focus-visible { outline:3px solid var(--site-primary); outline-offset:3px; }
+#guideBubble img {
+  display:block;
+  width:100%;
+  height:100%;
+  max-width:100%;
+  max-height:100%;
+  object-fit:cover;
+  object-position:center;
+  border-radius:50%;
+}
+#guideBubble .guide-bubble-label { display:none; }
+.guide-menu {
+  position:fixed; right:56px; top:90px; z-index:9999; width:min(280px,calc(100vw - 64px));
+  max-height:min(62vh,540px); overflow-y:auto; overscroll-behavior:contain;
+  background:var(--surface); color:var(--site-on-background);
+  border:1px solid var(--line); border-radius:18px; box-shadow:0 12px 32px rgba(0,0,0,.20); padding:14px;
+}
+.guide-menu[hidden], .guide-overlay[hidden] { display:none!important; }
+.guide-menu h3 { margin:0 0 5px; font-size:16px; }
+.guide-menu p { margin:0 0 12px; color:var(--muted); font-size:12px; line-height:1.5; }
+.guide-feature-list { display:grid; gap:6px; }
+.guide-feature-list button { text-align:left; width:100%; border:1px solid var(--line); border-radius:10px; padding:10px 11px; background:var(--surface-soft); color:var(--site-on-background); font:inherit; font-size:12px; cursor:pointer; }
+.guide-feature-list button:hover, .guide-feature-list button:focus-visible { border-color:var(--site-primary); outline-color:var(--site-primary); }
+.guide-overlay {
+  position:fixed; inset:0; z-index:10000; display:grid; place-items:center; padding:18px;
+  background:rgba(10,18,14,.58);
+}
+.guide-dialog {
+  width:min(480px,100%); max-height:min(88vh,760px); overflow:auto; background:var(--surface); color:var(--site-on-background);
+  border:1px solid var(--line); border-radius:20px; padding:22px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+.guide-dialog h3 { margin:0 0 9px; font-size:20px; }
+.guide-dialog p { margin:0; color:var(--muted); font-size:14px; line-height:1.65; white-space:pre-line; }
+/* Each guide feature has its own replaceable visual. Contain preserves the whole image. */
+.guide-image-frame {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  min-height:170px;
+  margin:16px 0 0;
+  padding:12px;
+  box-sizing:border-box;
+  background:var(--surface-soft);
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+}
+.guide-image-frame[hidden] { display:none !important; }
+.guide-image-frame img {
+  display:block;
+  width:100%;
+  height:260px;
+  max-width:100%;
+  object-fit:contain;
+  object-position:center;
+  border-radius:8px;
+}
+.guide-dialog-actions { display:flex; justify-content:flex-end; margin-top:16px; }
+.guide-dialog-actions button { border:0; border-radius:10px; padding:11px 20px; background:var(--site-primary); color:var(--site-on-primary); font-weight:800; cursor:pointer; }
+.guide-setting-row { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-top:12px; }
+.guide-setting-row .btn { min-width:190px; }
+@media(max-width:520px) {
+ #guideBubble { right:0; }
+ .guide-menu { right:56px; width:min(280px,calc(100vw - 64px)); max-height:62vh; padding:12px; }
+ .guide-dialog { padding:17px; }
+}
+</style>
 
 <meta name="theme-color" content="#315c4c">
 <meta name="description" content="PesoPlan — a thoughtful personal budget tracker.">
@@ -934,7 +1037,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       <div><div class="eyebrow">Your financial overview</div><h2>Make every peso count.</h2><p class="sub">Track what comes in, what goes out, and what remains for each part of your life.</p></div>
       <div class="date-label" id="todayLabel"></div>
     </div>
-    <section class="summary-grid" aria-label="Available capital">
+    <section class="summary-grid" id="availableCapitalSection" aria-label="Available capital">
       <div class="summary-card primary" style="grid-column:1/-1"><span class="summary-icon">◈</span><div class="card-label">Available capital</div><div class="amount" id="totalBalance">₱0.00</div><div class="card-note">Your current total across all categories</div></div>
     </section>
 
@@ -1153,6 +1256,13 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
           </div>
           <p class="settings-note">Matching logo files are loaded from <code>logos/1.png</code> through <code>logos/50.png</code>. If a numbered logo has not been uploaded yet, PesoPlan uses the original logo.</p>
         </section>
+        <section class="settings-subsection" aria-labelledby="guideBubbleSettingsTitle">
+          <div class="settings-subhead"><div><h4 id="guideBubbleSettingsTitle">Instruction bubble</h4><p class="panel-desc">Show or hide the circular floating guide on the side of the website. Your choice is saved on this device and synchronized to your cloud account when connected.</p></div></div>
+          <div class="guide-setting-row">
+            <span class="settings-note" id="guideBubbleSettingStatus" aria-live="polite">The instruction bubble is enabled.</span>
+            <button class="btn btn-primary" type="button" id="toggleGuideBubbleBtn" aria-pressed="true">Hide instruction bubble</button>
+          </div>
+        </section>
         <section class="settings-subsection">
           <div class="settings-subhead"><div><h4>Reset PesoPlan data</h4><p class="panel-desc">Restore the default categories and clear reminders, wishlist items, transactions, balances, reports, and paid history.</p></div></div>
           <p class="settings-warning">This removes the current tracker records from this device and, when signed in, synchronizes the reset to your cloud account. Export a backup first if you may need these records later.</p>
@@ -1170,6 +1280,33 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
           </section>
 
   </div>
+</div>
+
+
+<div class="guide-overlay" id="guideWelcomeOverlay" hidden>
+  <section class="guide-dialog" role="dialog" aria-modal="true" aria-labelledby="guideWelcomeTitle">
+    <h3 id="guideWelcomeTitle">Welcome to PesoPlan! 👋</h3>
+    <p>Welcome! PesoPlan has a round instruction bubble attached to the far-right edge of the page, just below the header. Select <strong>Got it</strong>, then tap that bubble to open the feature guide. Choose any item in the list to jump to that part of the website and read its instructions.</p>
+    <div class="guide-dialog-actions"><button type="button" id="guideWelcomeGotIt">Got it</button></div>
+  </section>
+</div>
+<button class="guide-bubble" id="guideBubble" type="button" aria-label="Open PesoPlan instruction guide" aria-expanded="false" aria-controls="guideMenu" title="Open instruction guide" hidden>
+  <img id="guideBubbleLogo" src="logos/1.png" alt=""><span class="guide-bubble-label">HELP</span>
+</button>
+<div class="guide-menu" id="guideMenu" hidden>
+  <h3>How can I help?</h3>
+  <p>Select a feature to open that part of PesoPlan and see its instructions.</p>
+  <div class="guide-feature-list" id="guideFeatureList"></div>
+</div>
+<div class="guide-overlay" id="guideExplanationOverlay" hidden>
+  <section class="guide-dialog" role="dialog" aria-modal="true" aria-labelledby="guideExplanationTitle">
+    <h3 id="guideExplanationTitle"></h3>
+    <p id="guideExplanationText"></p>
+    <div class="guide-image-frame" id="guideExplanationImageFrame">
+      <img id="guideExplanationImage" src="instruction-images/sign-in.jpg" alt="Sign in instruction visual">
+    </div>
+    <div class="guide-dialog-actions"><button type="button" id="guideExplanationGotIt">Got it</button></div>
+  </section>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -1331,6 +1468,29 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       save();
       toast('Original PesoPlan theme restored.');
     });
+    const guideToggle = document.getElementById('toggleGuideBubbleBtn');
+    guideToggle?.addEventListener('click', () => {
+      state.guideBubbleEnabled = state.guideBubbleEnabled === false;
+      state.guideBubbleUpdatedAt = Date.now();
+      updateGuideBubbleSettingUI();
+      save();
+      toast(state.guideBubbleEnabled ? 'Instruction bubble shown.' : 'Instruction bubble hidden.');
+    });
+    updateGuideBubbleSettingUI();
+  }
+  function updateGuideBubbleSettingUI() {
+    const enabled = state.guideBubbleEnabled !== false;
+    const button = document.getElementById('toggleGuideBubbleBtn');
+    const status = document.getElementById('guideBubbleSettingStatus');
+    if (button) {
+      button.textContent = enabled ? 'Hide instruction bubble' : 'Show instruction bubble';
+      button.setAttribute('aria-pressed', String(enabled));
+    }
+    if (status) status.textContent = enabled
+      ? 'The instruction bubble is enabled and visible after the first-visit note is dismissed.'
+      : 'The instruction bubble is hidden until you choose to show it again.';
+    document.documentElement.dataset.guideBubbleEnabled = enabled ? 'true' : 'false';
+    window.dispatchEvent(new CustomEvent('pesoplan:guide-preference-changed', {detail:{enabled}}));
   }
   function load() {
     try {
@@ -1342,10 +1502,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
         if (!syncMeta.categoriesAt && JSON.stringify(CATEGORIES) !== JSON.stringify(DEFAULT_CATEGORIES)) syncMeta.categoriesAt = migratedAt;
         const migrateRecords = items => (Array.isArray(items) ? items : []).map(item =>
           item && item.id != null && !item.updatedAt ? {...item, updatedAt:migratedAt} : item);
-        return {categories:CATEGORIES,themeId:Number(saved.themeId || localStorage.getItem(THEME_KEY) || 1),themeUpdatedAt:Number(saved.themeUpdatedAt || 0),balances:{...blankBalances(),...saved.balances}, transactions:migrateRecords(saved.transactions), wishes:migrateRecords(saved.wishes), bills:migrateRecords(saved.bills), paidBills:migrateRecords(saved.paidBills), reminderGroups:migrateRecords(saved.reminderGroups && saved.reminderGroups.length ? saved.reminderGroups : DEFAULT_REMINDER_GROUPS.map(g=>({...g}))), deletedTransactionIds:Array.isArray(saved.deletedTransactionIds)?saved.deletedTransactionIds:[], deletedBillIds:Array.isArray(saved.deletedBillIds)?saved.deletedBillIds:[], deletedWishIds:Array.isArray(saved.deletedWishIds)?saved.deletedWishIds:[], deletedReminderGroupIds:Array.isArray(saved.deletedReminderGroupIds)?saved.deletedReminderGroupIds:[], deletedPaidBillIds:Array.isArray(saved.deletedPaidBillIds)?saved.deletedPaidBillIds:[], deletedCategoryIds:Array.isArray(saved.deletedCategoryIds)?saved.deletedCategoryIds:[], _syncMeta:syncMeta};
+        return {categories:CATEGORIES,themeId:Number(saved.themeId || localStorage.getItem(THEME_KEY) || 1),themeUpdatedAt:Number(saved.themeUpdatedAt || 0),guideBubbleEnabled:saved.guideBubbleEnabled !== false,guideBubbleUpdatedAt:Number(saved.guideBubbleUpdatedAt || 0),balances:{...blankBalances(),...saved.balances}, transactions:migrateRecords(saved.transactions), wishes:migrateRecords(saved.wishes), bills:migrateRecords(saved.bills), paidBills:migrateRecords(saved.paidBills), reminderGroups:migrateRecords(saved.reminderGroups && saved.reminderGroups.length ? saved.reminderGroups : DEFAULT_REMINDER_GROUPS.map(g=>({...g}))), deletedTransactionIds:Array.isArray(saved.deletedTransactionIds)?saved.deletedTransactionIds:[], deletedBillIds:Array.isArray(saved.deletedBillIds)?saved.deletedBillIds:[], deletedWishIds:Array.isArray(saved.deletedWishIds)?saved.deletedWishIds:[], deletedReminderGroupIds:Array.isArray(saved.deletedReminderGroupIds)?saved.deletedReminderGroupIds:[], deletedPaidBillIds:Array.isArray(saved.deletedPaidBillIds)?saved.deletedPaidBillIds:[], deletedCategoryIds:Array.isArray(saved.deletedCategoryIds)?saved.deletedCategoryIds:[], _syncMeta:syncMeta};
       }
     } catch (e) {}
-    return {categories:CATEGORIES,themeId:Number(localStorage.getItem(THEME_KEY) || 1),themeUpdatedAt:0,balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[], reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), deletedTransactionIds:[], deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
+    return {categories:CATEGORIES,themeId:Number(localStorage.getItem(THEME_KEY) || 1),themeUpdatedAt:0,guideBubbleEnabled:true,guideBubbleUpdatedAt:0,balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[], reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), deletedTransactionIds:[], deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
   }
   // Cloud sync uses one private JSON record per signed-in user.
   // Only the Supabase project URL and publishable/anon key belong in the browser.
@@ -1518,7 +1678,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       },
       themeId: Number(local.themeUpdatedAt || 0) > Number(remote?.themeUpdatedAt || 0)
         ? Number(local.themeId || 1) : Number(remote.themeId || local.themeId || 1),
-      themeUpdatedAt: Math.max(Number(local.themeUpdatedAt || 0), Number(remote?.themeUpdatedAt || 0))
+      themeUpdatedAt: Math.max(Number(local.themeUpdatedAt || 0), Number(remote?.themeUpdatedAt || 0)),
+      guideBubbleEnabled: Number(local.guideBubbleUpdatedAt || 0) > Number(remote?.guideBubbleUpdatedAt || 0)
+        ? local.guideBubbleEnabled !== false : remote?.guideBubbleEnabled !== false,
+      guideBubbleUpdatedAt: Math.max(Number(local.guideBubbleUpdatedAt || 0), Number(remote?.guideBubbleUpdatedAt || 0))
     } : {
       ...local,
       transactions: [...transactionMap.values()],
@@ -1606,6 +1769,8 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       categories: CATEGORIES,
       themeId: Number(remoteState.themeId || state.themeId || 1),
       themeUpdatedAt: Number(remoteState.themeUpdatedAt || state.themeUpdatedAt || 0),
+      guideBubbleEnabled: remoteState.guideBubbleEnabled !== false,
+      guideBubbleUpdatedAt: Number(remoteState.guideBubbleUpdatedAt || state.guideBubbleUpdatedAt || 0),
       reminderGroups: Array.isArray(remoteState.reminderGroups) && remoteState.reminderGroups.length ? remoteState.reminderGroups : DEFAULT_REMINDER_GROUPS.map(g=>({...g})),
       balances: { ...blankBalances(), ...remoteState.balances },
       transactions: remoteState.transactions,
@@ -1626,6 +1791,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       lastSavedSnapshot = JSON.stringify(state);
     } catch (e) {}
     applyTheme(state.themeId || 1, false);
+    updateGuideBubbleSettingUI();
     render();
     return true;
   }
@@ -1676,8 +1842,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
         } catch (e) {}
         CATEGORIES = DEFAULT_CATEGORIES.map(c => ({...c}));
         try { localStorage.removeItem(THEME_KEY); } catch (e) {}
-        state = {categories:CATEGORIES, themeId:1, themeUpdatedAt:0, balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[],
+        state = {categories:CATEGORIES, themeId:1, themeUpdatedAt:0, guideBubbleEnabled:true, guideBubbleUpdatedAt:0, balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[],
           reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), deletedTransactionIds:[], deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
+        updateGuideBubbleSettingUI();
       }
       try { localStorage.setItem(ownerKey, nextUser.id); } catch (e) {}
       if (previousOwner !== nextUser.id) applyTheme(1, false);
@@ -1793,8 +1960,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
         }
       } catch (e) {}
       CATEGORIES = DEFAULT_CATEGORIES.map(c => ({...c}));
-      state = {categories:CATEGORIES, balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[],
+      state = {categories:CATEGORIES, themeId:1, themeUpdatedAt:0, guideBubbleEnabled:true, guideBubbleUpdatedAt:0, balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[],
         reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), deletedTransactionIds:[], deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
+      updateGuideBubbleSettingUI();
       render();
       updateCloudAccountUI();
       setCloudStatus('● Signed out · this device is cleared');
@@ -2041,7 +2209,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
     rows.innerHTML = visible.length ? visible.map(t => {
       const isIncome = t.type === 'income';
-      return `<tr><td>${escapeHTML(t.date)}</td><td class="${isIncome?'type-income':'type-expense'}">${isIncome?'Money received':'Expense'}</td><td><strong>${escapeHTML(t.note || (isIncome?'Added capital':'Purchase'))}</strong></td><td>${isIncome?'All categories':escapeHTML(category(t.category)?.name || '—')}</td><td class="${isIncome?'type-income':'type-expense'}">${isIncome?'+':'−'}${peso(t.amount)}</td><td class="no-print"><button class="icon-btn" title="Delete transaction and reverse its effect" data-delete-transaction="${t.id}">✕</button></td></tr>`;
+      return `<tr><td>${escapeHTML(t.date)}</td><td class="${isIncome?'type-income':'type-expense'}">${isIncome?'Money received':'Expense'}</td><td><strong>${escapeHTML(t.note || (isIncome?'Added capital':'Purchase'))}</strong></td><td>${isIncome ? escapeHTML((t.category && category(t.category)?.name) || (Array.isArray(t.allocations) && t.allocations.length === 1 ? category(t.allocations[0].category)?.name : '') || 'All categories') : escapeHTML(category(t.category)?.name || '—')}</td><td class="${isIncome?'type-income':'type-expense'}">${isIncome?'+':'−'}${peso(t.amount)}</td><td class="no-print"><button class="icon-btn" title="Delete transaction and reverse its effect" data-delete-transaction="${t.id}">✕</button></td></tr>`;
     }).join('') : '<tr><td colspan="6" class="empty">No transactions yet. Add money received or record your first expense.</td></tr>';
 
     const hasMoreThanLimit = sorted.length > RECENT_ACTIVITY_LIMIT;
@@ -2701,6 +2869,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     CATEGORIES = DEFAULT_CATEGORIES.map(c => ({...c}));
     state = {
       categories: CATEGORIES,
+      themeId: 1,
+      themeUpdatedAt: now,
+      guideBubbleEnabled: state.guideBubbleEnabled !== false,
+      guideBubbleUpdatedAt: Number(state.guideBubbleUpdatedAt || 0),
       balances: blankBalances(),
       transactions: [],
       wishes: [],
@@ -2724,6 +2896,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     reportSelectedMonth = null;
     reportSelectedDay = null;
     applyTheme(1, true);
+    updateGuideBubbleSettingUI();
     save();
     render();
     renderCategorySettings();
@@ -2987,7 +3160,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       const data = JSON.parse(await file.text());
       if (!data.balances || !Array.isArray(data.transactions) || !Array.isArray(data.wishes)) throw new Error('Invalid backup');
       if (!await showConfirm('Import this backup? It will replace the data currently saved in this browser.')) return;
-      if (Array.isArray(data.categories) && data.categories.length) CATEGORIES = data.categories.map(c=>({...c})); state = {categories:CATEGORIES,themeId:Number(data.themeId || state.themeId || 1),themeUpdatedAt:Number(data.themeUpdatedAt || Date.now()),reminderGroups:Array.isArray(data.reminderGroups)&&data.reminderGroups.length?data.reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})),balances:{...blankBalances(),...data.balances},transactions:data.transactions,wishes:data.wishes,bills:Array.isArray(data.bills)?data.bills:[],paidBills:Array.isArray(data.paidBills)?data.paidBills:[]}; applyTheme(state.themeId,false); save(); render(); toast('Backup imported successfully.');
+      if (Array.isArray(data.categories) && data.categories.length) CATEGORIES = data.categories.map(c=>({...c})); state = {categories:CATEGORIES,themeId:Number(data.themeId || state.themeId || 1),themeUpdatedAt:Number(data.themeUpdatedAt || Date.now()),guideBubbleEnabled:data.guideBubbleEnabled === undefined ? state.guideBubbleEnabled !== false : data.guideBubbleEnabled !== false,guideBubbleUpdatedAt:Number(data.guideBubbleUpdatedAt || state.guideBubbleUpdatedAt || 0),reminderGroups:Array.isArray(data.reminderGroups)&&data.reminderGroups.length?data.reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})),balances:{...blankBalances(),...data.balances},transactions:data.transactions,wishes:data.wishes,bills:Array.isArray(data.bills)?data.bills:[],paidBills:Array.isArray(data.paidBills)?data.paidBills:[]}; applyTheme(state.themeId,false); updateGuideBubbleSettingUI(); save(); render(); toast('Backup imported successfully.');
     } catch (err) { toast('Could not import this file. Please choose a valid PesoPlan backup.'); }
     e.target.value='';
   });
@@ -3033,6 +3206,239 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   });
   initSelects(); render();
   initializeCloud();
+})();
+</script>
+
+
+<script>
+(() => {
+  // The welcome acknowledgement is intentionally device/browser-local, not cloud-synced.
+  const welcomeKey = 'pesoplan-guide-welcome-seen-v1';
+  const bubble = document.getElementById('guideBubble');
+  const menu = document.getElementById('guideMenu');
+  const list = document.getElementById('guideFeatureList');
+  const welcome = document.getElementById('guideWelcomeOverlay');
+  const explanation = document.getElementById('guideExplanationOverlay');
+  const title = document.getElementById('guideExplanationTitle');
+  const description = document.getElementById('guideExplanationText');
+  const explanationImageFrame = document.getElementById('guideExplanationImageFrame');
+  const explanationImage = document.getElementById('guideExplanationImage');
+  const bubbleLogo = document.getElementById('guideBubbleLogo');
+  if (!bubble || !menu || !list || !welcome || !explanation || !explanationImageFrame || !explanationImage) return;
+
+  let hasSeenWelcome = false;
+  try { hasSeenWelcome = localStorage.getItem(welcomeKey) === '1'; } catch (_) {}
+
+  const guideIsEnabled = () => document.documentElement.dataset.guideBubbleEnabled !== 'false';
+  function syncGuideLogo() {
+    const themeId = Number(document.body.dataset.theme || 1);
+    bubbleLogo.onerror = () => { bubbleLogo.onerror = null; bubbleLogo.src = 'logos/1.png'; };
+    bubbleLogo.src = `logos/${themeId}.png`;
+  }
+  function setBubbleEnabled(enabled) {
+    if (!enabled) {
+      bubble.hidden = true;
+      menu.hidden = true;
+      welcome.hidden = true;
+      explanation.hidden = true;
+      bubble.setAttribute('aria-expanded', 'false');
+      return;
+    }
+    if (!hasSeenWelcome) {
+      bubble.hidden = true;
+      welcome.hidden = false;
+    } else {
+      welcome.hidden = true;
+      bubble.hidden = false;
+    }
+  }
+  syncGuideLogo();
+  new MutationObserver(syncGuideLogo).observe(document.body, {attributes:true, attributeFilter:['data-theme']});
+  window.addEventListener('pesoplan:guide-preference-changed', event => {
+    setBubbleEnabled(Boolean(event.detail?.enabled));
+  });
+
+  const features = [
+    {
+      name:'Sign in', target:'cloudAccountBtn', activate:true,
+      text:'Use Sign in to connect your PesoPlan account. Enter the email address and password for your account, or create an account if you are new. Once you are signed in, PesoPlan can synchronize supported budget records with your cloud account so you can continue using the same account on another device. Your device still keeps its offline copy when the internet is unavailable.',
+      image:'instruction-images/sign-in.jpg', imageAlt:'Sign in and cloud account screen in PesoPlan'
+    },
+    {
+      name:'Settings', target:'openAppSettingsBtn', activate:true,
+      text:'Open Settings to personalize PesoPlan. Choose a website theme and apply it, show or hide the floating instruction bubble, or use the reset controls when you need to manage your tracker data. Theme and guide preferences are saved by PesoPlan; read each confirmation carefully before using a reset option.',
+      image:'instruction-images/settings.jpg', imageAlt:'PesoPlan settings screen and theme options'
+    },
+    {
+      name:'Available Capital', target:'availableCapitalSection',
+      text:'Available Capital gives you a quick view of the money currently left in your budget. The summary changes as you record money received, expenses, and payments. Check this area before adding a new expense so you can see the amount currently available across your budget categories.',
+      image:'instruction-images/available-capital.jpg', imageAlt:'Available Capital summary in PesoPlan'
+    },
+    {
+      name:'Reminders', target:'billsSection',
+      text:'Use Reminders to keep track of bills, subscriptions, school expenses, and other payments you need to remember. Add a reminder with its name, amount, category, due date, and priority. When you finish paying it, mark it as paid. PesoPlan records the payment in Paid history and updates the related budget balance.',
+      image:'instruction-images/reminders.jpg', imageAlt:'PesoPlan reminders and upcoming payment list'
+    },
+    {
+      name:'Add Money Received', target:'incomeForm',
+      text:'Use Add Money Received whenever you receive an allowance, salary, gift, refund, or other funds. Enter the amount and date, then choose where the money should go. Select All Categories to distribute it using your saved allocation percentages, or choose one category to place the full amount there. Add a source or note if helpful, then submit the form to update your capital.',
+      image:'instruction-images/add-money-received.jpg', imageAlt:'Add Money Received form in PesoPlan'
+    },
+    {
+      name:'Add an Expense', target:'expenseForm',
+      text:'Use Add an Expense to record money you spend. Enter a short description, amount, date, and the category that paid for it. Check that the selected category is correct before saving. The expense is then included in your budget totals and appears in Recent Activities, helping you keep track of where your money goes.',
+      image:'instruction-images/add-expense.jpg', imageAlt:'Add an Expense form in PesoPlan'
+    },
+    {
+      name:'Categories', target:'categorySettingsToggle', activate:true,
+      text:'Categories organize your money into budget groups, such as Food, Transportation, School, or Savings. Review each category balance to see how much is available. Open the category settings to add or rename a category and adjust its allocation percentage. Make sure the allocation percentages total 100% before saving your changes.',
+      image:'instruction-images/categories.jpg', imageAlt:'PesoPlan category balances and category settings'
+    },
+    {
+      name:'Wishlist', target:'shoppingToggle', activatePanel:'shoppingPanel',
+      text:'Wishlist is for items or purchases you are planning and saving toward. Add the item name, category, estimated price, and priority. You can update an estimate as prices change and use the list to monitor your goals. When you record a related purchase, follow the app’s purchase flow so the amount is reflected in the appropriate category.',
+      image:'instruction-images/wishlist.jpg', imageAlt:'PesoPlan wishlist items and estimated costs'
+    },
+    {
+      name:'Reports and Data', target:'reportsToggle', activatePanel:'reportsPanel',
+      text:'Reports and Data helps you review your money received, expenses, and other budget activity for a selected year. Use the report controls to explore totals and transaction details. You can download a CSV report, print or save a PDF, or export a backup. Keep a backup somewhere safe, especially before changing devices or clearing browser data.',
+      image:'instruction-images/reports-data.jpg', imageAlt:'PesoPlan reports, yearly totals, and data tools'
+    },
+    {
+      name:'Recent Activities', target:'activityToggle', activatePanel:'activityPanel',
+      text:'Recent Activities shows your recorded money received and expenses, with the newest entries first. Review the date, transaction type, description, category, and amount to check that your records are correct. The list starts with the most recent entries; use View more transactions to browse older activity when available.',
+      image:'instruction-images/recent-activities.jpg', imageAlt:'PesoPlan recent activities transaction list'
+    },
+    {
+      name:'Paid History', target:'paidBillsSection',
+      text:'Paid History keeps a record of reminders and expenses that you have marked as paid. Use the category filter to narrow the list, then open a bill or expense name to review its payment history. This section is useful for checking what has already been settled and avoiding duplicate payments.',
+      image:'instruction-images/paid-history.jpg', imageAlt:'PesoPlan paid history list with completed payments'
+    }
+  ];
+
+  features.forEach(feature => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = feature.name;
+    button.addEventListener('click', () => openFeature(feature));
+    list.appendChild(button);
+  });
+
+  function showExplanation(feature) {
+    title.textContent = feature.name;
+    description.textContent = feature.text;
+    // Every feature points to its own file, so visuals can be replaced independently.
+    explanationImageFrame.hidden = !feature.image;
+    if (feature.image) {
+      explanationImage.alt = feature.imageAlt || `${feature.name} instruction visual`;
+      explanationImage.onerror = () => { explanationImageFrame.hidden = true; };
+      explanationImage.src = feature.image;
+    }
+    explanation.hidden = false;
+    document.getElementById('guideExplanationGotIt')?.focus();
+  }
+
+  function openFeature(feature) {
+    menu.hidden = true;
+    bubble.setAttribute('aria-expanded', 'false');
+    const target = feature.target ? document.getElementById(feature.target) : null;
+    if (target) {
+      if (feature.activatePanel) {
+        const panel = document.getElementById(feature.activatePanel);
+        if (panel && panel.hidden) target.click();
+      } else if (feature.target === 'categorySettingsToggle') {
+        const panel = document.getElementById('categorySettingsPanel');
+        if (panel && panel.hidden) target.click();
+      } else if (feature.activate) {
+        target.click();
+      }
+      target.scrollIntoView({behavior:'smooth', block:'center'});
+    } else {
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+    window.setTimeout(() => showExplanation(feature), 350);
+  }
+
+  document.getElementById('guideWelcomeGotIt').addEventListener('click', () => {
+    welcome.hidden = true;
+    hasSeenWelcome = true;
+    try { localStorage.setItem(welcomeKey, '1'); } catch (_) {}
+    bubble.hidden = !guideIsEnabled();
+    if (!bubble.hidden) bubble.focus();
+  });
+  document.getElementById('guideExplanationGotIt').addEventListener('click', () => {
+    explanation.hidden = true;
+  });
+
+  function positionGuideMenu() {
+    const rect = bubble.getBoundingClientRect();
+    const menuHeight = menu.getBoundingClientRect().height || Math.min(menu.scrollHeight, window.innerHeight * .62);
+    const idealTop = rect.top + rect.height / 2 - menuHeight / 2;
+    const maxTop = Math.max(8, window.innerHeight - menuHeight - 8);
+    menu.style.top = Math.max(8, Math.min(idealTop, maxTop)) + 'px';
+  }
+  bubble.addEventListener('click', () => {
+    if (bubble.dataset.justDragged === '1') return;
+    menu.hidden = !menu.hidden;
+    bubble.setAttribute('aria-expanded', String(!menu.hidden));
+    if (!menu.hidden) positionGuideMenu();
+  });
+  window.addEventListener('resize', () => {
+    if (!menu.hidden) positionGuideMenu();
+    const maxTop = Math.max(0, window.innerHeight - bubble.offsetHeight);
+    const currentTop = parseFloat(bubble.style.top || getComputedStyle(bubble).top) || 90;
+    if (currentTop > maxTop) bubble.style.top = `${maxTop}px`;
+  });
+
+  // Vertical drag only: the horizontal position is locked to the far-right screen edge.
+  let dragging = false, dragged = false, startY = 0, startTop = 0, pointerId = null;
+  bubble.addEventListener('pointerdown', event => {
+    if (event.button !== undefined && event.button !== 0) return;
+    dragging = true;
+    dragged = false;
+    pointerId = event.pointerId;
+    startY = event.clientY;
+    startTop = bubble.getBoundingClientRect().top;
+    bubble.setPointerCapture(pointerId);
+  });
+  bubble.addEventListener('pointermove', event => {
+    if (!dragging || event.pointerId !== pointerId) return;
+    const delta = event.clientY - startY;
+    if (Math.abs(delta) > 5) dragged = true;
+    if (dragged) {
+      const maxTop = Math.max(0, window.innerHeight - bubble.offsetHeight);
+      const nextTop = Math.min(maxTop, Math.max(0, startTop + delta));
+      bubble.style.top = `${nextTop}px`;
+      if (!menu.hidden) positionGuideMenu();
+    }
+  });
+  const stopDrag = () => {
+    if (!dragging) return;
+    dragging = false;
+    if (dragged) {
+      bubble.dataset.justDragged = '1';
+      window.setTimeout(() => { delete bubble.dataset.justDragged; dragged = false; }, 100);
+    }
+    pointerId = null;
+  };
+  bubble.addEventListener('pointerup', stopDrag);
+  bubble.addEventListener('pointercancel', stopDrag);
+
+  document.addEventListener('click', event => {
+    if (!menu.hidden && !menu.contains(event.target) && !bubble.contains(event.target)) {
+      menu.hidden = true;
+      bubble.setAttribute('aria-expanded', 'false');
+    }
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      menu.hidden = true;
+      explanation.hidden = true;
+      bubble.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  setBubbleEnabled(guideIsEnabled());
 })();
 </script>
 

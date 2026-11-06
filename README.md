@@ -15,3 +15,7 @@ Keep the `logos` folder beside `index.html`. `logos/1.png` is included. Add your
 
 ## Deployment
 Follow `UPLOAD-INSTRUCTIONS.txt`. Do not clear browser storage or reset your Supabase table as part of deployment.
+
+
+## Instruction guide images
+The floating guide includes a separate visual for each feature. Replace the JPG files in `instruction-images/` with your own screenshots while keeping each filename unchanged. The popup uses `object-fit: contain`, so the full image remains visible without cropping. The service worker refreshes these files while online and keeps the latest fetched versions available offline. See `instruction-images/README.txt` for the filename-to-feature list.

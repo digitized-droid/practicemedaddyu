@@ -20,6 +20,7 @@ Keep these existing files and folders:
 - manifest.webmanifest
 - any existing icons/ assets
 - logos/ folder (merge the supplied logos/1.png into it; do not delete your other numbered logo files)
+- instruction-images/ folder (upload the whole folder; it contains one replaceable visual per guide feature)
 
 The package includes logos/1.png. Add your own logo images logos/2.png through logos/50.png when ready. Do not rename them; the theme number is used as the filename.
 
@@ -45,3 +46,6 @@ VALIDATION PERFORMED FOR THIS PACKAGE
 - The 50 theme definitions were parsed from the supplied theme specification; all nine color roles are present for every theme.
 - The existing transaction, category, wishlist, bill, paid-history, and cloud-merge code paths were retained.
 - Live multi-device Supabase testing cannot be performed from this ZIP alone. After deployment, test offline changes and cloud sync using temporary records before relying on the reset function.
+
+INSTRUCTION VISUALS
+The instruction guide now uses separate files in instruction-images/. To add your own visuals, replace the matching JPG file and keep its filename. Do not use one shared practiceinstructionimage.jpg for all features. Images are displayed with contain sizing and padding, so their full contents remain visible without cropping. The service worker refreshes the images while online and saves the newest versions for offline use. After replacing an image, open PesoPlan once while connected. See instruction-images/README.txt for the exact mapping.
