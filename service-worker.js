@@ -1,12 +1,12 @@
 /* EUnify offline app shell for GitHub Pages. Keep this file beside index.html. */
-const CACHE_NAME = "pesoplan-shell-v17-web-push";
+const CACHE_NAME = "pesoplan-shell-v18-account-isolation-fix";
 const APP_SHELL = [
   new URL("./", self.registration.scope).href,
   new URL("./index.html", self.registration.scope).href,
   new URL("./schedules.html", self.registration.scope).href,
   new URL("./manifest.webmanifest", self.registration.scope).href,
   new URL("./supabase-config.js", self.registration.scope).href,
-  new URL("./eunify-push.js", self.registration.scope).href,
+  new URL("./eunify-push.js?v=20261120-account-isolation-fix", self.registration.scope).href,
   new URL("./logos/1.png", self.registration.scope).href,
   new URL("./instruction-images/sign-in.jpg", self.registration.scope).href,
   new URL("./instruction-images/settings.jpg", self.registration.scope).href,

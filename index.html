@@ -1481,7 +1481,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     </div>
   </section>
 </div>
-<script src="eunify-push.js"></script>
+<script src="eunify-push.js?v=20261120-account-isolation-fix"></script>
 <script>
 (() => {
   const DEFAULT_CATEGORIES = [
@@ -2114,7 +2114,22 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     // Detach this browser's push endpoint while the old account's session is
     // still valid. Do not sign out if the server cannot safely detach it.
     try {
-      if (cloudUser && window.EUnifyPush) await window.EUnifyPush.disable(cloudClient, cloudUser.id);
+      if (cloudUser) {
+        // Prefer the current push helper. The direct fallback also handles an older
+        // cached helper that exists but does not expose disable().
+        if (typeof window.EUnifyPush?.disable === 'function') {
+          await window.EUnifyPush.disable(cloudClient, cloudUser.id);
+        } else if ('serviceWorker' in navigator && 'PushManager' in window) {
+          const registration = await navigator.serviceWorker.ready;
+          const subscription = await registration.pushManager.getSubscription();
+          if (subscription) {
+            const { error: detachError } = await cloudClient.rpc('unregister_eunify_push_subscription', {
+              p_endpoint: subscription.endpoint
+            });
+            if (detachError) throw new Error(`Could not remove this device from the signed-out account: ${detachError.message}`);
+          }
+        }
+      }
     } catch (pushError) {
       console.error('EUnify push sign-out cleanup:', pushError);
       cloudModalStatus.textContent = pushError.message || 'Could not safely unregister this device. Please try signing out again.';
