@@ -2041,10 +2041,10 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     );
     const { data: { session } } = await cloudClient.auth.getSession();
     await activateCloudSession(session);
-    if (cloudUser && window.EUnifyPush) { renderPushSettings(); window.EUnifyPush.syncJobs(cloudClient, cloudUser.id, state).catch(console.warn); }
+    if (cloudUser && window.EUnifyPush) { renderPushSettings(); window.EUnifyPush.bindExisting(cloudClient, cloudUser.id).catch(err => console.warn('EUnify push account binding:', err)); window.EUnifyPush.syncJobs(cloudClient, cloudUser.id, state).catch(console.warn); }
     cloudClient.auth.onAuthStateChange((_event, session) => {
       // Defer network work so the auth callback does not block Supabase's internal queue.
-      setTimeout(async () => { await activateCloudSession(session); if (cloudUser && window.EUnifyPush) { renderPushSettings(); window.EUnifyPush.syncJobs(cloudClient, cloudUser.id, state).catch(console.warn); } }, 0);
+      setTimeout(async () => { await activateCloudSession(session); if (cloudUser && window.EUnifyPush) { renderPushSettings(); window.EUnifyPush.bindExisting(cloudClient, cloudUser.id).catch(err => console.warn('EUnify push account binding:', err)); window.EUnifyPush.syncJobs(cloudClient, cloudUser.id, state).catch(console.warn); } }, 0);
     });
   }
 
@@ -2111,6 +2111,15 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
 
   document.getElementById('cloudSignOutBtn').addEventListener('click', async () => {
     if (!cloudClient) return;
+    // Detach this browser's push endpoint while the old account's session is
+    // still valid. Do not sign out if the server cannot safely detach it.
+    try {
+      if (cloudUser && window.EUnifyPush) await window.EUnifyPush.disable(cloudClient, cloudUser.id);
+    } catch (pushError) {
+      console.error('EUnify push sign-out cleanup:', pushError);
+      cloudModalStatus.textContent = pushError.message || 'Could not safely unregister this device. Please try signing out again.';
+      return;
+    }
     const { error } = await cloudClient.auth.signOut();
     if (error) cloudModalStatus.textContent = error.message;
     else {

@@ -23,3 +23,8 @@ The floating guide includes a separate visual for each feature. Replace the JPG 
 ## Device push notifications
 
 The Web Push client, service-worker handlers, SQL migration, and scheduled Edge Function are included. Complete the one-time deployment steps in [PUSH-SETUP.md](PUSH-SETUP.md) before enabling push notifications.
+
+
+### Push notification account isolation
+
+For account-specific device notifications, apply both SQL migrations in `supabase/migrations/` in filename order. The second migration adds secure RPCs used to transfer the current browser subscription to the signed-in account and unregister it on sign-out.

@@ -5,7 +5,7 @@
 ## Included behavior
 
 - Device push, not Supabase Auth email.
-- Each signed-in user registers each device once.
+- Each browser/device subscription belongs to exactly one signed-in account at a time. Signing in with another account automatically transfers that browser endpoint; signing out removes it from the old account while keeping the browser permission.
 - Bill alerts use the due date and due time, the existing `Show reminder` interval, plus optional 24-hour and 12-hour alerts.
 - To-do alerts use 24 hours and 12 hours before the task date/time.
 - Paid bills and completed tasks are excluded; pending jobs are rebuilt when saved.
@@ -32,7 +32,7 @@ Never place the VAPID private key or Supabase service-role key in browser code o
 
 ## 2. Create database tables
 
-Run `supabase/migrations/202611200001_eunify_push.sql` in the Supabase SQL Editor. It creates the subscriptions and scheduled-job tables with per-user Row Level Security.
+Run `supabase/migrations/202611200001_eunify_push.sql` in the Supabase SQL Editor to create the subscriptions and scheduled-job tables. Then run `supabase/migrations/202611200002_eunify_push_account_isolation.sql` to enable safe per-device account reassignment and sign-out cleanup.
 
 ## 3. Deploy the Edge Function
 

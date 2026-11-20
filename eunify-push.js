@@ -75,20 +75,46 @@
     const unique = new Map(jobs.map(job=>[job.dedupe_key,job]));
     return [...unique.values()];
   }
+  async function saveSubscriptionForUser(client, userId, subscription) {
+    if (!client || !userId || !subscription) return false;
+    const json = subscription.toJSON();
+    const {error} = await client.rpc('register_eunify_push_subscription', {
+      p_endpoint: json.endpoint,
+      p_p256dh: json.keys?.p256dh,
+      p_auth: json.keys?.auth
+    });
+    if (error) throw new Error(`Could not assign this device to the signed-in account: ${error.message}. Apply the latest push SQL migration.`);
+    return true;
+  }
+  async function bindExisting(client, userId) {
+    if (!client || !userId || !('serviceWorker' in navigator) || !('PushManager' in window)) return false;
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+    if (!subscription) return false;
+    return saveSubscriptionForUser(client, userId, subscription);
+  }
+  async function disable(client, userId) {
+    if (!client || !userId || !('serviceWorker' in navigator) || !('PushManager' in window)) return false;
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+    if (!subscription) return false;
+    const {error} = await client.rpc('unregister_eunify_push_subscription', {p_endpoint: subscription.endpoint});
+    if (error) throw new Error(`Could not remove this device from the signed-out account: ${error.message}.`);
+    // Keep the browser permission and PushSubscription. A later account can claim
+    // this same endpoint after signing in, without asking for permission again.
+    return true;
+  }
   async function enable(client, userId) {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) throw new Error('This browser does not support Web Push. Try installing EUnify in a supported browser.');
     if (!('Notification' in window)) throw new Error('This browser does not support device notifications.');
     const publicKey = window.EUNIFY_VAPID_PUBLIC_KEY;
     if (!publicKey || publicKey.includes('PASTE_')) throw new Error('Push setup is not finished: add the VAPID public key to supabase-config.js first.');
-    const permission = await Notification.requestPermission();
+    const permission = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
     if (permission !== 'granted') throw new Error('Notification permission was not granted.');
     const registration = await navigator.serviceWorker.ready;
     let subscription = await registration.pushManager.getSubscription();
     if (!subscription) subscription = await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64ToBytes(publicKey)});
-    const json = subscription.toJSON();
-    const row = {user_id:userId,endpoint:json.endpoint,p256dh:json.keys?.p256dh,auth:json.keys?.auth,updated_at:new Date().toISOString()};
-    const {error} = await client.from('eunify_push_subscriptions').upsert(row,{onConflict:'endpoint'});
-    if (error) throw new Error(`Could not save this device subscription: ${error.message}. Apply the SQL in PUSH-SETUP.md.`);
+    await saveSubscriptionForUser(client, userId, subscription);
     return subscription;
   }
   async function syncJobs(client,userId,state) {
@@ -107,5 +133,5 @@
     const {error} = await client.from('eunify_notification_jobs').upsert(rows,{onConflict:'user_id,dedupe_key'});
     if (error) throw error;
   }
-  window.EUnifyPush = {enable,syncJobs,buildJobs};
+  window.EUnifyPush = {enable,bindExisting,disable,syncJobs,buildJobs};
 })();

@@ -874,11 +874,11 @@ async function initCloud(){
     const {data,error}=await client.auth.getSession();
     if(error)throw error;
     user=data.session?.user||null;
-    if(user){setSyncStatus('● Loading your cloud records…');await pullCloud();syncPushJobs();}
+    if(user){setSyncStatus('● Loading your cloud records…');await pullCloud();if(window.EUnifyPush)await window.EUnifyPush.bindExisting(client,user.id).catch(err=>console.warn('EUnify push account binding:',err));syncPushJobs();}
     else setSyncStatus('● Saved on this device');
     client.auth.onAuthStateChange((_event,session)=>{
       user=session?.user||null;
-      if(user){setSyncStatus('● Loading your cloud records…');pullCloud().then(syncPushJobs);}
+      if(user){setSyncStatus('● Loading your cloud records…');pullCloud().then(async()=>{if(window.EUnifyPush)await window.EUnifyPush.bindExisting(client,user.id).catch(err=>console.warn('EUnify push account binding:',err));syncPushJobs();});}
       else setSyncStatus('● Saved on this device');
     });
     if(window.__eunifyScheduleCloudPoll)clearInterval(window.__eunifyScheduleCloudPoll);
