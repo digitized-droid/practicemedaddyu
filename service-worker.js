@@ -1,5 +1,5 @@
 /* EUnify offline app shell for GitHub Pages. Keep this file beside index.html. */
-const CACHE_NAME = "pesoplan-shell-v16-web-push";
+const CACHE_NAME = "pesoplan-shell-v17-web-push";
 const APP_SHELL = [
   new URL("./", self.registration.scope).href,
   new URL("./index.html", self.registration.scope).href,
