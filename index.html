@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EUnify — Personal Budget Tracker</title>
+<link rel="icon" type="image/png" href="title.png">
 <style>
 :root {
   --site-primary: #315c4c;
@@ -202,8 +203,8 @@ td strong { font-size:11px; }
 .wish-category-tabs { display:flex; flex-wrap:wrap; gap:7px; margin:14px 0; }
 .wish-category-tabs button { border:1px solid var(--line); border-radius:999px; padding:7px 11px; background:var(--surface-soft); color:var(--text); font-size:10px; font-weight:750; }
 .wish-category-tabs button.active { background:var(--site-primary); border-color:var(--site-primary); color:white; }
-.wish-group { margin-top:13px; }
-.wish-group-title { display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:800; margin:0 0 8px; color:var(--text); }
+.wish-group { margin-top:6px; }
+.wish-group-title { display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:800; margin:0 0 5px; color:var(--text); }
 .wish-group-title span { color:var(--muted); font-size:10px; font-weight:600; }
 @media print { .collapsible-content[hidden] { display:block!important; } .section-toggle, .wish-category-tabs { display:none!important; } }
 .footer { text-align:center; color:var(--muted); font-size:10px; padding:20px; }
@@ -710,6 +711,11 @@ td strong { font-size:11px; }
   object-position:center;
   border-radius:8px;
 }
+.guide-step-controls { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px; }
+.guide-step-controls[hidden] { display:none !important; }
+.guide-step-controls button { border:1px solid var(--line); border-radius:9px; padding:9px 13px; background:var(--surface-soft); color:var(--site-on-background); font-weight:700; cursor:pointer; }
+.guide-step-controls button:disabled { opacity:.45; cursor:not-allowed; }
+.guide-step-controls span { color:var(--muted); font-size:12px; font-weight:700; }
 .guide-dialog-actions { display:flex; justify-content:flex-end; margin-top:16px; }
 .guide-dialog-actions button { border:0; border-radius:10px; padding:11px 20px; background:var(--site-primary); color:var(--site-on-primary); font-weight:800; cursor:pointer; }
 .guide-setting-row { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-top:12px; }
@@ -719,6 +725,102 @@ td strong { font-size:11px; }
  .guide-menu { right:56px; width:min(280px,calc(100vw - 64px)); max-height:62vh; padding:12px; }
  .guide-dialog { padding:17px; }
 }
+.section-display-blur{filter:blur(7px);opacity:.55;user-select:none;pointer-events:none}
+.section-display-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}.section-display-row select{max-width:190px}
+
+
+/* FINAL WISHLIST OVERRIDE: flat, compact checklist rows */
+#wishList.priority-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+}
+#wishList .wish-group {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+#wishList .wish-group + .wish-group {
+  margin-top: 12px !important;
+}
+#wishList .wish-group-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin: 0 0 3px !important;
+  padding: 0 2px 4px !important;
+}
+#wishList .priority-item,
+#wishList .priority-item.done {
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 6px 4px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+#wishList .priority-item:last-child {
+  border-bottom: 0 !important;
+}
+#wishList .priority-item.done {
+  opacity: .55 !important;
+}
+#wishList .priority-check {
+  width: 16px !important;
+  height: 16px !important;
+  margin: 0 2px 0 0 !important;
+  flex: 0 0 16px !important;
+}
+#wishList .buy-info {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+#wishList .buy-name {
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+}
+#wishList .buy-meta {
+  margin-top: 1px !important;
+  font-size: 10px !important;
+}
+#wishList .buy-price {
+  flex: 0 0 auto !important;
+  margin-left: auto !important;
+  padding-left: 8px !important;
+  font-size: 12px !important;
+}
+#wishList .wish-edit-btn,
+#wishList .icon-btn {
+  flex: 0 0 auto !important;
+}
+#wishCategoryTabs {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 7px !important;
+  margin-bottom: 10px !important;
+}
+#wishCategoryTabs button {
+  cursor: pointer !important;
+}
+@media (max-width: 520px) {
+  #wishList .priority-item {
+    flex-wrap: nowrap !important;
+    padding: 7px 2px !important;
+  }
+  #wishList .buy-info {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+  #wishList .buy-price {
+    margin-left: auto !important;
+    padding-left: 5px !important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#315c4c">
@@ -1030,7 +1132,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <div id="app">
   <header class="topbar">
     <div class="brand"><div class="brand-mark"><img src="logos/1.png" alt="EUnify logo"></div><div><h1>EUnify</h1><small>Your money, thoughtfully divided</small></div></div>
-    <div class="top-actions"><span class="pill">PERSONAL BUDGET</span><span id="saveStatus">● Saved on this device</span><button class="cloud-account-btn" id="cloudAccountBtn" type="button">☁ Connect account</button><button class="cloud-account-btn" id="openAppSettingsBtn" type="button" aria-haspopup="dialog">⚙ Settings</button></div>
+    <div class="top-actions"><a class="cloud-account-btn" href="schedules.html" style="text-decoration:none">▦ Schedules</a><span class="pill">PERSONAL BUDGET</span><span id="saveStatus">● Saved on this device</span><button class="cloud-account-btn" id="cloudAccountBtn" type="button">☁ Connect account</button><button class="cloud-account-btn" id="openAppSettingsBtn" type="button" aria-haspopup="dialog">⚙ Settings</button></div>
   </header>
   <main>
     <div class="welcome">
@@ -1056,9 +1158,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
           <div class="bill-form-wrap no-print" id="billFormWrap" hidden>
             <form id="billForm">
               <div class="bill-form-grid">
-                <div class="field full"><label for="billName">Name of reminder / bill / subscription</label><input id="billName" maxlength="80" placeholder="e.g. Internet, project deadline, subscription" required></div>
+                <div class="field"><label for="billType">Reminder type</label><select id="billType"><option value="expense">Pay money</option><option value="income">Receive money</option></select></div><div class="field"><label for="billCategory">Category for this reminder</label><select id="billCategory"><option value="all">All Categories (distribute automatically)</option></select></div><div class="field full"><label for="billName">Name of reminder / bill / subscription</label><input id="billName" maxlength="80" placeholder="e.g. Internet, project deadline, subscription" required></div>
                 <div class="field"><label for="billAmount">Amount (₱)</label><input id="billAmount" type="number" min="0.01" step="0.01" placeholder="0.00" required></div>
-                <div class="field"><label for="billDueDate">Due date</label><input id="billDueDate" type="date" required></div>
+                <div class="field"><label for="billDueDate">Due date</label><input id="billDueDate" type="date" required></div><div class="field"><label for="billDueTime">Due time</label><input id="billDueTime" type="time" value="09:00" required></div>
                 <div class="field"><label for="billPriority">Payment priority</label><select id="billPriority"><option>Urgent</option><option>High</option><option selected>Medium</option><option>Low</option></select></div>
                 <div class="field"><label for="billRepeat">Repeat</label><select id="billRepeat"><option value="once">One-time event</option><option value="daily">Daily</option><option value="weekdays">Weekdays (Mon–Fri)</option><option value="weekly">Weekly</option><option value="monthly">Monthly (same date)</option><option value="yearly">Yearly</option></select></div>
                 <div class="field"><label for="billReminderLead">Show reminder</label><select id="billReminderLead"><option value="0">On the due date</option><option value="1">1 day before</option><option value="3">3 days before</option><option value="7">7 days before</option><option value="14">14 days before</option><option value="30" selected>30 days before</option><option value="60">60 days before</option><option value="90">90 days before</option></select></div>
@@ -1123,15 +1225,16 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
           <span class="toggle-copy"><span class="toggle-title">♡ Things I want to buy</span><span class="toggle-desc">Open your wishlist, organized by category.</span></span><span class="toggle-arrow">⌄</span>
         </button>
         <div id="shoppingPanel" class="collapsible-content" hidden style="margin-top:18px">
-          <div class="panel-head"><div><h3>My shopping list</h3><div class="panel-desc">Add items and view them one category at a time.</div></div><span class="tag">WISHLIST</span></div>
-          <form id="wishForm" class="inline-form no-print">
+          <div class="panel-head"><div><h3>My shopping list</h3><div class="panel-desc">Your simple purchase checklist.</div></div><button class="btn btn-quiet" type="button" id="wishManageToggle" aria-expanded="false">⚙ Edit list</button></div>
+          <div id="wishManageArea" hidden><form id="wishForm" class="inline-form no-print">
             <div class="field"><label for="wishName">Item</label><input id="wishName" maxlength="70" placeholder="What do you want to buy?" required></div>
             <div class="field"><label for="wishCategory">Category</label><select id="wishCategory"></select></div>
             <div class="field"><label for="wishAmount">Estimated ₱</label><input id="wishAmount" type="number" min="0" step="0.01" placeholder="0.00"></div>
             <button class="btn btn-primary" type="submit">＋ Add</button>
           </form>
           <div class="field no-print" style="max-width:190px;margin-top:12px"><label for="wishPriority">Priority for next item</label><select id="wishPriority"><option>High</option><option selected>Medium</option><option>Low</option></select></div>
-          <div id="wishCategoryTabs" class="wish-category-tabs no-print"></div>
+          </div>
+          <div id="wishCategoryTabs" class="wish-category-tabs no-print" aria-label="Filter wishlist by category"></div>
           <div class="priority-list" id="wishList"></div>
         </div>
       </div>
@@ -1254,14 +1357,24 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
             <button class="btn btn-primary" type="button" id="applyThemeBtn">Apply theme</button>
             <button class="btn btn-quiet" type="button" id="resetThemeBtn">Reset to original theme</button>
           </div>
-          <p class="settings-note">Matching logo files are loaded from <code>logos/1.png</code> through <code>logos/50.png</code>. If a numbered logo has not been uploaded yet, EUnify uses the original logo.</p>
         </section>
+        <section class="settings-subsection" id="sectionDisplaySettings"><div class="settings-subhead"><div><h4>Website section display</h4><p class="panel-desc">Choose how each major section appears across the website.</p></div></div><div id="sectionDisplayRows"></div><p class="settings-note">Preferences save to this device and sync with your cloud account when connected.</p></section>
         <section class="settings-subsection" aria-labelledby="guideBubbleSettingsTitle">
           <div class="settings-subhead"><div><h4 id="guideBubbleSettingsTitle">Instruction bubble</h4><p class="panel-desc">Show or hide the circular floating guide on the side of the website. Your choice is saved on this device and synchronized to your cloud account when connected.</p></div></div>
           <div class="guide-setting-row">
             <span class="settings-note" id="guideBubbleSettingStatus" aria-live="polite">The instruction bubble is enabled.</span>
             <button class="btn btn-primary" type="button" id="toggleGuideBubbleBtn" aria-pressed="true">Hide instruction bubble</button>
           </div>
+        </section>
+        <section class="settings-subsection" aria-labelledby="pushNotificationSettingsTitle">
+          <div class="settings-subhead"><div><h4 id="pushNotificationSettingsTitle">Device push notifications</h4><p class="panel-desc">Receive reminders on this device even when EUnify is closed. Sign in and enable notifications on each device you use.</p></div></div>
+          <div class="settings-actions" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <label style="display:flex;gap:8px;align-items:center"><input id="push24Enabled" type="checkbox" checked style="width:auto"> 24 hours before</label>
+            <label style="display:flex;gap:8px;align-items:center"><input id="push12Enabled" type="checkbox" checked style="width:auto"> 12 hours before</label>
+            <button class="btn btn-primary" type="button" id="enablePushFromSettings">Enable on this device</button>
+          </div>
+          <p class="settings-note" id="pushSettingsStatus" role="status">Push notifications require browser permission and one-time server setup.</p>
+          <p class="settings-note">Expense reminders also use their existing “Show reminder” interval. To-do activities use the 24-hour and 12-hour alerts. All alerts are calculated relative to the saved due date and time.</p>
         </section>
         <section class="settings-subsection">
           <div class="settings-subhead"><div><h4>Reset EUnify data</h4><p class="panel-desc">Restore the default categories and clear reminders, wishlist items, transactions, balances, reports, and paid history.</p></div></div>
@@ -1285,7 +1398,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
 <div class="guide-overlay" id="guideWelcomeOverlay" hidden>
   <section class="guide-dialog" role="dialog" aria-modal="true" aria-labelledby="guideWelcomeTitle">
-    <h3 id="guideWelcomeTitle">Welcome to EUnify! 👋</h3>
+    <h3 id="guideWelcomeTitle">Welcome to EUnify!</h3>
     <p>Welcome to EUnify! We're happy to have you here.
 
 Managing your money doesn't have to be complicated. We're here to help you get familiar with the website and discover how each feature can make budgeting easier.
@@ -1310,6 +1423,11 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     <p id="guideExplanationText"></p>
     <div class="guide-image-frame" id="guideExplanationImageFrame">
       <img id="guideExplanationImage" src="instruction-images/sign-in.jpg" alt="Sign in instruction visual">
+    </div>
+    <div class="guide-step-controls" id="guideStepControls" hidden>
+      <button type="button" id="guideStepPrevious" aria-label="Previous instruction step">Previous</button>
+      <span id="guideStepCount" aria-live="polite"></span>
+      <button type="button" id="guideStepNext" aria-label="Next instruction step">Next</button>
     </div>
     <div class="guide-dialog-actions"><button type="button" id="guideExplanationGotIt">Got it</button></div>
   </section>
@@ -1336,10 +1454,11 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     <form id="billEditForm">
       <p class="panel-desc">Update the reminder details whenever the amount, due date, or schedule changes.</p>
       <input type="hidden" id="billEditId">
+      <div class="field"><label for="billEditType">Reminder type</label><select id="billEditType"><option value="expense">Pay money</option><option value="income">Receive money</option></select></div>
       <div class="field"><label for="billEditName">Reminder name</label><input id="billEditName" maxlength="80" required></div>
-      <div class="field"><label for="billEditCategory">Deduct from category</label><select id="billEditCategory" required></select></div>
+      <div class="field"><label for="billEditCategory" id="billEditCategoryLabel">Deduct from category</label><select id="billEditCategory" required></select></div>
       <div class="field"><label for="billEditAmount">Amount (₱)</label><input id="billEditAmount" type="number" min="0.01" step="0.01" required></div>
-      <div class="field"><label for="billEditDueDate">Due date</label><input id="billEditDueDate" type="date" required></div>
+      <div class="field"><label for="billEditDueDate">Due date</label><input id="billEditDueDate" type="date" required></div><div class="field"><label for="billEditDueTime">Due time</label><input id="billEditDueTime" type="time" required></div>
       <div class="field"><label for="billEditPriority">Priority</label><select id="billEditPriority"><option>Urgent</option><option>High</option><option>Medium</option><option>Low</option></select></div>
       <div class="field"><label for="billEditRepeat">Repeat</label><select id="billEditRepeat"><option value="once">One-time event</option><option value="daily">Daily</option><option value="weekdays">Weekdays (Mon–Fri)</option><option value="weekly">Weekly</option><option value="monthly">Monthly (same date)</option><option value="yearly">Yearly</option></select></div>
       <div class="field"><label for="billEditReminderLead">Show reminder</label><select id="billEditReminderLead"><option value="0">On the due date</option><option value="1">1 day before</option><option value="3">3 days before</option><option value="7">7 days before</option><option value="14">14 days before</option><option value="30">30 days before</option><option value="60">60 days before</option><option value="90">90 days before</option></select></div>
@@ -1362,6 +1481,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     </div>
   </section>
 </div>
+<script src="eunify-push.js"></script>
 <script>
 (() => {
   const DEFAULT_CATEGORIES = [
@@ -1508,10 +1628,10 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
         if (!syncMeta.categoriesAt && JSON.stringify(CATEGORIES) !== JSON.stringify(DEFAULT_CATEGORIES)) syncMeta.categoriesAt = migratedAt;
         const migrateRecords = items => (Array.isArray(items) ? items : []).map(item =>
           item && item.id != null && !item.updatedAt ? {...item, updatedAt:migratedAt} : item);
-        return {categories:CATEGORIES,themeId:Number(saved.themeId || localStorage.getItem(THEME_KEY) || 1),themeUpdatedAt:Number(saved.themeUpdatedAt || 0),guideBubbleEnabled:saved.guideBubbleEnabled !== false,guideBubbleUpdatedAt:Number(saved.guideBubbleUpdatedAt || 0),balances:{...blankBalances(),...saved.balances}, transactions:migrateRecords(saved.transactions), wishes:migrateRecords(saved.wishes), bills:migrateRecords(saved.bills), paidBills:migrateRecords(saved.paidBills), reminderGroups:migrateRecords(saved.reminderGroups && saved.reminderGroups.length ? saved.reminderGroups : DEFAULT_REMINDER_GROUPS.map(g=>({...g}))), deletedTransactionIds:Array.isArray(saved.deletedTransactionIds)?saved.deletedTransactionIds:[], deletedBillIds:Array.isArray(saved.deletedBillIds)?saved.deletedBillIds:[], deletedWishIds:Array.isArray(saved.deletedWishIds)?saved.deletedWishIds:[], deletedReminderGroupIds:Array.isArray(saved.deletedReminderGroupIds)?saved.deletedReminderGroupIds:[], deletedPaidBillIds:Array.isArray(saved.deletedPaidBillIds)?saved.deletedPaidBillIds:[], deletedCategoryIds:Array.isArray(saved.deletedCategoryIds)?saved.deletedCategoryIds:[], _syncMeta:syncMeta};
+        return {categories:CATEGORIES,themeId:Number(saved.themeId || localStorage.getItem(THEME_KEY) || 1),themeUpdatedAt:Number(saved.themeUpdatedAt || 0),guideBubbleEnabled:saved.guideBubbleEnabled !== false,guideBubbleUpdatedAt:Number(saved.guideBubbleUpdatedAt || 0),sectionDisplay:saved.sectionDisplay || {},notificationSettings:{notify24h:saved.notificationSettings?.notify24h !== false,notify12h:saved.notificationSettings?.notify12h !== false},sectionDisplayUpdatedAt:Number(saved.sectionDisplayUpdatedAt || 0),balances:{...blankBalances(),...saved.balances}, transactions:migrateRecords(saved.transactions), wishes:migrateRecords(saved.wishes), bills:migrateRecords(saved.bills), paidBills:migrateRecords(saved.paidBills), reminderGroups:migrateRecords(saved.reminderGroups && saved.reminderGroups.length ? saved.reminderGroups : DEFAULT_REMINDER_GROUPS.map(g=>({...g}))), schedules:migrateRecords(saved.schedules), deletedScheduleIds:Array.isArray(saved.deletedScheduleIds)?saved.deletedScheduleIds:[], deletedTransactionIds:Array.isArray(saved.deletedTransactionIds)?saved.deletedTransactionIds:[], deletedBillIds:Array.isArray(saved.deletedBillIds)?saved.deletedBillIds:[], deletedWishIds:Array.isArray(saved.deletedWishIds)?saved.deletedWishIds:[], deletedReminderGroupIds:Array.isArray(saved.deletedReminderGroupIds)?saved.deletedReminderGroupIds:[], deletedPaidBillIds:Array.isArray(saved.deletedPaidBillIds)?saved.deletedPaidBillIds:[], deletedCategoryIds:Array.isArray(saved.deletedCategoryIds)?saved.deletedCategoryIds:[], _syncMeta:syncMeta};
       }
     } catch (e) {}
-    return {categories:CATEGORIES,themeId:Number(localStorage.getItem(THEME_KEY) || 1),themeUpdatedAt:0,guideBubbleEnabled:true,guideBubbleUpdatedAt:0,balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[], reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), deletedTransactionIds:[], deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
+    return {categories:CATEGORIES,themeId:Number(localStorage.getItem(THEME_KEY) || 1),themeUpdatedAt:0,guideBubbleEnabled:true,guideBubbleUpdatedAt:0,sectionDisplay:{},notificationSettings:{notify24h:true,notify12h:true},sectionDisplayUpdatedAt:0,balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[], reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), schedules:[], deletedScheduleIds:[], deletedTransactionIds:[] , deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
   }
   // Cloud sync uses one private JSON record per signed-in user.
   // Only the Supabase project URL and publishable/anon key belong in the browser.
@@ -1602,6 +1722,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     const deletedBillIds = ids('deletedBillIds');
     const deletedWishIds = ids('deletedWishIds');
     const deletedReminderGroupIds = ids('deletedReminderGroupIds');
+    const deletedScheduleIds = ids('deletedScheduleIds');
     const deletedPaidBillIds = ids('deletedPaidBillIds');
     const deletedCategoryIds = ids('deletedCategoryIds');
 
@@ -1672,6 +1793,8 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       bills: mergeByUpdatedAt(local.bills, remote.bills).filter(x => !deletedBillIds.has(String(x.id))),
       paidBills: mergeByUpdatedAt(local.paidBills, remote.paidBills).filter(x => !deletedPaidBillIds.has(String(x.id))),
       reminderGroups: mergeByUpdatedAt(local.reminderGroups, remote.reminderGroups).filter(x => !deletedReminderGroupIds.has(String(x.id))),
+      schedules: mergeByUpdatedAt(local.schedules, remote.schedules).filter(x => !deletedScheduleIds.has(String(x.id))),
+      deletedScheduleIds: [...deletedScheduleIds],
       deletedTransactionIds: [...deletedTransactionIds],
       deletedBillIds: [...deletedBillIds],
       deletedWishIds: [...deletedWishIds],
@@ -1687,7 +1810,11 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       themeUpdatedAt: Math.max(Number(local.themeUpdatedAt || 0), Number(remote?.themeUpdatedAt || 0)),
       guideBubbleEnabled: Number(local.guideBubbleUpdatedAt || 0) > Number(remote?.guideBubbleUpdatedAt || 0)
         ? local.guideBubbleEnabled !== false : remote?.guideBubbleEnabled !== false,
-      guideBubbleUpdatedAt: Math.max(Number(local.guideBubbleUpdatedAt || 0), Number(remote?.guideBubbleUpdatedAt || 0))
+      guideBubbleUpdatedAt: Math.max(Number(local.guideBubbleUpdatedAt || 0), Number(remote?.guideBubbleUpdatedAt || 0)),
+      sectionDisplay: Number(local.sectionDisplayUpdatedAt || 0) > Number(remote?.sectionDisplayUpdatedAt || 0)
+        ? {...(local.sectionDisplay || {})} : {...(remote.sectionDisplay || local.sectionDisplay || {})},
+      sectionDisplayUpdatedAt: Math.max(Number(local.sectionDisplayUpdatedAt || 0), Number(remote?.sectionDisplayUpdatedAt || 0)),
+      notificationSettings: {...(remote.notificationSettings || local.notificationSettings || {notify24h:true,notify12h:true})}
     } : {
       ...local,
       transactions: [...transactionMap.values()],
@@ -1777,7 +1904,12 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       themeUpdatedAt: Number(remoteState.themeUpdatedAt || state.themeUpdatedAt || 0),
       guideBubbleEnabled: remoteState.guideBubbleEnabled !== false,
       guideBubbleUpdatedAt: Number(remoteState.guideBubbleUpdatedAt || state.guideBubbleUpdatedAt || 0),
+      sectionDisplay: remoteState.sectionDisplay && typeof remoteState.sectionDisplay === 'object' ? {...remoteState.sectionDisplay} : {...(state.sectionDisplay || {})},
+      notificationSettings: remoteState.notificationSettings && typeof remoteState.notificationSettings === 'object' ? {...remoteState.notificationSettings} : {...(state.notificationSettings || {notify24h:true,notify12h:true})},
+      sectionDisplayUpdatedAt: Number(remoteState.sectionDisplayUpdatedAt || 0),
       reminderGroups: Array.isArray(remoteState.reminderGroups) && remoteState.reminderGroups.length ? remoteState.reminderGroups : DEFAULT_REMINDER_GROUPS.map(g=>({...g})),
+      schedules: Array.isArray(remoteState.schedules) ? remoteState.schedules : (state.schedules || []),
+      deletedScheduleIds: Array.isArray(remoteState.deletedScheduleIds) ? remoteState.deletedScheduleIds : [],
       balances: { ...blankBalances(), ...remoteState.balances },
       transactions: remoteState.transactions,
       wishes: remoteState.wishes,
@@ -1799,6 +1931,8 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     applyTheme(state.themeId || 1, false);
     updateGuideBubbleSettingUI();
     render();
+    renderSectionDisplaySettings();
+    applySectionDisplaySettings();
     return true;
   }
 
@@ -1849,7 +1983,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
         CATEGORIES = DEFAULT_CATEGORIES.map(c => ({...c}));
         try { localStorage.removeItem(THEME_KEY); } catch (e) {}
         state = {categories:CATEGORIES, themeId:1, themeUpdatedAt:0, guideBubbleEnabled:true, guideBubbleUpdatedAt:0, balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[],
-          reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), deletedTransactionIds:[], deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
+          reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), schedules:[], deletedScheduleIds:[], deletedTransactionIds:[], deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
         updateGuideBubbleSettingUI();
       }
       try { localStorage.setItem(ownerKey, nextUser.id); } catch (e) {}
@@ -1907,13 +2041,38 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     );
     const { data: { session } } = await cloudClient.auth.getSession();
     await activateCloudSession(session);
+    if (cloudUser && window.EUnifyPush) { renderPushSettings(); window.EUnifyPush.syncJobs(cloudClient, cloudUser.id, state).catch(console.warn); }
     cloudClient.auth.onAuthStateChange((_event, session) => {
       // Defer network work so the auth callback does not block Supabase's internal queue.
-      setTimeout(() => activateCloudSession(session), 0);
+      setTimeout(async () => { await activateCloudSession(session); if (cloudUser && window.EUnifyPush) { renderPushSettings(); window.EUnifyPush.syncJobs(cloudClient, cloudUser.id, state).catch(console.warn); } }, 0);
     });
   }
 
+  const push24 = document.getElementById('push24Enabled');
+  const push12 = document.getElementById('push12Enabled');
+  const pushStatus = document.getElementById('pushSettingsStatus');
+  function renderPushSettings() {
+    const prefs = state.notificationSettings || {notify24h:true,notify12h:true};
+    if (push24) push24.checked = prefs.notify24h !== false;
+    if (push12) push12.checked = prefs.notify12h !== false;
+    if (pushStatus && 'Notification' in window) pushStatus.textContent = Notification.permission === 'granted' ? 'This browser has granted notification permission. Enable it on every device you want to receive alerts on.' : 'Enable device notifications below. Your browser will ask for permission.';
+  }
+  [push24,push12].forEach(input => input?.addEventListener('change', () => {
+    state.notificationSettings = {notify24h:!!push24.checked, notify12h:!!push12.checked}; save();
+  }));
+  document.getElementById('enablePushFromSettings')?.addEventListener('click', async () => {
+    if (!cloudClient || !cloudUser) { pushStatus.textContent = 'Please sign in to your EUnify cloud account first.'; return; }
+    try {
+      pushStatus.textContent = 'Connecting this device…';
+      await window.EUnifyPush.enable(cloudClient, cloudUser.id);
+      await window.EUnifyPush.syncJobs(cloudClient, cloudUser.id, state);
+      pushStatus.textContent = 'This device is registered for push notifications. Keep your browser notifications enabled.';
+    } catch (err) { console.error(err); pushStatus.textContent = err.message || 'Could not enable push notifications. Check the setup instructions.'; }
+  });
+  renderPushSettings();
+
   document.getElementById('cloudAccountBtn').addEventListener('click', openCloudModal);
+  if (new URLSearchParams(location.search).get('openAccount') === '1') { setTimeout(openCloudModal, 250); }
   document.getElementById('cloudCloseBtn').addEventListener('click', closeCloudModal);
   cloudModal.addEventListener('click', event => { if (event.target === cloudModal) closeCloudModal(); });
 
@@ -1967,7 +2126,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       } catch (e) {}
       CATEGORIES = DEFAULT_CATEGORIES.map(c => ({...c}));
       state = {categories:CATEGORIES, themeId:1, themeUpdatedAt:0, guideBubbleEnabled:true, guideBubbleUpdatedAt:0, balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[],
-        reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), deletedTransactionIds:[], deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
+        reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), schedules:[], deletedScheduleIds:[], deletedTransactionIds:[], deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
       updateGuideBubbleSettingUI();
       render();
       updateCloudAccountUI();
@@ -1998,7 +2157,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
           if (before.get(String(item.id)) !== JSON.stringify(item)) item.updatedAt = Math.max(now, Number(item.updatedAt || 0) + 1);
         });
       };
-      ['transactions','wishes','bills','paidBills','reminderGroups'].forEach(stampChanged);
+      ['transactions','wishes','bills','paidBills','reminderGroups','schedules'].forEach(stampChanged);
 
       const trackDeleted = (key, tombstoneKey) => {
         const currentIds = new Set((Array.isArray(state[key]) ? state[key] : []).filter(x=>x && x.id!=null).map(x=>String(x.id)));
@@ -2010,6 +2169,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       trackDeleted('bills','deletedBillIds');
       trackDeleted('paidBills','deletedPaidBillIds');
       trackDeleted('reminderGroups','deletedReminderGroupIds');
+      trackDeleted('schedules','deletedScheduleIds');
       const currentCategoryIds = new Set(CATEGORIES.map(c=>String(c.id)));
       state.deletedCategoryIds = Array.isArray(state.deletedCategoryIds) ? state.deletedCategoryIds : [];
       (previous.categories || []).filter(c=>c && c.id!=null && !currentCategoryIds.has(String(c.id)))
@@ -2019,6 +2179,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       const serialized = JSON.stringify(state);
       localStorage.setItem(KEY, serialized);
       lastSavedSnapshot = serialized;
+      if (cloudClient && cloudUser && window.EUnifyPush) window.EUnifyPush.syncJobs(cloudClient, cloudUser.id, state).catch(err=>console.warn('EUnify push schedule sync:',err));
       document.getElementById('saveStatus').textContent = cloudUser ? '● Saved on this device · syncing…' : '● Saved on this device';
       queueCloudSave();
     } catch (error) {
@@ -2192,10 +2353,28 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     refreshCategorySelects();
     grid.innerHTML = CATEGORIES.map(c => {
       const balance = Number(state.balances[c.id] || 0);
-      const allocated = sumType('income') * c.percent / 100;
-      const used = Math.max(0, allocated - balance);
+      // Use the category's saved income allocations as its original budget.
+      // Do not recalculate past allocations from the current percentage: that
+      // can make a category look as if money was spent when it was not.
+      const allocated = state.transactions
+        .filter(t => t.type === 'income')
+        .reduce((sum, t) => {
+          if (Array.isArray(t.allocations) && t.allocations.length) {
+            return sum + t.allocations
+              .filter(a => a && a.category === c.id)
+              .reduce((part, a) => part + Number(a.amount || 0), 0);
+          }
+          // Compatibility with older income records that have no saved split.
+          return sum + Number(t.amount || 0) * Number(c.percent || 0) / 100;
+        }, 0);
+      // "Used" must come from actual expense records, not inferred balance
+      // differences (which can change when allocation percentages are edited).
+      const monthKey = today().slice(0,7);
+      const used = state.transactions
+        .filter(t => t.type === 'expense' && t.category === c.id && String(t.date || '').slice(0,7) === monthKey)
+        .reduce((sum, t) => sum + Number(t.amount || 0), 0);
       const pct = allocated > 0 ? Math.max(0, Math.min(100, balance / allocated * 100)) : 0;
-      return `<article class="category-card"><div class="category-top"><span class="category-icon">${escapeHTML(c.icon)}</span><span class="category-percent">${c.percent}%</span></div><div class="category-name">${escapeHTML(c.name)}</div><div class="category-balance">${peso(balance)}</div><div class="progress"><span style="width:${pct}%"></span></div><div class="category-foot"><span>Remaining</span><span>${allocated ? peso(used)+' used' : 'No funds yet'}</span></div></article>`;
+      return `<article class="category-card"><div class="category-top"><span class="category-icon">${escapeHTML(c.icon)}</span><span class="category-percent">${c.percent}%</span></div><div class="category-name">${escapeHTML(c.name)}</div><div class="category-balance">${peso(balance)}</div><div class="progress"><span style="width:${pct}%"></span></div><div class="category-foot"><span>Used this month</span><span>${peso(used)}</span></div></article>`;
     }).join('');
     refreshCategorySelects();
     renderTransactions(); renderWishes(); renderBills();
@@ -2272,11 +2451,11 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
         <div class="upcoming-reminder-main">
           <strong>${escapeHTML(b.name || 'Untitled reminder')}</strong>
           <span>${escapeHTML(groupName(b.reminderGroupId || 'default-reminders'))} · ${escapeHTML(b.priority || 'Medium')} priority</span>
-          <small>${formatBillDate(b.dueDate)} · ${timing}${b.repeat && b.repeat !== 'once' ? ' · Repeats '+escapeHTML(b.repeat) : ''}</small>
+          <small>${formatBillDate(b.dueDate)} at ${escapeHTML(b.dueTime || '09:00')} · ${timing}${b.repeat && b.repeat !== 'once' ? ' · Repeats '+escapeHTML(b.repeat) : ''}</small>
         </div>
         <strong class="upcoming-reminder-amount">${peso(b.amount)}</strong>
         <div class="upcoming-reminder-actions">
-          <label><input type="checkbox" data-bill-check="${escapeHTML(b.id)}"> Mark paid</label>
+          <label><input type="checkbox" data-bill-check="${escapeHTML(b.id)}"> ${b.type === 'income' ? 'Mark received' : 'Mark paid'}</label>
           <button class="btn btn-quiet" type="button" data-edit-bill="${escapeHTML(b.id)}">✎ Edit</button>
           <button class="btn btn-quiet" type="button" data-delete-bill="${escapeHTML(b.id)}">Delete</button>
         </div>
@@ -2338,7 +2517,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
           <span class="bill-preview-star">✦</span>
           <span class="bill-preview-main">
             <strong class="bill-preview-name">${escapeHTML(b.name)}</strong>
-            <small class="bill-preview-due">Due ${formatBillDate(b.dueDate)} · ${escapeHTML(b.priority || 'Medium')} priority</small>
+            <small class="bill-preview-due">Due ${formatBillDate(b.dueDate)} at ${escapeHTML(b.dueTime || '09:00')} · ${escapeHTML(b.priority || 'Medium')} priority</small>
           </span>
           <span class="bill-preview-amount">${peso(b.amount)}</span>
         </button>`).join('');
@@ -2378,7 +2557,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
                   <span class="bill-card-star">✦</span>
                   <div class="bill-card-main">
                     <div class="bill-card-name">${escapeHTML(b.name)}</div>
-                    <div class="bill-card-due">Due ${formatBillDate(b.dueDate)}</div>
+                    <div class="bill-card-due">${b.type === 'income' ? 'Receive' : 'Pay'} · Due ${formatBillDate(b.dueDate)} at ${escapeHTML(b.dueTime || '09:00')}</div>
                   </div>
                   <span class="bill-card-amount">${peso(b.amount)}</span>
                 </div>
@@ -2386,11 +2565,11 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
                   <div class="bill-card-meta">
                     ${escapeHTML(b.priority || 'Medium')} priority
                     ${b.repeat && b.repeat !== 'once' ? ' · Repeats ' + escapeHTML(b.repeat) : ' · One-time reminder'}
-                    <br>Deduct from: ${escapeHTML(category(b.category || selectedGroup.category)?.name || 'Unknown category')}<br>Reminder: ${escapeHTML(reminderLeadLabel(b.reminderLeadDays ?? 30))}
+                    <br>${b.type === 'income' ? 'Add to: ' : 'Deduct from: '}${escapeHTML(b.category === 'all' ? 'All Categories' : category(b.category || selectedGroup.category)?.name || 'Unknown category')}<br>Reminder: ${escapeHTML(reminderLeadLabel(b.reminderLeadDays ?? 30))}
                     ${b.note ? '<br>' + escapeHTML(b.note) : ''}
                   </div>
                   <div class="bill-card-actions">
-                    <label class="bill-paid-check"><input class="priority-check" type="checkbox" data-bill-check="${escapeHTML(b.id)}"> Mark as paid</label>
+                    <label class="bill-paid-check"><input class="priority-check" type="checkbox" data-bill-check="${escapeHTML(b.id)}"> ${b.type === 'income' ? 'Mark as received' : 'Mark as paid'}</label>
                     <button class="btn btn-quiet" type="button" data-edit-bill="${escapeHTML(b.id)}">✎ Edit</button>
                     <button class="btn btn-quiet" type="button" title="Delete reminder" data-delete-bill="${escapeHTML(b.id)}">✕ Delete</button>
                   </div>
@@ -2406,7 +2585,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
   function paidExpenseLabel(t) {
     const raw = String(t.note || 'Expense').trim();
     // Reminder payments are grouped by the actual bill name, not by the repeated prefix.
-    return raw.replace(/^Reminder payment\s*:\s*/i, '').replace(/^Payment\s*:\s*/i, '').trim() || 'Expense';
+    return raw.replace(/^Reminder payment\s*:\s*/i, '').replace(/^Payment\s*:\s*/i, '').replace(/^Wishlist purchase\s*:\s*/i, '').trim() || 'Expense';
   }
 
   function renderPaidBills() {
@@ -2427,14 +2606,14 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       // Within each category, combine repeated expenses under one recognizable name.
       const grouped = new Map();
       items.forEach(t => {
-        const name = paidExpenseLabel(t);
-        if (!grouped.has(name)) grouped.set(name, []);
-        grouped.get(name).push(t);
+        const name = paidExpenseLabel(t), normalizedName = String(name).trim().toLocaleLowerCase();
+        if (!grouped.has(normalizedName)) grouped.set(normalizedName, {label:name, records:[]});
+        grouped.get(normalizedName).records.push(t);
       });
       const history = grouped.size
-        ? [...grouped.entries()].map(([name, records]) => {
+        ? [...grouped.values()].map(({label:name, records}) => {
             const groupTotal = records.reduce((sum,t) => sum + Number(t.amount || 0), 0);
-            const groupKey = `${c.id}::${name}`;
+            const groupKey = `${c.id}::${String(name).trim().toLocaleLowerCase()}`;
             const historyExpanded = expandedPaidExpenseName === groupKey;
             const recordsHTML = records.map(t => `<div class="paid-category-record"><div>${escapeHTML(t.billPaymentId ? 'Payment' : (t.note || name))}<small>${formatBillDate(t.date)}${t.billPaymentId ? ' · Reminder payment' : t.wishId ? ' · Wishlist purchase' : ''}</small></div><strong>${peso(t.amount)}</strong></div>`).join('');
             return `<section class="paid-expense-group"><button class="paid-expense-head" type="button" data-paid-expense="${escapeHTML(groupKey)}" aria-expanded="${historyExpanded}"><span class="paid-expense-name">${escapeHTML(name)}</span><span class="paid-expense-summary">${peso(groupTotal)} · ${records.length} payment${records.length===1?'':'s'} <span class="paid-category-arrow">⌄</span></span></button><div class="paid-expense-history" ${historyExpanded ? '' : 'hidden'}>${recordsHTML}</div></section>`;
@@ -2449,31 +2628,44 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     const tabs = document.getElementById('wishCategoryTabs');
     const sorted = [...state.wishes].sort((a,b) => Number(a.done)-Number(b.done) || ({High:0,Medium:1,Low:2}[a.priority] - {High:0,Medium:1,Low:2}[b.priority]));
     const counts = Object.fromEntries(CATEGORIES.map(c => [c.id, state.wishes.filter(w => w.category === c.id).length]));
-    tabs.innerHTML = `<button type="button" data-wish-filter="all" class="${selectedWishCategory==='all'?'active':''}">All (${state.wishes.length})</button>` +
-      CATEGORIES.filter(c => counts[c.id] > 0).map(c => `<button type="button" data-wish-filter="${c.id}" class="${selectedWishCategory===c.id?'active':''}">${c.icon} ${escapeHTML(c.name)} (${counts[c.id]})</button>`).join('');
+    const populatedCategories = CATEGORIES.filter(c => counts[c.id] > 0);
+    // If the selected category becomes empty, return to All instead of leaving a hidden category selected.
+    if (selectedWishCategory !== 'all' && !populatedCategories.some(c => c.id === selectedWishCategory)) {
+      selectedWishCategory = 'all';
+    }
+    tabs.innerHTML = (state.wishes.length
+      ? `<button type="button" data-wish-filter="all" class="${selectedWishCategory==='all'?'active':''}">All (${state.wishes.length})</button>`
+      : '') + populatedCategories.map(c =>
+        `<button type="button" data-wish-filter="${c.id}" class="${selectedWishCategory===c.id?'active':''}">${c.icon} ${escapeHTML(c.name)} (${counts[c.id]})</button>`
+      ).join('');
+    const managing = !document.getElementById('wishManageArea')?.hidden;
     const visible = selectedWishCategory === 'all' ? sorted : sorted.filter(w => w.category === selectedWishCategory);
     if (!visible.length) {
-      list.innerHTML = '<div class="empty">No items in this category yet. Add something you are planning to buy.</div>';
+      list.innerHTML = selectedWishCategory === 'all'
+        ? '<div class="empty">Your shopping list is empty. Open Edit list to add something you are planning to buy.</div>'
+        : '<div class="empty">No items in this category yet. Add something you are planning to buy.</div>';
       return;
     }
-    const groups = selectedWishCategory === 'all' ? CATEGORIES.filter(c => visible.some(w => w.category === c.id)) : [category(selectedWishCategory)].filter(Boolean);
+    const groups = selectedWishCategory === 'all' ? populatedCategories : [category(selectedWishCategory)].filter(c => c && counts[c.id] > 0);
     list.innerHTML = groups.map(c => {
       const items = visible.filter(w => w.category === c.id);
       return `<div class="wish-group"><div class="wish-group-title">${c.icon} ${escapeHTML(c.name)} <span>${items.length} item${items.length===1?'':'s'}</span></div>` +
-        items.map(w => `<div class="priority-item ${w.done?'done':''}"><input class="priority-check no-print" type="checkbox" aria-label="Mark ${escapeHTML(w.name)} as purchased" data-wish-check="${w.id}" ${w.done?'checked':''}><div class="buy-info"><div class="buy-name">${escapeHTML(w.name)}</div><div class="buy-meta">${w.priority} priority · ${w.done ? 'Purchased '+formatBillDate(w.purchasedAt || today()) : 'Estimated purchase'}</div></div><span class="buy-price">${peso(w.amount)}</span><button class="wish-edit-btn no-print" type="button" title="Edit wishlist estimation" aria-label="Edit ${escapeHTML(w.name)} estimation" data-edit-wish="${w.id}"><span aria-hidden="true">✎</span><span>Edit</span></button><button class="icon-btn no-print" type="button" title="Remove item" aria-label="Remove ${escapeHTML(w.name)}" data-delete-wish="${w.id}">✕</button></div>`).join('') + '</div>';
+        items.map(w => `<div class="priority-item ${w.done?'done':''}"><input class="priority-check no-print" type="checkbox" aria-label="Mark ${escapeHTML(w.name)} as purchased" data-wish-check="${w.id}" ${w.done?'checked':''}><div class="buy-info"><div class="buy-name">${escapeHTML(w.name)}</div><div class="buy-meta">${w.done ? 'Purchased' : 'To buy'}${managing ? ` · ${w.priority} priority` : ''}</div></div><span class="buy-price">${peso(w.amount)}</span>
+${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit wishlist estimation" aria-label="Edit ${escapeHTML(w.name)} estimation" data-edit-wish="${w.id}"><span aria-hidden="true">✎</span><span>Edit</span></button><button class="icon-btn no-print" type="button" title="Remove item" aria-label="Remove ${escapeHTML(w.name)}" data-delete-wish="${w.id}">✕</button>` : ''}</div>`).join('') + '</div>';
     }).join('');
   }
   function escapeHTML(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
   function addTransaction(t) { state.transactions.push(t); save(); render(); }
   function refreshCategorySelects() {
     const options = CATEGORIES.map(c => `<option value="${escapeHTML(c.id)}">${escapeHTML(c.name)}</option>`).join('');
-    ['expenseCategory','wishCategory','reminderGroupCategory','paidCategoryFilter','incomeCategory'].forEach(id => {
+    ['expenseCategory','wishCategory','reminderGroupCategory','paidCategoryFilter','incomeCategory','billCategory'].forEach(id => {
       const el = document.getElementById(id); if (!el) return;
       const previous = el.value;
-      const prefix = (id === 'paidCategoryFilter' || id === 'incomeCategory') ? (id === 'incomeCategory' ? '<option value="all">All Categories (distribute automatically)</option>' : '<option value="all">All categories</option>') : '';
+      const prefix = (id === 'paidCategoryFilter' || id === 'incomeCategory' || id === 'billCategory') ? (id === 'paidCategoryFilter' ? '<option value="all">All categories</option>' : '<option value="all">All Categories (distribute automatically)</option>') : '';
       el.innerHTML = prefix + options;
       if ([...el.options].some(o => o.value === previous)) el.value = previous;
     });
+    syncReminderCategoryVisibility();
   }
   function renderCategorySettings() {
     const rows = document.getElementById('categorySettingsRows'); if (!rows) return;
@@ -2536,10 +2728,11 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     if (!reminderGroup) return toast('Open a reminder list first.');
     state.bills = state.bills || [];
     state.bills.push({
-      id:makeId(), name, amount, dueDate,
+      id:makeId(), name, amount, dueDate, dueTime:document.getElementById('billDueTime').value || '09:00',
       priority:document.getElementById('billPriority').value,
       repeat, reminderLeadDays,
-      category:reminderGroup.category || 'bills',
+      type:document.getElementById('billType').value,
+      category:document.getElementById('billCategory').value,
       reminderGroupId:reminderGroup.id,
       note:document.getElementById('billNote').value.trim(),
       paid:false, createdAt:Date.now()
@@ -2688,18 +2881,39 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     state.wishes.push({id:makeId(), name, category:document.getElementById('wishCategory').value, amount:Number(document.getElementById('wishAmount').value)||0, priority:document.getElementById('wishPriority').value, done:false});
     save(); render(); e.target.reset(); toast('Added to your buy list.');
   });
+  function syncBillEditCategoryOptions(preferredValue) {
+    const type = document.getElementById('billEditType').value;
+    const categorySelect = document.getElementById('billEditCategory');
+    const label = document.getElementById('billEditCategoryLabel');
+    const isIncome = type === 'income';
+    label.textContent = isIncome ? 'Add to category' : 'Deduct from category';
+    categorySelect.innerHTML =
+      (isIncome ? '<option value="all">All Categories (distribute automatically)</option>' : '') +
+      CATEGORIES.map(c => `<option value="${escapeHTML(c.id)}">${escapeHTML(c.icon || '')} ${escapeHTML(c.name)}</option>`).join('');
+    const requested = preferredValue == null ? '' : String(preferredValue);
+    if ([...categorySelect.options].some(option => option.value === requested)) {
+      categorySelect.value = requested;
+    } else if (isIncome) {
+      categorySelect.value = 'all';
+    } else {
+      categorySelect.value = CATEGORIES[0]?.id || '';
+    }
+  }
+  document.getElementById('billEditType').addEventListener('change', () => {
+    syncBillEditCategoryOptions(document.getElementById('billEditCategory').value);
+  });
   function openBillEditor(billId) {
     const bill = (state.bills || []).find(item => String(item.id) === String(billId));
     if (!bill || bill.paid) return;
     const overlay = document.getElementById('billEditOverlay');
-    const categorySelect = document.getElementById('billEditCategory');
-    categorySelect.innerHTML = CATEGORIES.map(c => `<option value="${escapeHTML(c.id)}">${escapeHTML(c.icon || '')} ${escapeHTML(c.name)}</option>`).join('');
-    document.getElementById('billEditId').value = bill.id;
-    document.getElementById('billEditName').value = bill.name || '';
     const billGroup = (state.reminderGroups || []).find(g => g.id === (bill.reminderGroupId || 'default-reminders'));
-    document.getElementById('billEditCategory').value = bill.category || billGroup?.category || CATEGORIES[0]?.id || '';
+    document.getElementById('billEditId').value = bill.id;
+    document.getElementById('billEditType').value = bill.type === 'income' ? 'income' : 'expense';
+    syncBillEditCategoryOptions(bill.category || (bill.type === 'income' ? 'all' : billGroup?.category || CATEGORIES[0]?.id || ''));
+    document.getElementById('billEditName').value = bill.name || '';
     document.getElementById('billEditAmount').value = Number(bill.amount) || '';
     document.getElementById('billEditDueDate').value = bill.dueDate || '';
+    document.getElementById('billEditDueTime').value = bill.dueTime || '09:00';
     document.getElementById('billEditPriority').value = bill.priority || 'Medium';
     document.getElementById('billEditRepeat').value = bill.repeat || 'once';
     document.getElementById('billEditReminderLead').value = String(bill.reminderLeadDays ?? 30);
@@ -2716,12 +2930,14 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     const name = document.getElementById('billEditName').value.trim();
     const amount = Number(document.getElementById('billEditAmount').value);
     const dueDate = document.getElementById('billEditDueDate').value;
+    const type = document.getElementById('billEditType').value;
     const categoryId = document.getElementById('billEditCategory').value;
-    if (!name || !dueDate || !Number.isFinite(amount) || amount <= 0 || !category(categoryId)) {
+    const validCategory = type === 'income' && categoryId === 'all' ? true : !!category(categoryId);
+    if (!name || !dueDate || !Number.isFinite(amount) || amount <= 0 || !validCategory) {
       return toast('Please enter a valid reminder name, category, amount, and due date.');
     }
     Object.assign(bill, {
-      name, amount, dueDate, category: categoryId,
+      name, amount, dueDate, dueTime:document.getElementById('billEditDueTime').value || '09:00', type, category: categoryId,
       priority: document.getElementById('billEditPriority').value,
       repeat: document.getElementById('billEditRepeat').value,
       reminderLeadDays: Number(document.getElementById('billEditReminderLead').value),
@@ -2847,6 +3063,58 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       });
     }
   });
+  const SECTION_DISPLAY_TARGETS=[['availableCapitalSection','Available capital'],['billsSection','Reminders'],['incomeForm','Add money received'],['expenseForm','Add expenses'],['categoryGrid','Category balances'],['shoppingToggle','Things I want to buy'],['reportsToggle','Reports & data'],['activityToggle','Recent activity'],['paidBillsList','Paid history']];
+  function sectionTarget(key){if(key==='incomeForm'||key==='expenseForm')return document.getElementById(key)?.closest('.panel');if(key==='categoryGrid')return document.getElementById('categoryGrid')?.closest('.section');if(['shoppingToggle','reportsToggle','activityToggle'].includes(key)||key==='paidBillsList')return document.getElementById(key)?.closest('.section');return document.getElementById(key);}
+  function renderSectionDisplaySettings(){const host=document.getElementById('sectionDisplayRows');if(!host)return;host.innerHTML=SECTION_DISPLAY_TARGETS.map(([key,label])=>`<label class="section-display-row"><span>${label}</span><select data-section-display="${key}"><option value="show">Show normally</option><option value="blur">Blur section</option><option value="bottom">Move to bottom</option><option value="hide">Hide section</option></select></label>`).join('');host.querySelectorAll('[data-section-display]').forEach(el=>el.value=state.sectionDisplay?.[el.dataset.sectionDisplay]||'show');}
+  const sectionDisplayPlaceholders = new Map();
+  function applySectionDisplaySettings(){
+    const main=document.querySelector('main');
+    const footer=main?.querySelector('.footer');
+    if(!main)return;
+    SECTION_DISPLAY_TARGETS.forEach(([key])=>{
+      const el=sectionTarget(key); if(!el)return;
+      el.classList.remove('section-display-blur'); el.hidden=false; el.style.display=''; el.style.order='';
+      const mode=state.sectionDisplay?.[key]||'show';
+      if(mode==='bottom'){
+        if(el.parentElement!==main){
+          if(!sectionDisplayPlaceholders.has(key)){
+            const placeholder=document.createComment('section-position-'+key);
+            el.parentNode.insertBefore(placeholder,el); sectionDisplayPlaceholders.set(key,placeholder);
+          }
+        }
+        main.insertBefore(el,footer||null);
+      }else{
+        const placeholder=sectionDisplayPlaceholders.get(key);
+        if(placeholder?.parentNode){placeholder.parentNode.insertBefore(el,placeholder);placeholder.remove();sectionDisplayPlaceholders.delete(key);}
+        if(mode==='blur')el.classList.add('section-display-blur');
+        if(mode==='hide'){el.hidden=true;el.style.display='none';}
+      }
+    });
+    const hasBottom=SECTION_DISPLAY_TARGETS.some(([key])=>state.sectionDisplay?.[key]==='bottom');
+    main.style.display=hasBottom?'flex':''; main.style.flexDirection=hasBottom?'column':'';
+    if(footer)footer.style.order='999999';
+  }
+  function syncReminderCategoryVisibility(){
+    const typeSelect=document.getElementById('billType');
+    const categorySelect=document.getElementById('billCategory');
+    if(!typeSelect||!categorySelect)return;
+    const allOption=[...categorySelect.options].find(option=>option.value==='all');
+    if(!allOption)return;
+    const isReceive=typeSelect.value==='income';
+    // Keep the category dropdown and every individual category available.
+    // Only the automatic-allocation choice is unavailable for payments.
+    allOption.hidden=!isReceive;
+    allOption.disabled=!isReceive;
+    if(!isReceive && categorySelect.value==='all'){
+      const firstSpecificCategory=[...categorySelect.options].find(option=>option.value!=='all' && !option.disabled);
+      if(firstSpecificCategory)categorySelect.value=firstSpecificCategory.value;
+    }
+  }
+  document.getElementById('billType')?.addEventListener('change',syncReminderCategoryVisibility);
+  syncReminderCategoryVisibility();
+  renderSectionDisplaySettings();document.getElementById('sectionDisplayRows')?.addEventListener('change',e=>{const el=e.target.closest('[data-section-display]');if(!el)return;state.sectionDisplay=state.sectionDisplay||{};state.sectionDisplay[el.dataset.sectionDisplay]=el.value;state.sectionDisplayUpdatedAt=Date.now();save();applySectionDisplaySettings();});
+  document.getElementById('wishManageToggle')?.addEventListener('click',()=>{const area=document.getElementById('wishManageArea');area.hidden=!area.hidden;const btn=document.getElementById('wishManageToggle');btn.setAttribute('aria-expanded',String(!area.hidden));btn.textContent=area.hidden?'⚙ Edit list':'✓ Done editing';renderWishes();});
+  applySectionDisplaySettings();
   initializeThemeSettings();
   document.getElementById('resetAllDataBtn')?.addEventListener('click', async () => {
     const confirmed = await showConfirm('Reset ALL EUnify tracker data? This clears balances, categories back to defaults, reminders and reminder lists, wishlist items, transactions, reports, and paid history. If you are signed in, the reset will also sync to your cloud account. This cannot be undone unless you have a backup.');
@@ -2879,6 +3147,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       themeUpdatedAt: now,
       guideBubbleEnabled: state.guideBubbleEnabled !== false,
       guideBubbleUpdatedAt: Number(state.guideBubbleUpdatedAt || 0),
+      sectionDisplay: {...(state.sectionDisplay || {})},
       balances: blankBalances(),
       transactions: [],
       wishes: [],
@@ -2904,6 +3173,8 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     applyTheme(1, true);
     updateGuideBubbleSettingUI();
     save();
+    renderSectionDisplaySettings();
+    applySectionDisplaySettings();
     render();
     renderCategorySettings();
     refreshReminderGroupSelect();
@@ -3039,6 +3310,17 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       if (bill) {
         if (billCheck.checked) {
           const billAmount = Number(bill.amount) || 0;
+          if (bill.type === 'income') {
+            const selected = bill.category || 'all';
+            const allocations = selected === 'all' ? CATEGORIES.map(c => ({category:c.id, amount:billAmount * Number(c.percent || 0) / 100})) : [{category:selected, amount:billAmount}];
+            if (!allocations.length || allocations.some(a => !category(a.category))) { billCheck.checked=false; toast('Choose a valid category for this received amount.'); return; }
+            allocations.forEach(a => { state.balances[a.category] = Number(state.balances[a.category] || 0) + Number(a.amount || 0); });
+            const receiveId=makeId(), receiveDate=today();
+            state.transactions.push({id:receiveId,type:'income',amount:billAmount,date:receiveDate,category:selected==='all'?null:selected,allocations,note:`Reminder received: ${bill.name}`,reminderGroupId:bill.reminderGroupId || 'default-reminders',billPaymentId:receiveId,createdAt:Date.now()});
+            state.paidBills=state.paidBills||[]; state.paidBills.push({id:receiveId,transactionId:receiveId,name:bill.name,amount:billAmount,category:selected,reminderGroupId:bill.reminderGroupId||'default-reminders',dueDate:bill.dueDate,paidAt:receiveDate,type:'income',note:bill.note||''});
+            if (bill.repeat && bill.repeat !== 'once') { const nextDate=nextBillDate(bill.dueDate,bill.repeat); if(nextDate) bill.dueDate=nextDate; else state.bills=state.bills.filter(x=>x.id!==bill.id); } else state.bills=state.bills.filter(x=>x.id!==bill.id);
+            expandedBillId=null; save(); render(); toast(`${bill.name} received. ${peso(billAmount)} added to ${selected==='all'?'all categories':category(selected)?.name||'its category'}.`); return;
+          }
           const billGroup = (state.reminderGroups || []).find(g => g.id === (bill.reminderGroupId || 'default-reminders'));
           const deductionCategory = bill.category || billGroup?.category || 'bills';
           const deductionName = category(deductionCategory)?.name || 'selected category';
@@ -3229,6 +3511,12 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
   const description = document.getElementById('guideExplanationText');
   const explanationImageFrame = document.getElementById('guideExplanationImageFrame');
   const explanationImage = document.getElementById('guideExplanationImage');
+  const stepControls = document.getElementById('guideStepControls');
+  const stepPrevious = document.getElementById('guideStepPrevious');
+  const stepNext = document.getElementById('guideStepNext');
+  const stepCount = document.getElementById('guideStepCount');
+  let activeFeatureSteps = [];
+  let activeStepIndex = 0;
   const bubbleLogo = document.getElementById('guideBubbleLogo');
   if (!bubble || !menu || !list || !welcome || !explanation || !explanationImageFrame || !explanationImage) return;
 
@@ -3267,58 +3555,127 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
   const features = [
     {
       name:'Sign In', title:"Let's get you signed in!", target:'cloudAccountBtn', activate:true,
-      text:"Want to access your EUnify account? Start by signing in using your registered email address and password. If you're new here, you can create an account to get started!\n\nOnce you're signed in, EUnify can synchronize supported budget records with your cloud account, allowing you to continue using your account on another device. No internet connection? No problem! Your device still keeps its offline copy, so you can continue using your budget tracker even when you're offline.",
-      image:'instruction-images/sign-in.jpg', imageAlt:'Sign in and cloud account screen in EUnify'
+      steps:[
+        {
+          text:"Want to access your EUnify account? Start by signing in using your registered email address and password. If you are new here, you can create an account to get started.",
+          image:'instruction-images/sign-in.png',
+          imageAlt:'Sign in and cloud account screen in EUnify'
+        },
+        {
+          text:'Click "Confirm email address" to verify your registered email address. Once your email is confirmed, go back to EUnify and click Sign in.',
+          image:'instruction-images/sign-in2.png',
+          imageAlt:'Confirm email address screen'
+        },
+        {
+          text:'After signing in, EUnify can synchronize your supported budget records with your cloud account. This lets you access your account on another device while keeping an offline copy on your device.',
+          imageAlt:'EUnify cloud synchronization process'
+        }
+      ]
     },
     {
       name:'Settings', title:'Make EUnify yours!', target:'openAppSettingsBtn', activate:true,
       text:"Everyone has their own preferences, and you can personalize EUnify to match yours!\n\nHead over to Settings to explore the available website themes, choose the look you like, and apply it. You can also show or hide the floating instruction guide whenever you want.\n\nNeed to manage your tracker data? You'll also find reset options here. Just remember to read each confirmation carefully before proceeding, especially when resetting your data.\n\nYour theme and guide preferences are saved by EUnify, so you can enjoy your preferred setup!",
-      image:'instruction-images/settings.jpg', imageAlt:'EUnify settings screen and theme options'
+      imageAlt:'EUnify settings screen and theme options'
     },
     {
       name:'Available Capital', title:"Here's how much you have available!", target:'availableCapitalSection',
       text:"Want to know how much money you currently have left? You can find it right here!\n\nAvailable Capital gives you a quick overview of the money remaining in your budget. As you record money received, expenses, and payments, your available balance automatically changes to reflect your latest records.\n\nMake it a habit to check this section before adding a new expense. That way, you'll always have a better idea of how much money you have available across your budget categories.",
-      image:'instruction-images/available-capital.jpg', imageAlt:'Available Capital summary in EUnify'
+      image:'instruction-images/available-capital.png', imageAlt:'Available Capital summary in EUnify'
     },
     {
       name:'Reminders', title:'Never miss a payment!', target:'billsSection',
-      text:"Have bills, subscriptions, school expenses, or other payments to take care of? Let EUnify help you remember them!\n\nSimply add a reminder by providing its name, amount, category, due date, and priority. You can keep track of upcoming payments and easily see which ones still need your attention.\n\nOnce you've settled a payment, just mark it as paid. EUnify will record it in your Paid History and update the related budget balance.\n\nStay organized, keep track of your payments, and worry less about forgetting important due dates!",
-      image:'instruction-images/reminders.jpg', imageAlt:'EUnify reminders and upcoming payment list'
+      steps:[
+        {
+          text:"Have bills, subscriptions, school expenses, or other payments to take care of? Let EUnify help you remember them!\n\nSimply add a reminder by providing its name, amount, category, due date, and priority. You can keep track of upcoming payments and easily see which ones still need your attention.\n\nOnce you've settled a payment, just mark it as paid. EUnify will record it in your Paid History and update the related budget balance.\n\nStay organized, keep track of your payments, and worry less about forgetting important due dates!",
+          image:'instruction-images/reminders.png',
+          imageAlt:'EUnify reminders and upcoming payment list'
+        },
+        {
+          text:"Need to make changes to a reminder? No problem! Just tap the reminder section, Find the reminder you want to update and click the Edit button or settings icon. You can modify its name, amount, category, due date, or priority. Once you've made your changes, save them to keep your reminder updated.",
+          image:'instruction-images/reminders2.png',
+          imageAlt:'Editing a reminder in EUnify'
+        }
+      ]
     },
     {
       name:'Add Money Received', title:"Got some money? Let's add it!", target:'incomeForm',
       text:"Received your allowance, salary, a gift, refund, or some extra cash? Don't forget to record it in EUnify!\n\nEnter the amount you received and the date, then choose where you'd like the money to go.\n\nYou have two options:\n\n• All Categories: Distribute your money automatically using your saved allocation percentages.\n• One Category: Put the entire amount into a single category of your choice.\n\nYou can also include the source of the money or add a note to keep your records more organized.\n\nOnce everything looks good, submit the form, and your available capital will be updated!",
-      image:'instruction-images/add-money-received.jpg', imageAlt:'Add Money Received form in EUnify'
+      image:'instruction-images/add-money-received.png', imageAlt:'Add Money Received form in EUnify'
     },
     {
       name:'Add an Expense', title:"Spent some money? Let's keep track!", target:'expenseForm',
       text:"Every purchase counts, so let's make sure you keep track of where your money goes!\n\nWhenever you spend money, head over to Add an Expense and enter a short description, the amount, and the date of your purchase. Then, select the category where the money came from.\n\nBefore saving, double-check that you've selected the correct category and entered the right amount.\n\nOnce saved, your expense will automatically be included in your budget totals and appear in Recent Activities.\n\nKeeping track of your spending helps you understand your habits and make smarter budgeting decisions!",
-      image:'instruction-images/add-expense.jpg', imageAlt:'Add an Expense form in EUnify'
+      image:'instruction-images/add-expense.png', imageAlt:'Add an Expense form in EUnify'
+    },
+	{
+  name:'Categories',
+  title:'Give your money a place!',
+  target:'categorySettingsToggle',
+  activate:true,
+  steps:[
+    {
+      text:"Want to keep your budget organized? That's what Categories are for!\n\nThink of each category as a separate space for your money. You can organize your budget into groups such as Food, Transportation, School, Savings, and more.\n\nCheck each category to see how much money you have available. You can also open the category settings to add new categories, rename existing ones, or adjust how your money is distributed.\n\nOne important thing to remember: Make sure your allocation percentages add up to exactly 100% before saving your changes.\n\nThat way, every peso has a place in your budget!",
+      image:'instruction-images/categories.png',
+      imageAlt:'EUnify category balances and category settings'
     },
     {
-      name:'Categories', title:'Give your money a place!', target:'categorySettingsToggle', activate:true,
-      text:"Want to keep your budget organized? That's what Categories are for!\n\nThink of each category as a separate space for your money. You can organize your budget into groups such as Food, Transportation, School, Savings, and more.\n\nCheck each category to see how much money you have available. You can also open the category settings to add new categories, rename existing ones, or adjust how your money is distributed.\n\nOne important thing to remember: Make sure your allocation percentages add up to exactly 100% before saving your changes.\n\nThat way, every peso has a place in your budget!",
-      image:'instruction-images/categories.jpg', imageAlt:'EUnify category balances and category settings'
+      text:"Need to make changes to your categories? No problem! Simply open the category settings to manage them. You can change a category's name, adjust its allocation percentage, or choose a different icon to personalize it.",
+      image:'instruction-images/categories2.png',
+      imageAlt:'Editing category names, allocation percentages, and icons'
     },
+    {
+      text:"Thinking of deleting a category? Before proceeding, you'll need to select another category where its remaining balance, wishlist items, expenses, and related records will be transferred.\n\nMake sure to choose the correct category so your budget records remain organized!",
+      image:'instruction-images/categories3.png',
+      imageAlt:'Selecting another category when deleting a category'
+    }
+  ]
+},
     {
       name:'Wishlist', title:'Dream it, plan it, save for it!', target:'shoppingToggle', activatePanel:'shoppingPanel',
       text:"Have something you've been wanting to buy? Add it to your Wishlist!\n\nWhether it's a new gadget, school supplies, personal items, or something special you've been saving for, your Wishlist helps you keep track of your planned purchases.\n\nSimply enter the item's name, category, estimated price, and priority. You can update the estimated price whenever it changes and check your list to see which goals you're working toward.\n\nWhen you're finally ready to purchase an item, follow the app's purchase flow so the amount is properly reflected in the appropriate budget category.\n\nA little planning today can help you reach your goals tomorrow!",
-      image:'instruction-images/wishlist.jpg', imageAlt:'EUnify wishlist items and estimated costs'
+      image:'instruction-images/wishlist.png', imageAlt:'EUnify wishlist items and estimated costs'
     },
     {
-      name:'Reports and Data', title:"Let's take a look at your financial progress!", target:'reportsToggle', activatePanel:'reportsPanel',
-      text:"Curious about how you've been managing your money? Reports and Data is here to help!\n\nThis section gives you a better picture of your financial activity, including the money you've received, your expenses, and other recorded budget activities for your selected year.\n\nExplore your yearly totals and transaction details to see where your money comes from and where it goes.\n\nNeed a copy of your records? You can download a CSV report, print or save a PDF, or export a backup of your data.\n\nHere's a friendly reminder: Keep a backup somewhere safe, especially before switching devices or clearing your browser data. It's always better to have an extra copy of your important records!",
-      image:'instruction-images/reports-data.jpg', imageAlt:'EUnify reports, yearly totals, and data tools'
+  name:'Reports and Data',
+  title:"Let's take a look at your financial progress!",
+  target:'reportsToggle',
+  activatePanel:'reportsPanel',
+  steps:[
+    {
+      text:"Curious about how you've been managing your money? Reports and Data is here to help!\n\nStart with the Yearly Report to get an overview of your financial progress throughout the selected year. You can review your total money received, expenses, and other recorded budget activities.\n\nIt's a great way to see how you've managed your finances over time!",
+      image:'instruction-images/reports-data.png',
+      imageAlt:'EUnify yearly financial report and summary'
     },
+    {
+      text:"Want to take a closer look at your finances throughout the year? The All Months view lets you explore your financial records month by month.\n\nYou can compare your activities across different months and see how your income and expenses change over time.\n\nThis makes it easier to identify spending patterns and understand your financial progress throughout the year!",
+      image:'instruction-images/reports-data2.png',
+      imageAlt:'EUnify all months financial report overview'
+    },
+    {
+      text:"Need a more specific breakdown? Select the Monthly Report to view your financial activities for a particular month.\n\nThis allows you to review the money you've received, your expenses, and other recorded transactions within your selected month.\n\nUse this view to keep track of your monthly budget and see where your money goes!",
+      image:'instruction-images/reports-data3.png',
+      imageAlt:'EUnify monthly financial report and transaction summary'
+    },
+    {
+      text:"Looking for a specific day's financial activities? The Daily Report lets you focus on your records for a selected date.\n\nYou can review the transactions recorded on that particular day, making it easier to check your daily spending and money received.\n\nIt's especially helpful when you want to double-check a transaction or keep track of your day-to-day expenses!",
+      image:'instruction-images/reports-data4.png',
+      imageAlt:'EUnify daily financial report and transactions'
+    },
+    {
+      text:"Need a copy of your financial records? You can download a CSV report, print or save a PDF, or export a backup of your data.\n\nHere's a friendly reminder: Keep a backup somewhere safe, especially before switching devices or clearing your browser data. It's always better to have an extra copy of your important records!",
+      imageAlt:'EUnify report export and data backup options'
+    }
+  ]
+},
     {
       name:'Recent Activities', title:'Keep an eye on your latest transactions!', target:'activityToggle', activatePanel:'activityPanel',
       text:"Want to double-check your recent spending or money received? You can find your recorded transactions right here!\n\nRecent Activities keeps your latest money received and expenses in one convenient place, with the newest transactions appearing first.\n\nYou can review important details such as the date, transaction type, description, category, and amount to make sure everything is recorded correctly.\n\nLooking for an older transaction? Simply select View more transactions to browse previous activities when available.\n\nIt's an easy way to stay updated and keep your budget records in check!",
-      image:'instruction-images/recent-activities.jpg', imageAlt:'EUnify recent activities transaction list'
+      image:'instruction-images/recent-activities.png', imageAlt:'EUnify recent activities transaction list'
     },
     {
       name:'Paid History', title:"Already paid? We've got it recorded!", target:'paidBillsSection',
       text:"Wondering which bills or expenses you've already settled? You can check them here!\n\nPaid History keeps a record of reminders and expenses that you've marked as paid, making it easier to review your completed payments whenever you need to.\n\nWant to find a specific payment? Use the category filter to narrow down your list, then select a bill or expense name to review its payment history.\n\nThis way, you can keep track of what you've already paid, stay organized, and avoid accidentally paying for something twice.",
-      image:'instruction-images/paid-history.jpg', imageAlt:'EUnify paid history list with completed payments'
+      image:'instruction-images/paid-history.png', imageAlt:'EUnify paid history list with completed payments'
     }
   ];
 
@@ -3330,30 +3687,57 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     list.appendChild(button);
   });
 
+  function renderInstructionStep() {
+    const step = activeFeatureSteps[activeStepIndex];
+    if (!step) return;
+    description.textContent = step.text || '';
+    explanationImageFrame.hidden = !step.image;
+    if (step.image) {
+      explanationImage.alt = step.imageAlt || 'Instruction visual';
+      explanationImage.onerror = () => { explanationImageFrame.hidden = true; };
+      explanationImage.src = step.image;
+    }
+    const multiple = activeFeatureSteps.length > 1;
+    stepControls.hidden = !multiple;
+    if (multiple) {
+      stepCount.textContent = `Step ${activeStepIndex + 1} of ${activeFeatureSteps.length}`;
+      stepPrevious.disabled = activeStepIndex === 0;
+      stepNext.disabled = activeStepIndex === activeFeatureSteps.length - 1;
+    }
+  }
+
   function showExplanation(feature) {
     title.textContent = feature.title || feature.name;
-    description.textContent = feature.text;
-    // Every feature points to its own file, so visuals can be replaced independently.
-    explanationImageFrame.hidden = !feature.image;
-    if (feature.image) {
-      explanationImage.alt = feature.imageAlt || `${feature.name} instruction visual`;
-      explanationImage.onerror = () => { explanationImageFrame.hidden = true; };
-      explanationImage.src = feature.image;
-    }
+    activeFeatureSteps = Array.isArray(feature.steps) && feature.steps.length
+      ? feature.steps
+      : [{ text: feature.text || '', image: feature.image || '', imageAlt: feature.imageAlt || '' }];
+    activeStepIndex = 0;
+    renderInstructionStep();
     explanation.hidden = false;
 
-    // Always begin each instruction at the top so its title is visible first.
     const guideDialog = explanation.querySelector('.guide-dialog');
     const gotItButton = document.getElementById('guideExplanationGotIt');
     if (guideDialog) guideDialog.scrollTop = 0;
-
-    // Move keyboard focus without allowing the browser to scroll down to the button.
     gotItButton?.focus({ preventScroll: true });
-
-    // Reset once more after the dialog becomes visible, in case the browser
-    // restores its previous scroll position while laying out the popup.
     if (guideDialog) guideDialog.scrollTop = 0;
   }
+
+  stepPrevious.addEventListener('click', () => {
+    if (activeStepIndex > 0) {
+      activeStepIndex--;
+      renderInstructionStep();
+      const dialog = explanation.querySelector('.guide-dialog');
+      if (dialog) dialog.scrollTop = 0;
+    }
+  });
+  stepNext.addEventListener('click', () => {
+    if (activeStepIndex < activeFeatureSteps.length - 1) {
+      activeStepIndex++;
+      renderInstructionStep();
+      const dialog = explanation.querySelector('.guide-dialog');
+      if (dialog) dialog.scrollTop = 0;
+    }
+  });
 
   function openFeature(feature) {
     menu.hidden = true;

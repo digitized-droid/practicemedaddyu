@@ -1,0 +1,2 @@
+[functions.send-eunify-push]
+verify_jwt = false

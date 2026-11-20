@@ -19,3 +19,7 @@ Follow `UPLOAD-INSTRUCTIONS.txt`. Do not clear browser storage or reset your Sup
 
 ## Instruction guide images
 The floating guide includes a separate visual for each feature. Replace the JPG files in `instruction-images/` with your own screenshots while keeping each filename unchanged. The popup uses `object-fit: contain`, so the full image remains visible without cropping. The service worker refreshes these files while online and keeps the latest fetched versions available offline. See `instruction-images/README.txt` for the filename-to-feature list.
+
+## Device push notifications
+
+The Web Push client, service-worker handlers, SQL migration, and scheduled Edge Function are included. Complete the one-time deployment steps in [PUSH-SETUP.md](PUSH-SETUP.md) before enabling push notifications.
