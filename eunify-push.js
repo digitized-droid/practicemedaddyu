@@ -75,27 +75,55 @@
     const unique = new Map(jobs.map(job=>[job.dedupe_key,job]));
     return [...unique.values()];
   }
+  function withTimeout(promise, label, ms=15000) {
+    let timer;
+    return Promise.race([
+      promise,
+      new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`${label} is taking too long. Please check your connection and try again.`)), ms); })
+    ]).finally(() => clearTimeout(timer));
+  }
+  async function getPushRegistration() {
+    // Prefer the registration for this app's own scope. Do not wait forever on
+    // serviceWorker.ready if an install/update is stalled by an optional asset.
+    let registration = await withTimeout(navigator.serviceWorker.getRegistration(new URL('./', location.href)), 'Checking this device’s service worker', 10000);
+    if (!registration) registration = await withTimeout(navigator.serviceWorker.register('./service-worker.js'), 'Registering this device', 15000);
+    if (registration.active) return registration;
+    const worker = registration.installing || registration.waiting;
+    if (worker) {
+      await withTimeout(new Promise((resolve, reject) => {
+        if (worker.state === 'activated') return resolve();
+        const onState = () => {
+          if (worker.state === 'activated') { worker.removeEventListener('statechange', onState); resolve(); }
+          else if (worker.state === 'redundant') { worker.removeEventListener('statechange', onState); reject(new Error('The notification service worker could not activate. Reload EUnify and try again.')); }
+        };
+        worker.addEventListener('statechange', onState);
+        onState();
+      }), 'Activating the notification service worker', 15000);
+      if (registration.active) return registration;
+    }
+    return withTimeout(navigator.serviceWorker.ready, 'Waiting for the notification service worker', 15000);
+  }
   async function saveSubscriptionForUser(client, userId, subscription) {
     if (!client || !userId || !subscription) return false;
     const json = subscription.toJSON();
-    const {error} = await client.rpc('register_eunify_push_subscription', {
+    const {error} = await withTimeout(client.rpc('register_eunify_push_subscription', {
       p_endpoint: json.endpoint,
       p_p256dh: json.keys?.p256dh,
       p_auth: json.keys?.auth
-    });
+    }), 'Connecting this device to your EUnify account');
     if (error) throw new Error(`Could not assign this device to the signed-in account: ${error.message}. Apply the latest push SQL migration.`);
     return true;
   }
   async function bindExisting(client, userId) {
     if (!client || !userId || !('serviceWorker' in navigator) || !('PushManager' in window)) return false;
-    const registration = await navigator.serviceWorker.ready;
+    const registration = await getPushRegistration();
     const subscription = await registration.pushManager.getSubscription();
     if (!subscription) return false;
     return saveSubscriptionForUser(client, userId, subscription);
   }
   async function disable(client, userId) {
     if (!client || !userId || !('serviceWorker' in navigator) || !('PushManager' in window)) return false;
-    const registration = await navigator.serviceWorker.ready;
+    const registration = await getPushRegistration();
     const subscription = await registration.pushManager.getSubscription();
     if (!subscription) return false;
     const {error} = await client.rpc('unregister_eunify_push_subscription', {p_endpoint: subscription.endpoint});
@@ -111,7 +139,7 @@
     if (!publicKey || publicKey.includes('PASTE_')) throw new Error('Push setup is not finished: add the VAPID public key to supabase-config.js first.');
     const permission = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
     if (permission !== 'granted') throw new Error('Notification permission was not granted.');
-    const registration = await navigator.serviceWorker.ready;
+    const registration = await getPushRegistration();
     let subscription = await registration.pushManager.getSubscription();
     if (!subscription) subscription = await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64ToBytes(publicKey)});
     await saveSubscriptionForUser(client, userId, subscription);

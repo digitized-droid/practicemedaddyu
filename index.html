@@ -821,6 +821,23 @@ td strong { font-size:11px; }
   }
 }
 
+
+/* Category expansion and direct balance transfers */
+.category-card { cursor:pointer; transition:transform .18s ease, box-shadow .18s ease; }
+.category-card:focus-visible { outline:3px solid var(--site-secondary); outline-offset:3px; }
+.category-card.is-expanded { grid-column:span 2; box-shadow:0 8px 24px rgba(0,0,0,.10); }
+.category-expanded-actions { display:flex; gap:8px; margin-top:13px; flex-wrap:wrap; }
+.category-expanded-actions .btn { flex:1; min-width:120px; }
+.category-transfer-modal { position:fixed; inset:0; z-index:10050; display:grid; place-items:center; padding:18px; background:rgba(10,18,14,.58); }
+.category-transfer-modal[hidden] { display:none; }
+.category-transfer-dialog { width:min(100%,430px); max-height:90vh; overflow:auto; background:var(--surface); color:var(--text); border:1px solid var(--line); border-radius:20px; padding:22px; box-shadow:0 24px 70px rgba(0,0,0,.28); }
+.category-transfer-dialog h3 { margin:0 0 7px; font-family:var(--site-font-heading); font-size:23px; }
+.category-transfer-dialog p { color:var(--muted); font-size:12px; line-height:1.6; margin:0 0 14px; }
+.category-transfer-dialog .field { margin:12px 0; }
+.category-transfer-dialog input, .category-transfer-dialog select { width:100%; }
+.category-transfer-dialog .category-transfer-summary { margin:12px 0 16px; }
+@media(max-width:620px) { .category-card.is-expanded { grid-column:span 1; } }
+
 </style>
 
 <meta name="theme-color" content="#315c4c">
@@ -1318,6 +1335,24 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   </div>
 </div>
 
+<div class="category-transfer-modal" id="categoryTransferModal" hidden>
+  <div class="category-transfer-dialog" role="dialog" aria-modal="true" aria-labelledby="categoryTransferTitle">
+    <h3 id="categoryTransferTitle">Transfer money</h3>
+    <p id="categoryTransferDescription">Move money from this category to another category.</p>
+    <div class="category-transfer-summary">
+      <span class="panel-desc">Available balance</span>
+      <strong id="categoryTransferAvailable">₱0.00</strong>
+      <span class="panel-desc" id="categoryTransferSource"></span>
+    </div>
+    <div class="field"><label for="categoryTransferDestination">Transfer to</label><select id="categoryTransferDestination"></select></div>
+    <div class="field"><label for="categoryTransferAmount">Amount to transfer</label><input id="categoryTransferAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Enter amount"></div>
+    <div class="category-delete-actions">
+      <button class="btn btn-quiet" id="cancelCategoryTransfer" type="button">Cancel</button>
+      <button class="btn btn-secondary" id="confirmCategoryTransfer" type="button">Transfer</button>
+    </div>
+  </div>
+</div>
+
 <div class="cloud-modal" id="cloudModal" hidden>
   <div class="cloud-dialog" role="dialog" aria-modal="true" aria-labelledby="cloudTitle">
     <button class="close-cloud" id="cloudCloseBtn" type="button" aria-label="Close">×</button>
@@ -1372,6 +1407,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
             <label style="display:flex;gap:8px;align-items:center"><input id="push24Enabled" type="checkbox" checked style="width:auto"> 24 hours before</label>
             <label style="display:flex;gap:8px;align-items:center"><input id="push12Enabled" type="checkbox" checked style="width:auto"> 12 hours before</label>
             <button class="btn btn-primary" type="button" id="enablePushFromSettings">Enable on this device</button>
+            <button class="btn btn-danger" type="button" id="disablePushFromSettings">Disable on this device</button>
           </div>
           <p class="settings-note" id="pushSettingsStatus" role="status">Push notifications require browser permission and one-time server setup.</p>
           <p class="settings-note">Expense reminders also use their existing “Show reminder” interval. To-do activities use the 24-hour and 12-hour alerts. All alerts are calculated relative to the saved due date and time.</p>
@@ -1628,10 +1664,10 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
         if (!syncMeta.categoriesAt && JSON.stringify(CATEGORIES) !== JSON.stringify(DEFAULT_CATEGORIES)) syncMeta.categoriesAt = migratedAt;
         const migrateRecords = items => (Array.isArray(items) ? items : []).map(item =>
           item && item.id != null && !item.updatedAt ? {...item, updatedAt:migratedAt} : item);
-        return {categories:CATEGORIES,themeId:Number(saved.themeId || localStorage.getItem(THEME_KEY) || 1),themeUpdatedAt:Number(saved.themeUpdatedAt || 0),guideBubbleEnabled:saved.guideBubbleEnabled !== false,guideBubbleUpdatedAt:Number(saved.guideBubbleUpdatedAt || 0),sectionDisplay:saved.sectionDisplay || {},notificationSettings:{notify24h:saved.notificationSettings?.notify24h !== false,notify12h:saved.notificationSettings?.notify12h !== false},sectionDisplayUpdatedAt:Number(saved.sectionDisplayUpdatedAt || 0),balances:{...blankBalances(),...saved.balances}, transactions:migrateRecords(saved.transactions), wishes:migrateRecords(saved.wishes), bills:migrateRecords(saved.bills), paidBills:migrateRecords(saved.paidBills), reminderGroups:migrateRecords(saved.reminderGroups && saved.reminderGroups.length ? saved.reminderGroups : DEFAULT_REMINDER_GROUPS.map(g=>({...g}))), schedules:migrateRecords(saved.schedules), deletedScheduleIds:Array.isArray(saved.deletedScheduleIds)?saved.deletedScheduleIds:[], deletedTransactionIds:Array.isArray(saved.deletedTransactionIds)?saved.deletedTransactionIds:[], deletedBillIds:Array.isArray(saved.deletedBillIds)?saved.deletedBillIds:[], deletedWishIds:Array.isArray(saved.deletedWishIds)?saved.deletedWishIds:[], deletedReminderGroupIds:Array.isArray(saved.deletedReminderGroupIds)?saved.deletedReminderGroupIds:[], deletedPaidBillIds:Array.isArray(saved.deletedPaidBillIds)?saved.deletedPaidBillIds:[], deletedCategoryIds:Array.isArray(saved.deletedCategoryIds)?saved.deletedCategoryIds:[], _syncMeta:syncMeta};
+        return {categories:CATEGORIES,themeId:Number(saved.themeId || localStorage.getItem(THEME_KEY) || 1),themeUpdatedAt:Number(saved.themeUpdatedAt || 0),guideBubbleEnabled:saved.guideBubbleEnabled !== false,guideBubbleUpdatedAt:Number(saved.guideBubbleUpdatedAt || 0),sectionDisplay:saved.sectionDisplay || {},notificationSettings:{notify24h:saved.notificationSettings?.notify24h !== false,notify12h:saved.notificationSettings?.notify12h !== false},notificationSettingsUpdatedAt:Number(saved.notificationSettingsUpdatedAt || 0),sectionDisplayUpdatedAt:Number(saved.sectionDisplayUpdatedAt || 0),balances:{...blankBalances(),...saved.balances}, transactions:migrateRecords(saved.transactions), wishes:migrateRecords(saved.wishes), bills:migrateRecords(saved.bills), paidBills:migrateRecords(saved.paidBills), reminderGroups:migrateRecords(saved.reminderGroups && saved.reminderGroups.length ? saved.reminderGroups : DEFAULT_REMINDER_GROUPS.map(g=>({...g}))), schedules:migrateRecords(saved.schedules), deletedScheduleIds:Array.isArray(saved.deletedScheduleIds)?saved.deletedScheduleIds:[], deletedTransactionIds:Array.isArray(saved.deletedTransactionIds)?saved.deletedTransactionIds:[], deletedBillIds:Array.isArray(saved.deletedBillIds)?saved.deletedBillIds:[], deletedWishIds:Array.isArray(saved.deletedWishIds)?saved.deletedWishIds:[], deletedReminderGroupIds:Array.isArray(saved.deletedReminderGroupIds)?saved.deletedReminderGroupIds:[], deletedPaidBillIds:Array.isArray(saved.deletedPaidBillIds)?saved.deletedPaidBillIds:[], deletedCategoryIds:Array.isArray(saved.deletedCategoryIds)?saved.deletedCategoryIds:[], _syncMeta:syncMeta};
       }
     } catch (e) {}
-    return {categories:CATEGORIES,themeId:Number(localStorage.getItem(THEME_KEY) || 1),themeUpdatedAt:0,guideBubbleEnabled:true,guideBubbleUpdatedAt:0,sectionDisplay:{},notificationSettings:{notify24h:true,notify12h:true},sectionDisplayUpdatedAt:0,balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[], reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), schedules:[], deletedScheduleIds:[], deletedTransactionIds:[] , deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
+    return {categories:CATEGORIES,themeId:Number(localStorage.getItem(THEME_KEY) || 1),themeUpdatedAt:0,guideBubbleEnabled:true,guideBubbleUpdatedAt:0,sectionDisplay:{},notificationSettings:{notify24h:true,notify12h:true},notificationSettingsUpdatedAt:0,sectionDisplayUpdatedAt:0,balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[], reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), schedules:[], deletedScheduleIds:[], deletedTransactionIds:[] , deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
   }
   // Cloud sync uses one private JSON record per signed-in user.
   // Only the Supabase project URL and publishable/anon key belong in the browser.
@@ -1814,7 +1850,8 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       sectionDisplay: Number(local.sectionDisplayUpdatedAt || 0) > Number(remote?.sectionDisplayUpdatedAt || 0)
         ? {...(local.sectionDisplay || {})} : {...(remote.sectionDisplay || local.sectionDisplay || {})},
       sectionDisplayUpdatedAt: Math.max(Number(local.sectionDisplayUpdatedAt || 0), Number(remote?.sectionDisplayUpdatedAt || 0)),
-      notificationSettings: {...(remote.notificationSettings || local.notificationSettings || {notify24h:true,notify12h:true})}
+      notificationSettings: Number(local.notificationSettingsUpdatedAt || 0) > Number(remote?.notificationSettingsUpdatedAt || 0) ? {...(local.notificationSettings || {notify24h:true,notify12h:true})} : {...(remote.notificationSettings || local.notificationSettings || {notify24h:true,notify12h:true})},
+      notificationSettingsUpdatedAt: Math.max(Number(local.notificationSettingsUpdatedAt || 0), Number(remote?.notificationSettingsUpdatedAt || 0))
     } : {
       ...local,
       transactions: [...transactionMap.values()],
@@ -1906,6 +1943,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       guideBubbleUpdatedAt: Number(remoteState.guideBubbleUpdatedAt || state.guideBubbleUpdatedAt || 0),
       sectionDisplay: remoteState.sectionDisplay && typeof remoteState.sectionDisplay === 'object' ? {...remoteState.sectionDisplay} : {...(state.sectionDisplay || {})},
       notificationSettings: remoteState.notificationSettings && typeof remoteState.notificationSettings === 'object' ? {...remoteState.notificationSettings} : {...(state.notificationSettings || {notify24h:true,notify12h:true})},
+      notificationSettingsUpdatedAt: Number(remoteState.notificationSettingsUpdatedAt || state.notificationSettingsUpdatedAt || 0),
       sectionDisplayUpdatedAt: Number(remoteState.sectionDisplayUpdatedAt || 0),
       reminderGroups: Array.isArray(remoteState.reminderGroups) && remoteState.reminderGroups.length ? remoteState.reminderGroups : DEFAULT_REMINDER_GROUPS.map(g=>({...g})),
       schedules: Array.isArray(remoteState.schedules) ? remoteState.schedules : (state.schedules || []),
@@ -1982,7 +2020,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
         } catch (e) {}
         CATEGORIES = DEFAULT_CATEGORIES.map(c => ({...c}));
         try { localStorage.removeItem(THEME_KEY); } catch (e) {}
-        state = {categories:CATEGORIES, themeId:1, themeUpdatedAt:0, guideBubbleEnabled:true, guideBubbleUpdatedAt:0, balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[],
+        state = {categories:CATEGORIES, themeId:1, themeUpdatedAt:0, guideBubbleEnabled:true, guideBubbleUpdatedAt:0, notificationSettings:{notify24h:true,notify12h:true}, notificationSettingsUpdatedAt:Date.now(), balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[],
           reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), schedules:[], deletedScheduleIds:[], deletedTransactionIds:[], deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
         updateGuideBubbleSettingUI();
       }
@@ -2058,16 +2096,36 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     if (pushStatus && 'Notification' in window) pushStatus.textContent = Notification.permission === 'granted' ? 'This browser has granted notification permission. Enable it on every device you want to receive alerts on.' : 'Enable device notifications below. Your browser will ask for permission.';
   }
   [push24,push12].forEach(input => input?.addEventListener('change', () => {
-    state.notificationSettings = {notify24h:!!push24.checked, notify12h:!!push12.checked}; save();
+    state.notificationSettings = {notify24h:!!push24.checked, notify12h:!!push12.checked}; state.notificationSettingsUpdatedAt = Date.now(); save();
   }));
   document.getElementById('enablePushFromSettings')?.addEventListener('click', async () => {
     if (!cloudClient || !cloudUser) { pushStatus.textContent = 'Please sign in to your EUnify cloud account first.'; return; }
+    const enableButton = document.getElementById('enablePushFromSettings');
+    const disableButton = document.getElementById('disablePushFromSettings');
+    enableButton.disabled = true;
     try {
-      pushStatus.textContent = 'Connecting this device…';
+      pushStatus.textContent = 'Checking notification permission…';
       await window.EUnifyPush.enable(cloudClient, cloudUser.id);
+      pushStatus.textContent = 'Device connected. Updating your reminder schedule…';
       await window.EUnifyPush.syncJobs(cloudClient, cloudUser.id, state);
-      pushStatus.textContent = 'This device is registered for push notifications. Keep your browser notifications enabled.';
-    } catch (err) { console.error(err); pushStatus.textContent = err.message || 'Could not enable push notifications. Check the setup instructions.'; }
+      pushStatus.textContent = 'This device is connected and registered for push notifications.';
+    } catch (err) {
+      console.error('EUnify push enable failed:', err);
+      pushStatus.textContent = err.message || 'Could not enable push notifications. Check the setup instructions.';
+    } finally { enableButton.disabled = false; }
+  });
+  document.getElementById('disablePushFromSettings')?.addEventListener('click', async () => {
+    if (!cloudClient || !cloudUser) { pushStatus.textContent = 'Please sign in to your EUnify cloud account first.'; return; }
+    const disableButton = document.getElementById('disablePushFromSettings');
+    disableButton.disabled = true;
+    try {
+      pushStatus.textContent = 'Disconnecting notifications from this device…';
+      await window.EUnifyPush.disable(cloudClient, cloudUser.id);
+      pushStatus.textContent = 'Push notifications are disabled for this device. Your browser permission and other devices are unchanged.';
+    } catch (err) {
+      console.error('EUnify push disable failed:', err);
+      pushStatus.textContent = err.message || 'Could not disable notifications on this device.';
+    } finally { disableButton.disabled = false; }
   });
   renderPushSettings();
 
@@ -2149,7 +2207,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
         }
       } catch (e) {}
       CATEGORIES = DEFAULT_CATEGORIES.map(c => ({...c}));
-      state = {categories:CATEGORIES, themeId:1, themeUpdatedAt:0, guideBubbleEnabled:true, guideBubbleUpdatedAt:0, balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[],
+      state = {categories:CATEGORIES, themeId:1, themeUpdatedAt:0, guideBubbleEnabled:true, guideBubbleUpdatedAt:0, notificationSettings:{notify24h:true,notify12h:true}, notificationSettingsUpdatedAt:Date.now(), balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[],
         reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), schedules:[], deletedScheduleIds:[], deletedTransactionIds:[], deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
       updateGuideBubbleSettingUI();
       render();
@@ -2171,7 +2229,8 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       state.reminderGroups = state.reminderGroups || DEFAULT_REMINDER_GROUPS.map(g=>({...g}));
       state._syncMeta = state._syncMeta || {};
       const categoryChanged = JSON.stringify(previous.categories || []) !== JSON.stringify(CATEGORIES);
-      if (categoryChanged) state._syncMeta.categoriesAt = Math.max(now, Number(state._syncMeta.categoriesAt || 0) + 1);
+      const balancesChanged = JSON.stringify(previous.balances || {}) !== JSON.stringify(state.balances || {});
+      if (categoryChanged || balancesChanged) state._syncMeta.categoriesAt = Math.max(now, Number(state._syncMeta.categoriesAt || 0) + 1);
 
       const stampChanged = (key) => {
         const before = new Map((Array.isArray(previous[key]) ? previous[key] : []).filter(x=>x && x.id!=null).map(x=>[String(x.id), JSON.stringify(x)]));
@@ -2398,7 +2457,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
         .filter(t => t.type === 'expense' && t.category === c.id && String(t.date || '').slice(0,7) === monthKey)
         .reduce((sum, t) => sum + Number(t.amount || 0), 0);
       const pct = allocated > 0 ? Math.max(0, Math.min(100, balance / allocated * 100)) : 0;
-      return `<article class="category-card"><div class="category-top"><span class="category-icon">${escapeHTML(c.icon)}</span><span class="category-percent">${c.percent}%</span></div><div class="category-name">${escapeHTML(c.name)}</div><div class="category-balance">${peso(balance)}</div><div class="progress"><span style="width:${pct}%"></span></div><div class="category-foot"><span>Used this month</span><span>${peso(used)}</span></div></article>`;
+      return `<article class="category-card" data-category-expand="${escapeHTML(c.id)}" tabindex="0" role="button" aria-label="${escapeHTML(c.name)} category, ${peso(balance)}. Click to transfer money"><div class="category-top"><span class="category-icon">${escapeHTML(c.icon)}</span><span class="category-percent">${c.percent}%</span></div><div class="category-name">${escapeHTML(c.name)}</div><div class="category-balance">${peso(balance)}</div><div class="progress"><span style="width:${pct}%"></span></div><div class="category-foot"><span>Used this month</span><span>${peso(used)}</span></div></article>`;
     }).join('');
     refreshCategorySelects();
     renderTransactions(); renderWishes(); renderBills();
@@ -2797,6 +2856,51 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
     CATEGORIES.push({id,name,percent,icon:document.getElementById('newCategoryIcon').value.trim() || '✦'});
     state.deletedCategoryIds = (state.deletedCategoryIds || []).filter(deletedId => String(deletedId) !== String(id));
     state.balances[id] = 0; save(); render(); renderCategorySettings(); e.target.reset(); document.getElementById('newCategoryIcon').value='✦';
+  });
+  let pendingCategoryTransferId = null;
+  const categoryTransferModal = document.getElementById('categoryTransferModal');
+  const categoryGrid = document.getElementById('categoryGrid');
+  function openCategoryTransferModal(id) {
+    const source = category(id);
+    if (!source) return;
+    const available = Math.max(0, Number(state.balances[id] || 0));
+    pendingCategoryTransferId = id;
+    document.getElementById('categoryTransferTitle').textContent = `Transfer from ${source.name}`;
+    document.getElementById('categoryTransferDescription').textContent = `Choose another category and enter how much you want to move from ${source.name}.`;
+    document.getElementById('categoryTransferAvailable').textContent = peso(available);
+    document.getElementById('categoryTransferSource').textContent = `From: ${source.name}`;
+    document.getElementById('categoryTransferDestination').innerHTML = CATEGORIES.filter(c => String(c.id) !== String(id)).map(c => `<option value="${escapeHTML(c.id)}">${escapeHTML(c.name)}</option>`).join('');
+    const amount = document.getElementById('categoryTransferAmount');
+    amount.value = ''; amount.max = String(available);
+    categoryTransferModal.hidden = false;
+    setTimeout(() => amount.focus(), 0);
+  }
+  function closeCategoryTransferModal() { categoryTransferModal.hidden = true; pendingCategoryTransferId = null; }
+  categoryGrid.addEventListener('click', e => {
+    const card = e.target.closest('[data-category-expand]');
+    if (!card) return;
+    openCategoryTransferModal(card.dataset.categoryExpand);
+  });
+  categoryGrid.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-category-expand]')) {
+      e.preventDefault();
+      openCategoryTransferModal(e.target.dataset.categoryExpand);
+    }
+  });
+  document.getElementById('cancelCategoryTransfer').addEventListener('click', closeCategoryTransferModal);
+  categoryTransferModal.addEventListener('click', e => { if (e.target === categoryTransferModal) closeCategoryTransferModal(); });
+  document.getElementById('confirmCategoryTransfer').addEventListener('click', () => {
+    const sourceId = pendingCategoryTransferId, source = category(sourceId);
+    const destinationId = document.getElementById('categoryTransferDestination').value, destination = category(destinationId);
+    const amountInput = document.getElementById('categoryTransferAmount'), amount = Number(amountInput.value);
+    const available = Number(state.balances[sourceId] || 0);
+    if (!source || !destination || String(sourceId) === String(destinationId)) return toast('Please choose a different destination category.');
+    if (!Number.isFinite(amount) || amount <= 0) { amountInput.setCustomValidity('Enter an amount greater than zero.'); amountInput.reportValidity(); return; }
+    if (amount > available + 0.000001) { amountInput.setCustomValidity('The transfer amount cannot be greater than the available balance.'); amountInput.reportValidity(); return; }
+    state.balances[sourceId] = Math.max(0, available - amount);
+    state.balances[destinationId] = Number(state.balances[destinationId] || 0) + amount;
+    closeCategoryTransferModal(); render(); save();
+    toast(`${peso(amount)} transferred from ${source.name} to ${destination.name}.`);
   });
   let pendingCategoryDeletionId = null;
   const categoryDeleteModal = document.getElementById('categoryDeleteModal');

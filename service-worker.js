@@ -1,12 +1,12 @@
 /* EUnify offline app shell for GitHub Pages. Keep this file beside index.html. */
-const CACHE_NAME = "pesoplan-shell-v18-account-isolation-fix";
+const CACHE_NAME = "pesoplan-shell-v20-push-connection-fix";
 const APP_SHELL = [
   new URL("./", self.registration.scope).href,
   new URL("./index.html", self.registration.scope).href,
   new URL("./schedules.html", self.registration.scope).href,
   new URL("./manifest.webmanifest", self.registration.scope).href,
   new URL("./supabase-config.js", self.registration.scope).href,
-  new URL("./eunify-push.js?v=20261120-account-isolation-fix", self.registration.scope).href,
+  new URL("./eunify-push.js?v=20261121-push-connection-fix", self.registration.scope).href,
   new URL("./logos/1.png", self.registration.scope).href,
   new URL("./instruction-images/sign-in.jpg", self.registration.scope).href,
   new URL("./instruction-images/settings.jpg", self.registration.scope).href,
@@ -24,15 +24,20 @@ const APP_SHELL = [
 self.addEventListener("install", event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
-    // Cache core files individually so one optional/missing file cannot cancel installation.
-    for (const url of APP_SHELL) {
+    // Cache assets concurrently with a timeout. A slow optional image or
+    // network request must not leave the service worker installing indefinitely.
+    await Promise.allSettled(APP_SHELL.map(async url => {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 7000);
       try {
-        const response = await fetch(url, { cache: "reload" });
+        const response = await fetch(url, { cache: "reload", signal: controller.signal });
         if (response.ok) await cache.put(url, response);
       } catch (error) {
         console.warn("EUnify: could not pre-cache", url, error);
+      } finally {
+        clearTimeout(timer);
       }
-    }
+    }));
     await self.skipWaiting();
   })());
 });
