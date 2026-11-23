@@ -141,6 +141,7 @@ table { width:100%; border-collapse:collapse; min-width:520px; }
 th, td { text-align:left; padding:11px 9px; border-bottom:1px solid var(--line); font-size:11px; }
 th { color:var(--muted); font-size:9px; text-transform:uppercase; letter-spacing:1px; }
 td strong { font-size:11px; }
+.type-transfer { color: var(--accent); font-weight: 700; }
 .type-income { color:var(--good); font-weight:800; }
 .type-expense { color:var(--bad); font-weight:800; }
 .empty { color:var(--muted); text-align:center; padding:25px 10px; font-size:12px; }
@@ -822,6 +823,89 @@ td strong { font-size:11px; }
 }
 
 
+/* Match My completed wishlist to the compact initial wishlist rows */
+#wishCompletedList.priority-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+}
+#wishCompletedList .wish-group {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+#wishCompletedList .wish-group + .wish-group {
+  margin-top: 12px !important;
+}
+#wishCompletedList .wish-group-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin: 0 0 3px !important;
+  padding: 0 2px 4px !important;
+}
+#wishCompletedList .priority-item,
+#wishCompletedList .priority-item.done {
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 6px 4px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+#wishCompletedList .priority-item:last-child {
+  border-bottom: 0 !important;
+}
+#wishCompletedList .priority-item.done {
+  opacity: .55 !important;
+}
+#wishCompletedList .priority-check {
+  width: 16px !important;
+  height: 16px !important;
+  margin: 0 2px 0 0 !important;
+  flex: 0 0 16px !important;
+}
+#wishCompletedList .buy-info {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+#wishCompletedList .buy-name {
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+}
+#wishCompletedList .buy-meta {
+  margin-top: 1px !important;
+  font-size: 10px !important;
+}
+#wishCompletedList .buy-price {
+  flex: 0 0 auto !important;
+  margin-left: auto !important;
+  padding-left: 8px !important;
+  font-size: 12px !important;
+}
+#wishCompletedList .wish-edit-btn,
+#wishCompletedList .icon-btn {
+  flex: 0 0 auto !important;
+}
+@media (max-width: 520px) {
+  #wishCompletedList .priority-item {
+    flex-wrap: nowrap !important;
+    padding: 7px 2px !important;
+  }
+  #wishCompletedList .buy-info {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+  #wishCompletedList .buy-price {
+    margin-left: auto !important;
+    padding-left: 5px !important;
+  }
+}
+
 /* Category expansion and direct balance transfers */
 .category-card { cursor:pointer; transition:transform .18s ease, box-shadow .18s ease; }
 .category-card:focus-visible { outline:3px solid var(--site-secondary); outline-offset:3px; }
@@ -838,6 +922,9 @@ td strong { font-size:11px; }
 .category-transfer-dialog .category-transfer-summary { margin:12px 0 16px; }
 @media(max-width:620px) { .category-card.is-expanded { grid-column:span 1; } }
 
+.reminder-type-section { margin-top:14px; padding-top:4px; }
+.reminder-type-section + .reminder-type-section { border-top:1px solid var(--line); margin-top:20px; padding-top:12px; }
+.reminder-type-section > .reminder-group-head strong { font-size:13px; }
 </style>
 
 <meta name="theme-color" content="#315c4c">
@@ -1177,7 +1264,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
               <div class="bill-form-grid">
                 <div class="field"><label for="billType">Reminder type</label><select id="billType"><option value="expense">Pay money</option><option value="income">Receive money</option></select></div><div class="field"><label for="billCategory">Category for this reminder</label><select id="billCategory"><option value="all">All Categories (distribute automatically)</option></select></div><div class="field full"><label for="billName">Name of reminder / bill / subscription</label><input id="billName" maxlength="80" placeholder="e.g. Internet, project deadline, subscription" required></div>
                 <div class="field"><label for="billAmount">Amount (₱)</label><input id="billAmount" type="number" min="0.01" step="0.01" placeholder="0.00" required></div>
-                <div class="field"><label for="billDueDate">Due date</label><input id="billDueDate" type="date" required></div><div class="field"><label for="billDueTime">Due time</label><input id="billDueTime" type="time" value="09:00" required></div>
+                <div class="field"><label for="billDueDate">Due date</label><input id="billDueDate" type="date" required></div><div class="field"><label for="billDueTime">Due time (optional)</label><input id="billDueTime" type="time"></div>
                 <div class="field"><label for="billPriority">Payment priority</label><select id="billPriority"><option>Urgent</option><option>High</option><option selected>Medium</option><option>Low</option></select></div>
                 <div class="field"><label for="billRepeat">Repeat</label><select id="billRepeat"><option value="once">One-time event</option><option value="daily">Daily</option><option value="weekdays">Weekdays (Mon–Fri)</option><option value="weekly">Weekly</option><option value="monthly">Monthly (same date)</option><option value="yearly">Yearly</option></select></div>
                 <div class="field"><label for="billReminderLead">Show reminder</label><select id="billReminderLead"><option value="0">On the due date</option><option value="1">1 day before</option><option value="3">3 days before</option><option value="7">7 days before</option><option value="14">14 days before</option><option value="30" selected>30 days before</option><option value="60">60 days before</option><option value="90">90 days before</option></select></div>
@@ -1253,6 +1340,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
           </div>
           <div id="wishCategoryTabs" class="wish-category-tabs no-print" aria-label="Filter wishlist by category"></div>
           <div class="priority-list" id="wishList"></div>
+          <div class="wish-collection" style="margin-top:16px;border-top:1px solid var(--line);padding-top:14px">
+            <button class="btn btn-quiet btn-block" type="button" id="wishCompletedToggle" aria-expanded="false">♡ My completed wishlist <span id="wishCompletedCount">(0)</span>　⌄</button>
+            <div id="wishCompletedPanel" hidden style="margin-top:12px"><div id="wishCompletedCategoryTabs" class="wish-category-tabs no-print" aria-label="Filter completed wishlist by category"></div><div class="priority-list" id="wishCompletedList"></div></div>
+          </div>
         </div>
       </div>
     </section>
@@ -1458,7 +1549,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     <h3 id="guideExplanationTitle"></h3>
     <p id="guideExplanationText"></p>
     <div class="guide-image-frame" id="guideExplanationImageFrame">
-      <img id="guideExplanationImage" src="instruction-images/sign-in.jpg" alt="Sign in instruction visual">
+      <img id="guideExplanationImage" src="instruction-images/sign-in.png" alt="Sign in instruction visual">
     </div>
     <div class="guide-step-controls" id="guideStepControls" hidden>
       <button type="button" id="guideStepPrevious" aria-label="Previous instruction step">Previous</button>
@@ -1494,7 +1585,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       <div class="field"><label for="billEditName">Reminder name</label><input id="billEditName" maxlength="80" required></div>
       <div class="field"><label for="billEditCategory" id="billEditCategoryLabel">Deduct from category</label><select id="billEditCategory" required></select></div>
       <div class="field"><label for="billEditAmount">Amount (₱)</label><input id="billEditAmount" type="number" min="0.01" step="0.01" required></div>
-      <div class="field"><label for="billEditDueDate">Due date</label><input id="billEditDueDate" type="date" required></div><div class="field"><label for="billEditDueTime">Due time</label><input id="billEditDueTime" type="time" required></div>
+      <div class="field"><label for="billEditDueDate">Due date</label><input id="billEditDueDate" type="date" required></div><div class="field"><label for="billEditDueTime">Due time (optional)</label><input id="billEditDueTime" type="time"></div>
       <div class="field"><label for="billEditPriority">Priority</label><select id="billEditPriority"><option>Urgent</option><option>High</option><option>Medium</option><option>Low</option></select></div>
       <div class="field"><label for="billEditRepeat">Repeat</label><select id="billEditRepeat"><option value="once">One-time event</option><option value="daily">Daily</option><option value="weekdays">Weekdays (Mon–Fri)</option><option value="weekly">Weekly</option><option value="monthly">Monthly (same date)</option><option value="yearly">Yearly</option></select></div>
       <div class="field"><label for="billEditReminderLead">Show reminder</label><select id="billEditReminderLead"><option value="0">On the due date</option><option value="1">1 day before</option><option value="3">3 days before</option><option value="7">7 days before</option><option value="14">14 days before</option><option value="30">30 days before</option><option value="60">60 days before</option><option value="90">90 days before</option></select></div>
@@ -1535,11 +1626,36 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
   const THEME_KEY = 'pesoplan_theme_v1';
   const KEY = 'pesoplan_data_v1';
   const peso = n => '₱' + Number(n || 0).toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const roundMoney = value => Math.round((Number(value || 0) + Number.EPSILON) * 100) / 100;
+  function distributeMoney(amount, categories) {
+    const cents = Math.round(roundMoney(amount) * 100);
+    const valid = (categories || []).filter(c => c && c.id != null);
+    const totalPercent = valid.reduce((sum, c) => sum + Math.max(0, Number(c.percent) || 0), 0);
+    if (!valid.length || totalPercent <= 0) return [];
+    const parts = valid.map((c, index) => {
+      const exact = cents * Math.max(0, Number(c.percent) || 0) / totalPercent;
+      return {category:c.id, cents:Math.floor(exact), remainder:exact-Math.floor(exact), index};
+    });
+    let remaining = cents - parts.reduce((sum, part) => sum + part.cents, 0);
+    [...parts].sort((a,b) => b.remainder-a.remainder || a.index-b.index).forEach(part => { if (remaining > 0) { part.cents++; remaining--; } });
+    return parts.map(part => ({category:part.category, amount:part.cents/100}));
+  }
   const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
   const makeId = () => (globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function') ? globalThis.crypto.randomUUID() : `pp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   const blankBalances = () => Object.fromEntries(CATEGORIES.map(c => [c.id, 0]));
   let state = load();
+  // Funding lots preserve the origin of every peso as it moves between categories.
+  // Existing balances are migrated as legacy funds; new income gets its own origin ID.
+  if (!state.fundingLots || typeof state.fundingLots !== 'object') {
+    state.fundingLots = {};
+    CATEGORIES.forEach(c => {
+      const opening = roundMoney(Number(state.balances[c.id] || 0));
+      state.fundingLots[c.id] = opening > 0 ? [{lotId:`legacy-${c.id}`, originIncomeId:null, amount:opening}] : [];
+    });
+  }
+  CATEGORIES.forEach(c => { if (!Array.isArray(state.fundingLots[c.id])) state.fundingLots[c.id] = []; });
   let selectedWishCategory = 'all';
+  let selectedCompletedWishCategory = 'all';
   let expandedBillId = null;
   let activeReminderGroupId = null;
   let expandedPaidBillName = null;
@@ -1664,10 +1780,10 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
         if (!syncMeta.categoriesAt && JSON.stringify(CATEGORIES) !== JSON.stringify(DEFAULT_CATEGORIES)) syncMeta.categoriesAt = migratedAt;
         const migrateRecords = items => (Array.isArray(items) ? items : []).map(item =>
           item && item.id != null && !item.updatedAt ? {...item, updatedAt:migratedAt} : item);
-        return {categories:CATEGORIES,themeId:Number(saved.themeId || localStorage.getItem(THEME_KEY) || 1),themeUpdatedAt:Number(saved.themeUpdatedAt || 0),guideBubbleEnabled:saved.guideBubbleEnabled !== false,guideBubbleUpdatedAt:Number(saved.guideBubbleUpdatedAt || 0),sectionDisplay:saved.sectionDisplay || {},notificationSettings:{notify24h:saved.notificationSettings?.notify24h !== false,notify12h:saved.notificationSettings?.notify12h !== false},notificationSettingsUpdatedAt:Number(saved.notificationSettingsUpdatedAt || 0),sectionDisplayUpdatedAt:Number(saved.sectionDisplayUpdatedAt || 0),balances:{...blankBalances(),...saved.balances}, transactions:migrateRecords(saved.transactions), wishes:migrateRecords(saved.wishes), bills:migrateRecords(saved.bills), paidBills:migrateRecords(saved.paidBills), reminderGroups:migrateRecords(saved.reminderGroups && saved.reminderGroups.length ? saved.reminderGroups : DEFAULT_REMINDER_GROUPS.map(g=>({...g}))), schedules:migrateRecords(saved.schedules), deletedScheduleIds:Array.isArray(saved.deletedScheduleIds)?saved.deletedScheduleIds:[], deletedTransactionIds:Array.isArray(saved.deletedTransactionIds)?saved.deletedTransactionIds:[], deletedBillIds:Array.isArray(saved.deletedBillIds)?saved.deletedBillIds:[], deletedWishIds:Array.isArray(saved.deletedWishIds)?saved.deletedWishIds:[], deletedReminderGroupIds:Array.isArray(saved.deletedReminderGroupIds)?saved.deletedReminderGroupIds:[], deletedPaidBillIds:Array.isArray(saved.deletedPaidBillIds)?saved.deletedPaidBillIds:[], deletedCategoryIds:Array.isArray(saved.deletedCategoryIds)?saved.deletedCategoryIds:[], _syncMeta:syncMeta};
+        return {categories:CATEGORIES,themeId:Number(saved.themeId || localStorage.getItem(THEME_KEY) || 1),themeUpdatedAt:Number(saved.themeUpdatedAt || 0),guideBubbleEnabled:saved.guideBubbleEnabled !== false,guideBubbleUpdatedAt:Number(saved.guideBubbleUpdatedAt || 0),sectionDisplay:saved.sectionDisplay || {},notificationSettings:{notify24h:saved.notificationSettings?.notify24h !== false,notify12h:saved.notificationSettings?.notify12h !== false},notificationSettingsUpdatedAt:Number(saved.notificationSettingsUpdatedAt || 0),sectionDisplayUpdatedAt:Number(saved.sectionDisplayUpdatedAt || 0),balances:{...blankBalances(),...saved.balances}, fundingLots:saved.fundingLots && typeof saved.fundingLots === 'object' ? saved.fundingLots : null, deletedTransferOrigins:saved.deletedTransferOrigins && typeof saved.deletedTransferOrigins === 'object' ? saved.deletedTransferOrigins : {}, transactions:migrateRecords(saved.transactions), wishes:migrateRecords(saved.wishes), bills:migrateRecords(saved.bills), paidBills:migrateRecords(saved.paidBills), reminderGroups:migrateRecords(saved.reminderGroups && saved.reminderGroups.length ? saved.reminderGroups : DEFAULT_REMINDER_GROUPS.map(g=>({...g}))), schedules:migrateRecords(saved.schedules), deletedScheduleIds:Array.isArray(saved.deletedScheduleIds)?saved.deletedScheduleIds:[], deletedTransactionIds:Array.isArray(saved.deletedTransactionIds)?saved.deletedTransactionIds:[], deletedBillIds:Array.isArray(saved.deletedBillIds)?saved.deletedBillIds:[], deletedWishIds:Array.isArray(saved.deletedWishIds)?saved.deletedWishIds:[], deletedReminderGroupIds:Array.isArray(saved.deletedReminderGroupIds)?saved.deletedReminderGroupIds:[], deletedPaidBillIds:Array.isArray(saved.deletedPaidBillIds)?saved.deletedPaidBillIds:[], deletedCategoryIds:Array.isArray(saved.deletedCategoryIds)?saved.deletedCategoryIds:[], _syncMeta:syncMeta};
       }
     } catch (e) {}
-    return {categories:CATEGORIES,themeId:Number(localStorage.getItem(THEME_KEY) || 1),themeUpdatedAt:0,guideBubbleEnabled:true,guideBubbleUpdatedAt:0,sectionDisplay:{},notificationSettings:{notify24h:true,notify12h:true},notificationSettingsUpdatedAt:0,sectionDisplayUpdatedAt:0,balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[], reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), schedules:[], deletedScheduleIds:[], deletedTransactionIds:[] , deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
+    return {categories:CATEGORIES,themeId:Number(localStorage.getItem(THEME_KEY) || 1),themeUpdatedAt:0,guideBubbleEnabled:true,guideBubbleUpdatedAt:0,sectionDisplay:{},notificationSettings:{notify24h:true,notify12h:true},notificationSettingsUpdatedAt:0,sectionDisplayUpdatedAt:0,balances:blankBalances(), fundingLots:null, deletedTransferOrigins:{}, transactions:[], wishes:[], bills:[], paidBills:[], reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), schedules:[], deletedScheduleIds:[], deletedTransactionIds:[] , deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
   }
   // Cloud sync uses one private JSON record per signed-in user.
   // Only the Supabase project URL and publishable/anon key belong in the browser.
@@ -1732,18 +1848,176 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       if (Array.isArray(tx.allocations) && tx.allocations.length) {
         tx.allocations.forEach(allocation => {
           if (allocation && allocation.category) {
-            balances[allocation.category] = Number(balances[allocation.category] || 0) + Number(allocation.amount || 0) * sign;
+            balances[allocation.category] = roundMoney(Number(balances[allocation.category] || 0) + Number(allocation.amount || 0) * sign);
           }
         });
+      } else if (tx.category) {
+        // Older single-category income records still identify their destination.
+        balances[tx.category] = roundMoney(Number(balances[tx.category] || 0) + amount);
       } else {
-        // Older income records did not save their original category split.
-        (categories || CATEGORIES).forEach(c => {
-          balances[c.id] = Number(balances[c.id] || 0) + amount * Number(c.percent || 0) / 100;
+        // Legacy all-category records lack their historical split. This fallback
+        // remains for cloud reconciliation only; deletion is blocked in the UI.
+        distributeMoney(Math.abs(amount), categories || CATEGORIES).forEach(allocation => {
+          balances[allocation.category] = roundMoney(Number(balances[allocation.category] || 0) + allocation.amount * sign);
         });
       }
     } else if (tx.type === 'expense' && tx.category) {
-      balances[tx.category] = Number(balances[tx.category] || 0) - amount;
+      balances[tx.category] = roundMoney(Number(balances[tx.category] || 0) - amount);
+    } else if (tx.type === 'transfer' && tx.sourceCategory && tx.destinationCategory) {
+      // A transfer is one balanced movement: source decreases and destination increases.
+      balances[tx.sourceCategory] = roundMoney(Number(balances[tx.sourceCategory] || 0) - amount);
+      balances[tx.destinationCategory] = roundMoney(Number(balances[tx.destinationCategory] || 0) + amount);
     }
+  }
+
+  // Keep source-level ownership of unspent funds. Transfers move the same lots;
+  // expenses consume lots; deleting income removes only its still-unspent descendants.
+  function fundingLotsFor(categoryId) {
+    if (!state.fundingLots || typeof state.fundingLots !== 'object') state.fundingLots = {};
+    if (!Array.isArray(state.fundingLots[categoryId])) state.fundingLots[categoryId] = [];
+    return state.fundingLots[categoryId];
+  }
+  function addIncomeFunding(tx) {
+    const allocations = Array.isArray(tx.allocations) && tx.allocations.length
+      ? tx.allocations
+      : (tx.category ? [{category:tx.category, amount:Number(tx.amount || 0)}] : distributeMoney(Number(tx.amount || 0), CATEGORIES));
+    allocations.forEach((a, index) => {
+      const amount = roundMoney(Number(a.amount || 0));
+      if (!a.category || amount <= 0) return;
+      fundingLotsFor(a.category).push({lotId:`${tx.id}:${a.category}:${index}`, originIncomeId:String(tx.id), amount});
+    });
+  }
+  function consumeFunding(categoryId, amount) {
+    let remaining = roundMoney(Number(amount || 0));
+    const lots = fundingLotsFor(categoryId), consumed = [];
+    for (let i=0; i<lots.length && remaining > 0.000001; i++) {
+      const lot = lots[i];
+      const available = roundMoney(Number(lot.amount || 0));
+      if (available <= 0) continue;
+      const take = roundMoney(Math.min(available, remaining));
+      if (take <= 0) continue;
+      consumed.push({lotId:lot.lotId, originIncomeId:lot.originIncomeId ?? null, lineage:Array.isArray(lot.lineage)?[...lot.lineage]:[], amount:take});
+      lot.amount = roundMoney(available - take);
+      remaining = roundMoney(remaining - take);
+    }
+    lots.splice(0, lots.length, ...lots.filter(lot => Number(lot.amount || 0) > 0.000001));
+    // Preserve balance integrity for legacy/manual balances that predate the ledger.
+    if (remaining > 0.000001) {
+      const lotId = `legacy-reconcile-${categoryId}`;
+      consumed.push({lotId, originIncomeId:null, amount:remaining});
+    }
+    return consumed;
+  }
+  function moveFunding(sourceId, destinationId, amount, transferId) {
+    const moved = consumeFunding(sourceId, amount).map((slice, index) => ({
+      ...slice,
+      lotId: transferId ? `${transferId}:${index}` : `transfer-lot-${makeId()}`,
+      lineage: [...(Array.isArray(slice.lineage) ? slice.lineage : []), ...(transferId ? [String(transferId)] : [])]
+    }));
+    moved.forEach(slice => fundingLotsFor(destinationId).push({...slice}));
+    return moved;
+  }
+  function isIncomeDeleted(originId) {
+    return originId != null && (state.deletedTransactionIds || []).some(id => String(id) === String(originId));
+  }
+  function removeIncomeFunding(tx) {
+    const originId = String(tx.id);
+    let removed = 0, found = false;
+    Object.keys(state.fundingLots || {}).forEach(categoryId => {
+      const lots = fundingLotsFor(categoryId);
+      const kept = [];
+      lots.forEach(lot => {
+        if (String(lot.originIncomeId) === originId) {
+          const amount = roundMoney(Number(lot.amount || 0));
+          if (amount > 0) {
+            state.balances[categoryId] = roundMoney(Number(state.balances[categoryId] || 0) - amount);
+            removed = roundMoney(removed + amount);
+            found = true;
+          }
+        } else kept.push(lot);
+      });
+      state.fundingLots[categoryId] = kept;
+    });
+    if (!found) {
+      // Pre-ledger legacy income: reverse its saved original allocation exactly.
+      // Old records without allocations use the best available historical fallback.
+      const before = {...state.balances};
+      transactionBalanceEffect(state.balances, tx, 'remove', CATEGORIES);
+      Object.keys(state.balances).forEach(categoryId => {
+        const delta = roundMoney(Number(before[categoryId] || 0) - Number(state.balances[categoryId] || 0));
+        if (delta > 0) {
+          const lots = fundingLotsFor(categoryId);
+          let remaining = delta;
+          for (let i=0; i<lots.length && remaining>0.000001; i++) {
+            if (lots[i].originIncomeId != null) continue;
+            const take = roundMoney(Math.min(Number(lots[i].amount || 0), remaining));
+            lots[i].amount = roundMoney(Number(lots[i].amount || 0)-take);
+            remaining = roundMoney(remaining-take);
+          }
+          state.fundingLots[categoryId] = lots.filter(lot => Number(lot.amount || 0)>0.000001);
+        }
+      });
+    }
+  }
+  function restoreExpenseFunding(tx) {
+    const categoryId = tx.category;
+    const slices = Array.isArray(tx.fundingConsumed) ? tx.fundingConsumed : null;
+    if (slices) {
+      slices.forEach((slice, index) => {
+        if (isIncomeDeleted(slice.originIncomeId)) return;
+        const amount = roundMoney(Number(slice.amount || 0));
+        if (amount <= 0) return;
+        let targetCategory = categoryId;
+        let lineage = Array.isArray(slice.lineage) ? [...slice.lineage] : [];
+        const deletedOrigins = state.deletedTransferOrigins || {};
+        const deletedIndex = lineage.findIndex(transferId => deletedOrigins[String(transferId)]);
+        if (deletedIndex >= 0) {
+          const deletedTransfer = deletedOrigins[String(lineage[deletedIndex])];
+          targetCategory = deletedTransfer.sourceCategory || categoryId;
+          lineage = lineage.slice(0, deletedIndex);
+        }
+        fundingLotsFor(targetCategory).push({lotId:slice.lotId || `restored-${tx.id}-${index}`, originIncomeId:slice.originIncomeId ?? null, lineage, amount});
+        state.balances[targetCategory] = roundMoney(Number(state.balances[targetCategory] || 0) + amount);
+      });
+    } else {
+      transactionBalanceEffect(state.balances, tx, 'remove', CATEGORIES);
+      const amount = roundMoney(Number(tx.amount || 0));
+      if (amount > 0) fundingLotsFor(categoryId).push({lotId:`legacy-restore-${tx.id}`, originIncomeId:null, lineage:[], amount});
+    }
+  }
+
+  function reverseTransferFunding(tx) {
+    const slices = Array.isArray(tx.fundingMoved) ? tx.fundingMoved : null;
+    if (!slices) {
+      transactionBalanceEffect(state.balances, tx, 'remove', CATEGORIES);
+      moveFunding(tx.destinationCategory, tx.sourceCategory, Number(tx.amount || 0), `undo-${tx.id}`);
+      return;
+    }
+    let returned = 0, removed = 0;
+    const restoreLots = [];
+    // Follow this transfer's lineage, including any later transfers of the same
+    // money. Restore only what is still unspent; spent portions stay spent.
+    Object.keys(state.fundingLots || {}).forEach(categoryId => {
+      const lots = fundingLotsFor(categoryId), kept = [];
+      lots.forEach(lot => {
+        const belongsToTransfer = Array.isArray(lot.lineage) && lot.lineage.includes(String(tx.id));
+        if (!belongsToTransfer) { kept.push(lot); return; }
+        const amount = roundMoney(Number(lot.amount || 0));
+        if (amount <= 0) return;
+        state.balances[categoryId] = roundMoney(Number(state.balances[categoryId] || 0) - amount);
+        removed = roundMoney(removed + amount);
+        if (!isIncomeDeleted(lot.originIncomeId)) {
+          restoreLots.push({lotId:`undo-${tx.id}-${makeId()}`, originIncomeId:lot.originIncomeId ?? null, lineage:(Array.isArray(lot.lineage)?lot.lineage:[]).filter(id => String(id) !== String(tx.id)), amount});
+          state.balances[tx.sourceCategory] = roundMoney(Number(state.balances[tx.sourceCategory] || 0) + amount);
+          returned = roundMoney(returned + amount);
+        }
+      });
+      state.fundingLots[categoryId] = kept;
+    });
+    fundingLotsFor(tx.sourceCategory).push(...restoreLots);
+    // Legacy transfer records have no lineage metadata. Their reversal is handled
+    // by the fallback above; the counters here are intentionally informational.
+    void removed; void returned;
   }
 
   function mergeCloudStates(localState, remoteState) {
@@ -1824,6 +2098,8 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       ...remote,
       categories: baseCategories,
       balances,
+      fundingLots: (localCategoryChangesNewer ? local.fundingLots : (remote.fundingLots || local.fundingLots)) || {},
+      deletedTransferOrigins: {...(remote.deletedTransferOrigins || {}), ...(local.deletedTransferOrigins || {})},
       transactions: [...transactionMap.values()],
       wishes: mergeByUpdatedAt(local.wishes, remote.wishes).filter(x => !deletedWishIds.has(String(x.id))),
       bills: mergeByUpdatedAt(local.bills, remote.bills).filter(x => !deletedBillIds.has(String(x.id))),
@@ -1854,6 +2130,8 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       notificationSettingsUpdatedAt: Math.max(Number(local.notificationSettingsUpdatedAt || 0), Number(remote?.notificationSettingsUpdatedAt || 0))
     } : {
       ...local,
+      fundingLots: local.fundingLots || {},
+      deletedTransferOrigins: local.deletedTransferOrigins || {},
       transactions: [...transactionMap.values()],
       deletedTransactionIds: [...deletedTransactionIds],
       deletedBillIds: [...deletedBillIds],
@@ -2020,7 +2298,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
         } catch (e) {}
         CATEGORIES = DEFAULT_CATEGORIES.map(c => ({...c}));
         try { localStorage.removeItem(THEME_KEY); } catch (e) {}
-        state = {categories:CATEGORIES, themeId:1, themeUpdatedAt:0, guideBubbleEnabled:true, guideBubbleUpdatedAt:0, notificationSettings:{notify24h:true,notify12h:true}, notificationSettingsUpdatedAt:Date.now(), balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[],
+        state = {categories:CATEGORIES, themeId:1, themeUpdatedAt:0, guideBubbleEnabled:true, guideBubbleUpdatedAt:0, notificationSettings:{notify24h:true,notify12h:true}, notificationSettingsUpdatedAt:Date.now(), balances:blankBalances(), fundingLots:null, deletedTransferOrigins:{}, transactions:[], wishes:[], bills:[], paidBills:[],
           reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), schedules:[], deletedScheduleIds:[], deletedTransactionIds:[], deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
         updateGuideBubbleSettingUI();
       }
@@ -2143,7 +2421,13 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
       return;
     }
     cloudModalStatus.textContent = 'Creating your account…';
-    const { data, error } = await cloudClient.auth.signUp({ email, password });
+    const { data, error } = await cloudClient.auth.signUp({
+  email,
+  password,
+  options: {
+    emailRedirectTo: 'https://digitized-droid.github.io/ExpenseUtility/'
+  }
+});
     if (error) cloudModalStatus.textContent = error.message;
     else if (data.session) {
       cloudModalStatus.textContent = 'Account created. Connecting…';
@@ -2207,7 +2491,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
         }
       } catch (e) {}
       CATEGORIES = DEFAULT_CATEGORIES.map(c => ({...c}));
-      state = {categories:CATEGORIES, themeId:1, themeUpdatedAt:0, guideBubbleEnabled:true, guideBubbleUpdatedAt:0, notificationSettings:{notify24h:true,notify12h:true}, notificationSettingsUpdatedAt:Date.now(), balances:blankBalances(), transactions:[], wishes:[], bills:[], paidBills:[],
+      state = {categories:CATEGORIES, themeId:1, themeUpdatedAt:0, guideBubbleEnabled:true, guideBubbleUpdatedAt:0, notificationSettings:{notify24h:true,notify12h:true}, notificationSettingsUpdatedAt:Date.now(), balances:blankBalances(), fundingLots:null, deletedTransferOrigins:{}, transactions:[], wishes:[], bills:[], paidBills:[],
         reminderGroups:DEFAULT_REMINDER_GROUPS.map(g=>({...g})), schedules:[], deletedScheduleIds:[], deletedTransactionIds:[], deletedBillIds:[], deletedWishIds:[], deletedReminderGroupIds:[], deletedPaidBillIds:[], deletedCategoryIds:[], _syncMeta:{}};
       updateGuideBubbleSettingUI();
       render();
@@ -2377,8 +2661,12 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
     const transactions = tx.length ? tx.map(t => {
       const isIncome = t.type === 'income';
       const title = t.note || (isIncome ? 'Money received' : 'Purchase');
-      const categoryName = isIncome ? 'Money received' : (category(t.category)?.name || 'Uncategorized');
-      return `<article class="report-transaction"><div><div class="report-transaction-title">${escapeHTML(title)}</div><div class="report-transaction-meta">${isIncome?'Money received':'Expense'} · ${escapeHTML(categoryName)}</div></div><div class="report-transaction-amount ${isIncome?'type-income':'type-expense'}">${isIncome?'+':'−'}${peso(t.amount)}</div></article>`;
+      const isTransfer = t.type === 'transfer';
+      const categoryName = isTransfer ? `${category(t.sourceCategory)?.name || 'Unknown'} → ${category(t.destinationCategory)?.name || 'Unknown'}` : (isIncome ? 'Money received' : (category(t.category)?.name || 'Uncategorized'));
+      const kind = isIncome ? 'Money received' : (isTransfer ? 'Category transfer' : 'Expense');
+      const sign = isIncome ? '+' : (isTransfer ? '↔' : '−');
+      const amountClass = isIncome ? 'type-income' : (isTransfer ? 'type-transfer' : 'type-expense');
+      return `<article class="report-transaction"><div><div class="report-transaction-title">${escapeHTML(title)}</div><div class="report-transaction-meta">${kind} · ${escapeHTML(categoryName)}</div></div><div class="report-transaction-amount ${amountClass}">${sign}${peso(t.amount)}</div></article>`;
     }).join('') : '<div class="report-empty">No transactions recorded on this day.</div>';
     return `<div class="report-detail-summary"><div class="report-detail-total"><small>Total money received</small><strong class="type-income">${peso(income)}</strong></div><div class="report-detail-total"><small>Total expenses</small><strong class="type-expense">${peso(expense)}</strong></div></div><div class="report-breakdown"><h4>Income breakdown</h4><div class="report-category-row"><span>Money received</span><strong class="type-income">${peso(income)}</strong></div></div><div class="report-breakdown"><h4>Expense breakdown by category</h4>${categoryRows}</div><div class="report-transactions"><h4>All transactions for this day (${tx.length})</h4><div class="report-transaction-list">${transactions}</div></div>`;
   }
@@ -2477,7 +2765,14 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
 
     rows.innerHTML = visible.length ? visible.map(t => {
       const isIncome = t.type === 'income';
-      return `<tr><td>${escapeHTML(t.date)}</td><td class="${isIncome?'type-income':'type-expense'}">${isIncome?'Money received':'Expense'}</td><td><strong>${escapeHTML(t.note || (isIncome?'Added capital':'Purchase'))}</strong></td><td>${isIncome ? escapeHTML((t.category && category(t.category)?.name) || (Array.isArray(t.allocations) && t.allocations.length === 1 ? category(t.allocations[0].category)?.name : '') || 'All categories') : escapeHTML(category(t.category)?.name || '—')}</td><td class="${isIncome?'type-income':'type-expense'}">${isIncome?'+':'−'}${peso(t.amount)}</td><td class="no-print"><button class="icon-btn" title="Delete transaction and reverse its effect" data-delete-transaction="${t.id}">✕</button></td></tr>`;
+      const isTransfer = t.type === 'transfer';
+      const typeLabel = isIncome ? 'Money received' : (isTransfer ? 'Category transfer' : 'Expense');
+      const typeClass = isIncome ? 'type-income' : (isTransfer ? 'type-transfer' : 'type-expense');
+      const categoryLabel = isTransfer
+        ? `${category(t.sourceCategory)?.name || 'Unknown'} → ${category(t.destinationCategory)?.name || 'Unknown'}`
+        : (isIncome ? ((t.category && category(t.category)?.name) || (Array.isArray(t.allocations) && t.allocations.length === 1 ? category(t.allocations[0].category)?.name : '') || 'All categories') : (category(t.category)?.name || '—'));
+      const sign = isIncome ? '+' : (isTransfer ? '↔' : '−');
+      return `<tr><td>${escapeHTML(t.date)}</td><td class="${typeClass}">${typeLabel}</td><td><strong>${escapeHTML(t.note || (isIncome?'Added capital':(isTransfer?'Category transfer':'Purchase')))}</strong></td><td>${escapeHTML(categoryLabel)}</td><td class="${typeClass}">${sign}${peso(t.amount)}</td><td class="no-print"><button class="icon-btn" title="Delete transaction and reverse its effect" data-delete-transaction="${t.id}">✕</button></td></tr>`;
     }).join('') : '<tr><td colspan="6" class="empty">No transactions yet. Add money received or record your first expense.</td></tr>';
 
     const hasMoreThanLimit = sorted.length > RECENT_ACTIVITY_LIMIT;
@@ -2534,7 +2829,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
         <div class="upcoming-reminder-main">
           <strong>${escapeHTML(b.name || 'Untitled reminder')}</strong>
           <span>${escapeHTML(groupName(b.reminderGroupId || 'default-reminders'))} · ${escapeHTML(b.priority || 'Medium')} priority</span>
-          <small>${formatBillDate(b.dueDate)} at ${escapeHTML(b.dueTime || '09:00')} · ${timing}${b.repeat && b.repeat !== 'once' ? ' · Repeats '+escapeHTML(b.repeat) : ''}</small>
+          <small>${formatBillDate(b.dueDate)}${b.dueTime ? ' at ' + escapeHTML(b.dueTime) : ' · No time set'} · ${timing}${b.repeat && b.repeat !== 'once' ? ' · Repeats '+escapeHTML(b.repeat) : ''}</small>
         </div>
         <strong class="upcoming-reminder-amount">${peso(b.amount)}</strong>
         <div class="upcoming-reminder-actions">
@@ -2600,7 +2895,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
           <span class="bill-preview-star">✦</span>
           <span class="bill-preview-main">
             <strong class="bill-preview-name">${escapeHTML(b.name)}</strong>
-            <small class="bill-preview-due">Due ${formatBillDate(b.dueDate)} at ${escapeHTML(b.dueTime || '09:00')} · ${escapeHTML(b.priority || 'Medium')} priority</small>
+            <small class="bill-preview-due">${b.type === 'income' ? 'Receivable' : 'Payable'} · Due ${formatBillDate(b.dueDate)}${b.dueTime ? ' at ' + escapeHTML(b.dueTime) : ' · No time set'} · ${escapeHTML(b.priority || 'Medium')} priority</small>
           </span>
           <span class="bill-preview-amount">${peso(b.amount)}</span>
         </button>`).join('');
@@ -2632,7 +2927,12 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
             </div>
           </div>
           <button class="btn btn-secondary bill-group-add no-print" type="button" data-add-reminder-to="${escapeHTML(selectedGroup.id)}">＋ Add a reminder to ${escapeHTML(selectedGroup.name)}</button>
-          <div class="bill-stack">${groupBills.map(b => {
+          ${['expense','income'].map(reminderType => {
+            const typeBills = groupBills.filter(b => (b.type === 'income' ? 'income' : 'expense') === reminderType);
+            const sectionTitle = reminderType === 'income' ? 'Receivables · Receive money' : 'Payables · Pay money';
+            return `<section class="reminder-type-section" data-reminder-type="${reminderType}">
+              <div class="reminder-group-head" style="margin:16px 0 8px"><strong>${sectionTitle}</strong><small>${typeBills.length} ${reminderType === 'income' ? 'receivable' : 'payable'}${typeBills.length === 1 ? '' : 's'}</small></div>
+              <div class="bill-stack">${typeBills.map(b => {
             const expanded = expandedBillId === b.id;
             return `
               <article class="bill-card ${expanded ? 'expanded' : ''}">
@@ -2640,7 +2940,7 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
                   <span class="bill-card-star">✦</span>
                   <div class="bill-card-main">
                     <div class="bill-card-name">${escapeHTML(b.name)}</div>
-                    <div class="bill-card-due">${b.type === 'income' ? 'Receive' : 'Pay'} · Due ${formatBillDate(b.dueDate)} at ${escapeHTML(b.dueTime || '09:00')}</div>
+                    <div class="bill-card-due">${b.type === 'income' ? 'Receive' : 'Pay'} · Due ${formatBillDate(b.dueDate)}${b.dueTime ? ' at ' + escapeHTML(b.dueTime) : ' · No time set'}</div>
                   </div>
                   <span class="bill-card-amount">${peso(b.amount)}</span>
                 </div>
@@ -2658,7 +2958,9 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
                   </div>
                 </div>
               </article>`;
-          }).join('') || '<div class="empty">No active reminders in this list yet. Add one using the button above.</div>'}</div>
+          }).join('') || `<div class="empty">No ${reminderType === 'income' ? 'receivables' : 'payables'} in this list yet.</div>`}</div>
+            </section>`;
+          }).join('')}
         </section>`;
     }
     renderPaidBills();
@@ -2708,34 +3010,35 @@ Whenever you're ready, select <strong>Got it</strong> to start exploring.</p>
 
   function renderWishes() {
     const list = document.getElementById('wishList');
+    const completedList = document.getElementById('wishCompletedList');
+    const completedToggle = document.getElementById('wishCompletedToggle');
     const tabs = document.getElementById('wishCategoryTabs');
-    const sorted = [...state.wishes].sort((a,b) => Number(a.done)-Number(b.done) || ({High:0,Medium:1,Low:2}[a.priority] - {High:0,Medium:1,Low:2}[b.priority]));
-    const counts = Object.fromEntries(CATEGORIES.map(c => [c.id, state.wishes.filter(w => w.category === c.id).length]));
+    const active = state.wishes.filter(w => !w.done);
+    const completed = state.wishes.filter(w => w.done);
+    const sortWishes = items => [...items].sort((a,b) => ({High:0,Medium:1,Low:2}[a.priority] - {High:0,Medium:1,Low:2}[b.priority]));
+    const counts = Object.fromEntries(CATEGORIES.map(c => [c.id, active.filter(w => w.category === c.id).length]));
     const populatedCategories = CATEGORIES.filter(c => counts[c.id] > 0);
-    // If the selected category becomes empty, return to All instead of leaving a hidden category selected.
-    if (selectedWishCategory !== 'all' && !populatedCategories.some(c => c.id === selectedWishCategory)) {
-      selectedWishCategory = 'all';
-    }
-    tabs.innerHTML = (state.wishes.length
-      ? `<button type="button" data-wish-filter="all" class="${selectedWishCategory==='all'?'active':''}">All (${state.wishes.length})</button>`
-      : '') + populatedCategories.map(c =>
-        `<button type="button" data-wish-filter="${c.id}" class="${selectedWishCategory===c.id?'active':''}">${c.icon} ${escapeHTML(c.name)} (${counts[c.id]})</button>`
-      ).join('');
+    if (selectedWishCategory !== 'all' && !populatedCategories.some(c => c.id === selectedWishCategory)) selectedWishCategory = 'all';
+    tabs.innerHTML = (active.length ? `<button type="button" data-wish-filter="all" class="${selectedWishCategory==='all'?'active':''}">All (${active.length})</button>` : '') + populatedCategories.map(c =>
+      `<button type="button" data-wish-filter="${c.id}" class="${selectedWishCategory===c.id?'active':''}">${c.icon} ${escapeHTML(c.name)} (${counts[c.id]})</button>`).join('');
+    const completedTabs = document.getElementById('wishCompletedCategoryTabs');
+    const completedCounts = Object.fromEntries(CATEGORIES.map(c => [c.id, completed.filter(w => w.category === c.id).length]));
+    const completedCategories = CATEGORIES.filter(c => completedCounts[c.id] > 0);
+    if (selectedCompletedWishCategory !== 'all' && !completedCategories.some(c => c.id === selectedCompletedWishCategory)) selectedCompletedWishCategory = 'all';
+    completedTabs.innerHTML = (completed.length ? `<button type="button" data-completed-wish-filter="all" class="${selectedCompletedWishCategory==='all'?'active':''}">All (${completed.length})</button>` : '') + completedCategories.map(c =>
+      `<button type="button" data-completed-wish-filter="${c.id}" class="${selectedCompletedWishCategory===c.id?'active':''}">${c.icon} ${escapeHTML(c.name)} (${completedCounts[c.id]})</button>`).join('');
     const managing = !document.getElementById('wishManageArea')?.hidden;
-    const visible = selectedWishCategory === 'all' ? sorted : sorted.filter(w => w.category === selectedWishCategory);
-    if (!visible.length) {
-      list.innerHTML = selectedWishCategory === 'all'
-        ? '<div class="empty">Your shopping list is empty. Open Edit list to add something you are planning to buy.</div>'
-        : '<div class="empty">No items in this category yet. Add something you are planning to buy.</div>';
-      return;
-    }
-    const groups = selectedWishCategory === 'all' ? populatedCategories : [category(selectedWishCategory)].filter(c => c && counts[c.id] > 0);
-    list.innerHTML = groups.map(c => {
-      const items = visible.filter(w => w.category === c.id);
-      return `<div class="wish-group"><div class="wish-group-title">${c.icon} ${escapeHTML(c.name)} <span>${items.length} item${items.length===1?'':'s'}</span></div>` +
-        items.map(w => `<div class="priority-item ${w.done?'done':''}"><input class="priority-check no-print" type="checkbox" aria-label="Mark ${escapeHTML(w.name)} as purchased" data-wish-check="${w.id}" ${w.done?'checked':''}><div class="buy-info"><div class="buy-name">${escapeHTML(w.name)}</div><div class="buy-meta">${w.done ? 'Purchased' : 'To buy'}${managing ? ` · ${w.priority} priority` : ''}</div></div><span class="buy-price">${peso(w.amount)}</span>
-${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit wishlist estimation" aria-label="Edit ${escapeHTML(w.name)} estimation" data-edit-wish="${w.id}"><span aria-hidden="true">✎</span><span>Edit</span></button><button class="icon-btn no-print" type="button" title="Remove item" aria-label="Remove ${escapeHTML(w.name)}" data-delete-wish="${w.id}">✕</button>` : ''}</div>`).join('') + '</div>';
+    const visible = selectedWishCategory === 'all' ? sortWishes(active) : sortWishes(active.filter(w => w.category === selectedWishCategory));
+    const renderGroups = items => CATEGORIES.filter(c => items.some(w => w.category === c.id)).map(c => {
+      const groupItems = items.filter(w => w.category === c.id);
+      return `<div class="wish-group"><div class="wish-group-title">${c.icon} ${escapeHTML(c.name)} <span>${groupItems.length} item${groupItems.length===1?'':'s'}</span></div>` +
+        groupItems.map(w => `<div class="priority-item ${w.done?'done':''}"><input class="priority-check no-print" type="checkbox" aria-label="${w.done?'Unmark':'Mark'} ${escapeHTML(w.name)} ${w.done?'as not purchased':'as purchased'}" data-wish-check="${w.id}" ${w.done?'checked':''}><div class="buy-info"><div class="buy-name">${escapeHTML(w.name)}</div><div class="buy-meta">${w.done ? 'Purchased' : 'To buy'}${managing ? ` · ${w.priority} priority` : ''}</div></div><span class="buy-price">${peso(w.amount)}</span>${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit wishlist estimation" aria-label="Edit ${escapeHTML(w.name)} estimation" data-edit-wish="${w.id}"><span aria-hidden="true">✎</span><span>Edit</span></button><button class="icon-btn no-print" type="button" title="Remove item" aria-label="Remove ${escapeHTML(w.name)}" data-delete-wish="${w.id}">✕</button>` : ''}</div>`).join('') + '</div>';
     }).join('');
+    list.innerHTML = visible.length ? renderGroups(visible) : '<div class="empty">Your active Wishlist is empty. Completed items are kept in My completed wishlist.</div>';
+    document.getElementById('wishCompletedCount').textContent = `(${completed.length})`;
+    completedToggle.hidden = completed.length === 0;
+    const visibleCompleted = selectedCompletedWishCategory === 'all' ? completed : completed.filter(w => w.category === selectedCompletedWishCategory);
+    completedList.innerHTML = visibleCompleted.length ? renderGroups(sortWishes(visibleCompleted)) : '<div class="empty">No completed wishlist items in this category.</div>';
   }
   function escapeHTML(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
   function addTransaction(t) { state.transactions.push(t); save(); render(); }
@@ -2766,17 +3069,19 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
     const selectedCategory = document.getElementById('incomeCategory').value || 'all';
     let allocations;
     if (selectedCategory === 'all') {
-      allocations = CATEGORIES.map(c => ({category:c.id, amount:amount * Number(c.percent || 0) / 100}));
+      allocations = distributeMoney(amount, CATEGORIES);
       allocations.forEach(allocation => {
-        state.balances[allocation.category] = Number(state.balances[allocation.category] || 0) + allocation.amount;
+        state.balances[allocation.category] = roundMoney(Number(state.balances[allocation.category] || 0) + allocation.amount);
       });
     } else {
       const target = category(selectedCategory);
       if (!target) return toast('Please choose an existing category.');
       allocations = [{category:target.id, amount}];
-      state.balances[target.id] = Number(state.balances[target.id] || 0) + amount;
+      state.balances[target.id] = roundMoney(Number(state.balances[target.id] || 0) + amount);
     }
-    addTransaction({id:makeId(), type:'income', amount, date, note:document.getElementById('incomeNote').value.trim(), category:selectedCategory === 'all' ? null : selectedCategory, allocations, createdAt:Date.now()});
+    const incomeTx = {id:makeId(), type:'income', amount, date, note:document.getElementById('incomeNote').value.trim(), category:selectedCategory === 'all' ? null : selectedCategory, allocations, createdAt:Date.now()};
+    addIncomeFunding(incomeTx);
+    addTransaction(incomeTx);
     e.target.reset(); document.getElementById('incomeDate').value = today(); document.getElementById('incomeCategory').value = 'all';
     toast(selectedCategory === 'all' ? 'Money added and distributed across all categories.' : `Money added to ${category(selectedCategory).name} only.`);
   });
@@ -2788,9 +3093,11 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
     const note = document.getElementById('expenseNote').value.trim();
     if (!Number.isFinite(amount) || amount <= 0 || !date || !note) return toast('Complete all expense details with a valid amount.');
     if (amount > Number(state.balances[cat] || 0) + 0.000001) return toast(`Not enough in ${category(cat).name}. Available: ${peso(state.balances[cat])}`);
-    state.balances[cat] -= amount;
+    state.balances[cat] = roundMoney(Number(state.balances[cat] || 0) - amount);
     if (Math.abs(state.balances[cat]) < 0.000001) state.balances[cat] = 0;
-    addTransaction({id:makeId(), type:'expense', amount, date, category:cat, note, createdAt:Date.now()});
+    const expenseTx = {id:makeId(), type:'expense', amount, date, category:cat, note, createdAt:Date.now()};
+    expenseTx.fundingConsumed = consumeFunding(cat, amount);
+    addTransaction(expenseTx);
     e.target.reset(); document.getElementById('expenseDate').value = today(); toast('Expense saved. Only that category was deducted.');
   });
 
@@ -2811,7 +3118,7 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
     if (!reminderGroup) return toast('Open a reminder list first.');
     state.bills = state.bills || [];
     state.bills.push({
-      id:makeId(), name, amount, dueDate, dueTime:document.getElementById('billDueTime').value || '09:00',
+      id:makeId(), name, amount, dueDate, dueTime:document.getElementById('billDueTime').value || '',
       priority:document.getElementById('billPriority').value,
       repeat, reminderLeadDays,
       type:document.getElementById('billType').value,
@@ -2892,15 +3199,22 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
   document.getElementById('confirmCategoryTransfer').addEventListener('click', () => {
     const sourceId = pendingCategoryTransferId, source = category(sourceId);
     const destinationId = document.getElementById('categoryTransferDestination').value, destination = category(destinationId);
-    const amountInput = document.getElementById('categoryTransferAmount'), amount = Number(amountInput.value);
+    const amountInput = document.getElementById('categoryTransferAmount'), amount = roundMoney(Number(amountInput.value));
     const available = Number(state.balances[sourceId] || 0);
     if (!source || !destination || String(sourceId) === String(destinationId)) return toast('Please choose a different destination category.');
     if (!Number.isFinite(amount) || amount <= 0) { amountInput.setCustomValidity('Enter an amount greater than zero.'); amountInput.reportValidity(); return; }
     if (amount > available + 0.000001) { amountInput.setCustomValidity('The transfer amount cannot be greater than the available balance.'); amountInput.reportValidity(); return; }
-    state.balances[sourceId] = Math.max(0, available - amount);
-    state.balances[destinationId] = Number(state.balances[destinationId] || 0) + amount;
+    const transfer = {
+      id: makeId(), type: 'transfer', amount, date: today(),
+      sourceCategory: sourceId, destinationCategory: destinationId,
+      note: `Transfer: ${source.name} to ${destination.name}`,
+      createdAt: Date.now()
+    };
+    transfer.fundingMoved = moveFunding(sourceId, destinationId, amount, transfer.id);
+    transactionBalanceEffect(state.balances, transfer, 'add', CATEGORIES);
+    state.transactions.push(transfer);
     closeCategoryTransferModal(); render(); save();
-    toast(`${peso(amount)} transferred from ${source.name} to ${destination.name}.`);
+    toast(`${peso(amount)} transferred from ${source.name} to ${destination.name} and saved in activity history.`);
   });
   let pendingCategoryDeletionId = null;
   const categoryDeleteModal = document.getElementById('categoryDeleteModal');
@@ -2952,7 +3266,10 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
 
     // Transfer the full live balance first; no money is discarded.
     const balance = Number(state.balances[id] || 0);
-    state.balances[destinationId] = Number(state.balances[destinationId] || 0) + balance;
+    state.balances[destinationId] = roundMoney(Number(state.balances[destinationId] || 0) + balance);
+    const sourceLots = fundingLotsFor(id);
+    fundingLotsFor(destinationId).push(...sourceLots.map(lot => ({...lot})));
+    delete state.fundingLots[id];
     delete state.balances[id];
 
     // Reassign every live record and historical reference so no item points to a deleted category.
@@ -2963,6 +3280,8 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
     (state.reminderGroups || []).forEach(moveCategory);
     (state.transactions || []).forEach(tx => {
       moveCategory(tx);
+      if (String(tx.sourceCategory) === String(id)) tx.sourceCategory = destinationId;
+      if (String(tx.destinationCategory) === String(id)) tx.destinationCategory = destinationId;
       if (Array.isArray(tx.allocations)) {
         const mergedAllocations = new Map();
         tx.allocations.forEach(allocation => {
@@ -2974,6 +3293,10 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
         });
         tx.allocations = [...mergedAllocations.values()];
       }
+    });
+    Object.values(state.deletedTransferOrigins || {}).forEach(origin => {
+      if (String(origin.sourceCategory) === String(id)) origin.sourceCategory = destinationId;
+      if (String(origin.destinationCategory) === String(id)) origin.destinationCategory = destinationId;
     });
 
     CATEGORIES = CATEGORIES.filter(item => String(item.id) !== String(id));
@@ -3041,7 +3364,7 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
     document.getElementById('billEditName').value = bill.name || '';
     document.getElementById('billEditAmount').value = Number(bill.amount) || '';
     document.getElementById('billEditDueDate').value = bill.dueDate || '';
-    document.getElementById('billEditDueTime').value = bill.dueTime || '09:00';
+    document.getElementById('billEditDueTime').value = bill.dueTime || '';
     document.getElementById('billEditPriority').value = bill.priority || 'Medium';
     document.getElementById('billEditRepeat').value = bill.repeat || 'once';
     document.getElementById('billEditReminderLead').value = String(bill.reminderLeadDays ?? 30);
@@ -3065,7 +3388,7 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
       return toast('Please enter a valid reminder name, category, amount, and due date.');
     }
     Object.assign(bill, {
-      name, amount, dueDate, dueTime:document.getElementById('billEditDueTime').value || '09:00', type, category: categoryId,
+      name, amount, dueDate, dueTime:document.getElementById('billEditDueTime').value || '', type, category: categoryId,
       priority: document.getElementById('billEditPriority').value,
       repeat: document.getElementById('billEditRepeat').value,
       reminderLeadDays: Number(document.getElementById('billEditReminderLead').value),
@@ -3241,6 +3564,7 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
   document.getElementById('billType')?.addEventListener('change',syncReminderCategoryVisibility);
   syncReminderCategoryVisibility();
   renderSectionDisplaySettings();document.getElementById('sectionDisplayRows')?.addEventListener('change',e=>{const el=e.target.closest('[data-section-display]');if(!el)return;state.sectionDisplay=state.sectionDisplay||{};state.sectionDisplay[el.dataset.sectionDisplay]=el.value;state.sectionDisplayUpdatedAt=Date.now();save();applySectionDisplaySettings();});
+  document.getElementById('wishCompletedToggle')?.addEventListener('click',()=>{const panel=document.getElementById('wishCompletedPanel');panel.hidden=!panel.hidden;document.getElementById('wishCompletedToggle').setAttribute('aria-expanded',String(!panel.hidden));});
   document.getElementById('wishManageToggle')?.addEventListener('click',()=>{const area=document.getElementById('wishManageArea');area.hidden=!area.hidden;const btn=document.getElementById('wishManageToggle');btn.setAttribute('aria-expanded',String(!area.hidden));btn.textContent=area.hidden?'⚙ Edit list':'✓ Done editing';renderWishes();});
   applySectionDisplaySettings();
   initializeThemeSettings();
@@ -3322,6 +3646,13 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
     renderWishes();
   });
 
+  document.getElementById('wishCompletedCategoryTabs')?.addEventListener('click', e => {
+    const button = e.target.closest('[data-completed-wish-filter]');
+    if (!button) return;
+    selectedCompletedWishCategory = button.dataset.completedWishFilter;
+    renderWishes();
+  });
+
   document.addEventListener('click', async e => {
     const billExpand = e.target.closest('[data-bill-expand]');
     if (billExpand) {
@@ -3369,9 +3700,22 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
     const delT = e.target.closest('[data-delete-transaction]');
     if (delT) {
       const t = state.transactions.find(x => x.id === delT.dataset.deleteTransaction); if (!t) return;
-      const promptText = t.type === 'income' ? 'Delete this income? Its distributed amount will be removed from all categories.' : 'Delete this expense? Its amount will be returned to the category.';
+      const promptText = t.type === 'income'
+        ? 'Delete this income? Its remaining unspent money will be removed from every category it has moved to. Amount already spent will remain recorded as an expense.'
+        : (t.type === 'transfer'
+          ? `Delete this transfer? ${peso(t.amount)} will be moved back from ${category(t.destinationCategory)?.name || 'the destination'} to ${category(t.sourceCategory)?.name || 'the source'}.`
+          : 'Delete this expense? Its amount will be returned to the category.');
+      // Income deletion follows its original funding lots wherever they moved.
+      // It removes only the still-unspent portion; later expenses remain recorded.
       if (!await showConfirm(promptText)) return;
-      transactionBalanceEffect(state.balances, t, 'remove', CATEGORIES);
+      if (t.type === 'income') removeIncomeFunding(t);
+      else if (t.type === 'expense') restoreExpenseFunding(t);
+      else if (t.type === 'transfer') {
+        state.deletedTransferOrigins = state.deletedTransferOrigins || {};
+        state.deletedTransferOrigins[String(t.id)] = {sourceCategory:t.sourceCategory, destinationCategory:t.destinationCategory};
+        reverseTransferFunding(t);
+      }
+      else transactionBalanceEffect(state.balances, t, 'remove', CATEGORIES);
       state.deletedTransactionIds = Array.isArray(state.deletedTransactionIds) ? state.deletedTransactionIds : [];
       if (!state.deletedTransactionIds.includes(String(t.id))) state.deletedTransactionIds.push(String(t.id));
       if (t.wishId) { const linkedWish = state.wishes.find(w => w.id === t.wishId); if (linkedWish) { linkedWish.done = false; linkedWish.purchaseTransactionId = null; linkedWish.purchasedAt = null; } }
@@ -3412,8 +3756,9 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
           if (!category(cat)) { check.checked = false; toast('This wishlist item uses a category that no longer exists. Edit or remove the item first.'); return; }
           if (amount > Number(state.balances[cat] || 0) + 0.000001) { check.checked = false; toast(`Not enough in ${category(cat).name}. Available: ${peso(state.balances[cat])} · Needed: ${peso(amount)}`); return; }
           if (amount > 0) {
-            state.balances[cat] -= amount;
+            state.balances[cat] = roundMoney(Number(state.balances[cat] || 0) - amount);
             const tx = {id:makeId(),type:'expense',amount,date:today(),category:cat,note:`Wishlist purchase: ${w.name}`,wishId:w.id,createdAt:Date.now()};
+            tx.fundingConsumed = consumeFunding(cat, amount);
             state.transactions.push(tx); w.purchaseTransactionId = tx.id;
           }
           w.done = true; w.purchasedAt = today();
@@ -3421,7 +3766,7 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
           if (w.purchaseTransactionId) {
             const tx = state.transactions.find(t => t.id === w.purchaseTransactionId);
             if (tx) {
-              state.balances[tx.category] = Number(state.balances[tx.category] || 0) + Number(tx.amount || 0);
+              restoreExpenseFunding(tx);
               state.deletedTransactionIds = Array.isArray(state.deletedTransactionIds) ? state.deletedTransactionIds : [];
               if (!state.deletedTransactionIds.includes(String(tx.id))) state.deletedTransactionIds.push(String(tx.id));
             }
@@ -3440,11 +3785,13 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
           const billAmount = Number(bill.amount) || 0;
           if (bill.type === 'income') {
             const selected = bill.category || 'all';
-            const allocations = selected === 'all' ? CATEGORIES.map(c => ({category:c.id, amount:billAmount * Number(c.percent || 0) / 100})) : [{category:selected, amount:billAmount}];
+            const allocations = selected === 'all' ? distributeMoney(billAmount, CATEGORIES) : [{category:selected, amount:roundMoney(billAmount)}];
             if (!allocations.length || allocations.some(a => !category(a.category))) { billCheck.checked=false; toast('Choose a valid category for this received amount.'); return; }
-            allocations.forEach(a => { state.balances[a.category] = Number(state.balances[a.category] || 0) + Number(a.amount || 0); });
+            allocations.forEach(a => { state.balances[a.category] = roundMoney(Number(state.balances[a.category] || 0) + Number(a.amount || 0)); });
             const receiveId=makeId(), receiveDate=today();
-            state.transactions.push({id:receiveId,type:'income',amount:billAmount,date:receiveDate,category:selected==='all'?null:selected,allocations,note:`Reminder received: ${bill.name}`,reminderGroupId:bill.reminderGroupId || 'default-reminders',billPaymentId:receiveId,createdAt:Date.now()});
+            const receivedTx = {id:receiveId,type:'income',amount:billAmount,date:receiveDate,category:selected==='all'?null:selected,allocations,note:`Reminder received: ${bill.name}`,reminderGroupId:bill.reminderGroupId || 'default-reminders',billPaymentId:receiveId,createdAt:Date.now()};
+            addIncomeFunding(receivedTx);
+            state.transactions.push(receivedTx);
             state.paidBills=state.paidBills||[]; state.paidBills.push({id:receiveId,transactionId:receiveId,name:bill.name,amount:billAmount,category:selected,reminderGroupId:bill.reminderGroupId||'default-reminders',dueDate:bill.dueDate,paidAt:receiveDate,type:'income',note:bill.note||''});
             if (bill.repeat && bill.repeat !== 'once') { const nextDate=nextBillDate(bill.dueDate,bill.repeat); if(nextDate) bill.dueDate=nextDate; else state.bills=state.bills.filter(x=>x.id!==bill.id); } else state.bills=state.bills.filter(x=>x.id!==bill.id);
             expandedBillId=null; save(); render(); toast(`${bill.name} received. ${peso(billAmount)} added to ${selected==='all'?'all categories':category(selected)?.name||'its category'}.`); return;
@@ -3465,10 +3812,10 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
           // Recent Activity, and transaction deletion all stay connected.
           const paymentId = makeId();
           const paymentDate = today();
-          state.balances[deductionCategory] -= billAmount;
+          state.balances[deductionCategory] = roundMoney(Number(state.balances[deductionCategory] || 0) - billAmount);
           if (Math.abs(state.balances[deductionCategory]) < 0.000001) state.balances[deductionCategory] = 0;
 
-          state.transactions.push({
+          const reminderExpenseTx = {
             id: paymentId,
             type: 'expense',
             amount: billAmount,
@@ -3478,7 +3825,9 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
             reminderGroupId: bill.reminderGroupId || 'default-reminders',
             billPaymentId: paymentId,
             createdAt: Date.now()
-          });
+          };
+          reminderExpenseTx.fundingConsumed = consumeFunding(deductionCategory, billAmount);
+          state.transactions.push(reminderExpenseTx);
 
           state.paidBills = state.paidBills || [];
           state.paidBills.push({
@@ -3527,7 +3876,7 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
       ['Date','Type','Description','Category','Amount']
     ];
     [...report.transactions].sort((a,b) => a.date.localeCompare(b.date) || (a.createdAt || 0)-(b.createdAt || 0))
-      .forEach(t => lines.push([t.date,t.type,t.note || '',t.category ? category(t.category)?.name : 'All categories',Number(t.amount || 0).toFixed(2)]));
+      .forEach(t => lines.push([t.date,t.type,t.note || '',t.type === 'transfer' ? `${category(t.sourceCategory)?.name || 'Unknown'} → ${category(t.destinationCategory)?.name || 'Unknown'}` : (t.category ? category(t.category)?.name : 'All categories'),Number(t.amount || 0).toFixed(2)]));
     const csv = '\\uFEFF' + lines.map(row => row.map(csvCell).join(',')).join('\\r\\n');
     const filenamePeriod = report.label.toLowerCase().replace(/\s+/g,'-');
     downloadBlob(csv,`eunify-report-${filenamePeriod}.csv`,'text/csv;charset=utf-8;');
@@ -3540,7 +3889,7 @@ ${managing ? `<button class="wish-edit-btn no-print" type="button" title="Edit w
     const expenses = report.transactions.filter(t => t.type === 'expense').reduce((sum,t) => sum + Number(t.amount || 0), 0);
     const rows = [...report.transactions]
       .sort((a,b) => a.date.localeCompare(b.date) || (a.createdAt || 0)-(b.createdAt || 0))
-      .map(t => `<tr><td>${escapeHTML(t.date || '')}</td><td>${escapeHTML(t.type || '')}</td><td>${escapeHTML(t.note || '')}</td><td>${escapeHTML(t.category ? category(t.category)?.name || '' : 'All categories')}</td><td>${peso(t.amount)}</td></tr>`).join('');
+      .map(t => `<tr><td>${escapeHTML(t.date || '')}</td><td>${escapeHTML(t.type || '')}</td><td>${escapeHTML(t.note || '')}</td><td>${escapeHTML(t.type === 'transfer' ? `${category(t.sourceCategory)?.name || 'Unknown'} → ${category(t.destinationCategory)?.name || 'Unknown'}` : (t.category ? category(t.category)?.name || '' : 'All categories'))}</td><td>${peso(t.amount)}</td></tr>`).join('');
     const printWindow = window.open('', '_blank');
     if (!printWindow) { toast('Please allow pop-ups to print this report.'); return; }
     printWindow.document.write(`<!DOCTYPE html><html><head><title>EUnify ${report.mode} report - ${escapeHTML(report.label)}</title><style>

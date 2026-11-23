@@ -42,38 +42,58 @@
     }
     return out;
   }
+  // Keep recurrence calculations aligned with schedules.html's repeatConfig/cycleAtIndex.
+  // Queue the next 400 occurrences per repeating task, not only its original date.
+  const localDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const dateOnly = value => new Date(`${value}T12:00:00`);
+  const addDateDays = (value,count) => { const d=dateOnly(value); d.setDate(d.getDate()+count); return localDate(d); };
+  const addDateMonths = (value,count) => { const d=dateOnly(value),day=d.getDate(); d.setDate(1); d.setMonth(d.getMonth()+count); d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate())); return localDate(d); };
+  function taskRepeatConfig(repeat) {
+    if(!repeat||repeat.type==='once') return null;
+    if(repeat.type==='custom') return {unit:repeat.unit||'months',step:Math.max(1,Number(repeat.interval)||1)};
+    const map={daily:{unit:'days',step:1},every2days:{unit:'days',step:2},every3days:{unit:'days',step:3},weekly:{unit:'weeks',step:1},every2weeks:{unit:'weeks',step:2},every3weeks:{unit:'weeks',step:3},monthly:{unit:'months',step:1},every2months:{unit:'months',step:2},every3months:{unit:'months',step:3},every6months:{unit:'months',step:6},yearly:{unit:'years',step:1},every2years:{unit:'years',step:2}};
+    return map[repeat.type]||null;
+  }
+  function taskCycleAtIndex(task,index,cfg) {
+    const anchor=task.date,step=cfg.step; let start=anchor,end=anchor;
+    if(cfg.unit==='days'){start=addDateDays(anchor,index*step);end=addDateDays(start,step-1);}
+    else if(cfg.unit==='weeks'){start=addDateDays(anchor,index*step*7);end=addDateDays(start,step*7-1);}
+    else if(cfg.unit==='months'){start=index===0?anchor:addDateMonths(anchor,index*step);end=addDateDays(addDateMonths(anchor,(index+1)*step),-1);}
+    else if(cfg.unit==='years'){const makeYear=y=>`${y}-${anchor.slice(5,7)}-${anchor.slice(8,10)}`;start=index===0?anchor:makeYear(Number(anchor.slice(0,4))+index*step);end=addDateDays(makeYear(Number(anchor.slice(0,4))+(index+1)*step),-1);}
+    return {key:start,start,end,index};
+  }
   function buildJobs(state) {
-    const prefs = state.notificationSettings || {notify24h:true, notify12h:true};
-    const now = Date.now();
-    const jobs = [];
-    const add = (source, itemId, title, dueAt, offsetMs, label) => {
-      const at = dueAt.getTime() - offsetMs;
-      if (dueAt.getTime() <= now || at > dueAt.getTime()) return;
-      // If a user adds/edits a reminder after its advance-alert time, queue it now
-      // rather than silently losing that alert. The due event itself must still be future.
-      const scheduled = new Date(Math.max(at, now)).toISOString();
-      const dueLabel = dueAt.toLocaleString(undefined,{dateStyle:'medium',timeStyle:'short'});
-      const dedupe = `${source}:${itemId}:${dueAt.toISOString()}:${offsetMs}`;
+    const prefs=state.notificationSettings||{notify24h:true,notify12h:true},now=Date.now(),jobs=[];
+    const add=(source,itemId,title,dueAt,offsetMs,label,occurrenceKey='')=>{
+      const at=dueAt.getTime()-offsetMs;if(dueAt.getTime()<=now||at>dueAt.getTime())return;
+      const scheduled=new Date(Math.max(at,now)).toISOString(),dueLabel=dueAt.toLocaleString(undefined,{dateStyle:'medium',timeStyle:'short'});
+      const dedupe=`${source}:${itemId}:${occurrenceKey||dueAt.toISOString()}:${offsetMs}`;
       jobs.push({dedupe_key:dedupe,title:`EUnify · ${label}`,body:`${title} is due ${dueLabel}.`,scheduled_at:scheduled,status:'pending'});
     };
-    for (const bill of (state.bills || [])) {
-      if (bill.paid || !bill.dueDate) continue;
-      for (const dueAt of billOccurrences(bill)) {
-        const lead = Math.max(0, Number(bill.reminderLeadDays ?? 30) || 0);
-        add('bill',bill.id,bill.name || 'Your reminder',dueAt,lead*DAY,lead===0?'Due date reminder':`${lead} day${lead===1?'':'s'} before`);
-        if (prefs.notify24h !== false) add('bill',bill.id,bill.name || 'Your reminder',dueAt,DAY,'24-hour reminder');
-        if (prefs.notify12h !== false) add('bill',bill.id,bill.name || 'Your reminder',dueAt,12*60*60*1000,'12-hour reminder');
+    for(const bill of(state.bills||[])){
+      if(bill.paid||!bill.dueDate)continue;
+      for(const dueAt of billOccurrences(bill)){
+        const lead=Math.max(0,Number(bill.reminderLeadDays??30)||0);
+        add('bill',bill.id,bill.name||'Your reminder',dueAt,lead*DAY,lead===0?'Due date reminder':`${lead} day${lead===1?'':'s'} before`);
+        if(prefs.notify24h!==false)add('bill',bill.id,bill.name||'Your reminder',dueAt,DAY,'24-hour reminder');
+        if(prefs.notify12h!==false)add('bill',bill.id,bill.name||'Your reminder',dueAt,12*60*60*1000,'12-hour reminder');
       }
     }
-    for (const task of (state.schedules || [])) {
-      if (task.done || !task.date) continue;
-      const dueAt = dueDate(task.date, task.time || '09:00');
-      if (!dueAt) continue;
-      if (prefs.notify24h !== false) add('task',task.id,task.title || 'Your task',dueAt,DAY,'24-hour task reminder');
-      if (prefs.notify12h !== false) add('task',task.id,task.title || 'Your task',dueAt,12*60*60*1000,'12-hour task reminder');
+    for(const task of(state.schedules||[])){
+      if(!task.date||((!task.repeat||task.repeat.type==='once')&&task.done))continue;
+      const cfg=taskRepeatConfig(task.repeat);
+      if(!cfg){const dueAt=dueDate(task.date,task.time||'09:00');if(!dueAt||task.done)continue;
+        if(prefs.notify24h!==false)add('task',task.id,task.title||'Your task',dueAt,DAY,'24-hour task reminder');
+        if(prefs.notify12h!==false)add('task',task.id,task.title||'Your task',dueAt,12*60*60*1000,'12-hour task reminder');continue;}
+      // Completion suppresses only its own occurrence; a missed occurrence never suppresses later cycles.
+      for(let i=0;i<400;i++){
+        const cycle=taskCycleAtIndex(task,i,cfg);if((task.occurrences||{})[cycle.key]==='done')continue;
+        const dueAt=dueDate(cycle.start,task.time||'09:00');if(!dueAt)continue;
+        if(prefs.notify24h!==false)add('task',task.id,task.title||'Your task',dueAt,DAY,'24-hour task reminder',cycle.key);
+        if(prefs.notify12h!==false)add('task',task.id,task.title||'Your task',dueAt,12*60*60*1000,'12-hour task reminder',cycle.key);
+      }
     }
-    const unique = new Map(jobs.map(job=>[job.dedupe_key,job]));
-    return [...unique.values()];
+    return [...new Map(jobs.map(job=>[job.dedupe_key,job])).values()];
   }
   function withTimeout(promise, label, ms=15000) {
     let timer;

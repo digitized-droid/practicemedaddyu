@@ -1,5 +1,5 @@
 /* EUnify offline app shell for GitHub Pages. Keep this file beside index.html. */
-const CACHE_NAME = "pesoplan-shell-v20-push-connection-fix";
+const CACHE_NAME = "pesoplan-shell-v22-money-provenance-fix";
 const APP_SHELL = [
   new URL("./", self.registration.scope).href,
   new URL("./index.html", self.registration.scope).href,
@@ -8,17 +8,23 @@ const APP_SHELL = [
   new URL("./supabase-config.js", self.registration.scope).href,
   new URL("./eunify-push.js?v=20261121-push-connection-fix", self.registration.scope).href,
   new URL("./logos/1.png", self.registration.scope).href,
-  new URL("./instruction-images/sign-in.jpg", self.registration.scope).href,
-  new URL("./instruction-images/settings.jpg", self.registration.scope).href,
-  new URL("./instruction-images/available-capital.jpg", self.registration.scope).href,
-  new URL("./instruction-images/reminders.jpg", self.registration.scope).href,
-  new URL("./instruction-images/add-money-received.jpg", self.registration.scope).href,
-  new URL("./instruction-images/add-expense.jpg", self.registration.scope).href,
-  new URL("./instruction-images/categories.jpg", self.registration.scope).href,
-  new URL("./instruction-images/wishlist.jpg", self.registration.scope).href,
-  new URL("./instruction-images/reports-data.jpg", self.registration.scope).href,
-  new URL("./instruction-images/recent-activities.jpg", self.registration.scope).href,
-  new URL("./instruction-images/paid-history.jpg", self.registration.scope).href
+  new URL("./instruction-images/add-expense.png", self.registration.scope).href,
+  new URL("./instruction-images/add-money-received.png", self.registration.scope).href,
+  new URL("./instruction-images/available-capital.png", self.registration.scope).href,
+  new URL("./instruction-images/categories.png", self.registration.scope).href,
+  new URL("./instruction-images/categories2.png", self.registration.scope).href,
+  new URL("./instruction-images/categories3.png", self.registration.scope).href,
+  new URL("./instruction-images/paid-history.png", self.registration.scope).href,
+  new URL("./instruction-images/recent-activities.png", self.registration.scope).href,
+  new URL("./instruction-images/reminders.png", self.registration.scope).href,
+  new URL("./instruction-images/reminders2.png", self.registration.scope).href,
+  new URL("./instruction-images/reports-data.png", self.registration.scope).href,
+  new URL("./instruction-images/reports-data2.png", self.registration.scope).href,
+  new URL("./instruction-images/reports-data3.png", self.registration.scope).href,
+  new URL("./instruction-images/reports-data4.png", self.registration.scope).href,
+  new URL("./instruction-images/sign-in.png", self.registration.scope).href,
+  new URL("./instruction-images/sign-in2.png", self.registration.scope).href,
+  new URL("./instruction-images/wishlist.png", self.registration.scope).href
 ];
 
 self.addEventListener("install", event => {

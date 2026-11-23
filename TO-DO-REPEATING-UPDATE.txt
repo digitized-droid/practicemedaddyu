@@ -1,0 +1,12 @@
+TO-DO LIST UPDATE
+
+Updated schedules.html with:
+- One-time, daily, weekly, monthly, yearly, and custom repeating tasks.
+- Custom intervals support days, weeks, months, and years (for example, every 2 months).
+- Repeating occurrences have separate completion status. An unfinished occurrence is marked missed when its period ends and does not carry into the next occurrence.
+- Weekly occurrences stay available for their 7-day cycle; monthly/yearly/custom month/year occurrences stay available for their cycle.
+- Normal unfinished one-time tasks remain visible as overdue in later days and months until completed.
+- To-do list settings now enables per-task Edit and Delete buttons. Edit opens the existing task form with its saved values.
+- Connected expense reminders are limited to the current month. Completed reminders are displayed by paidAt/completion date and retain their original due date in the details.
+
+Existing local schedule records and the existing Supabase cloud sync structure are retained. New recurrence settings and occurrence statuses are stored on each schedule record and included in the existing cloud sync.
