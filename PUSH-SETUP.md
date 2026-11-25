@@ -6,8 +6,8 @@
 
 - Device push, not Supabase Auth email.
 - Each browser/device subscription belongs to exactly one signed-in account at a time. Signing in with another account automatically transfers that browser endpoint; signing out removes it from the old account while keeping the browser permission.
-- Bill alerts use the due date and due time, the existing `Show reminder` interval, plus optional 24-hour and 12-hour alerts.
-- To-do alerts use 24 hours and 12 hours before the task date/time.
+- Bill alerts use the due date and due time, the existing `Show reminder` interval, plus optional 24-hour, 12-hour, and 1-hour alerts.
+- To-do alerts use 24 hours, 12 hours, and 1 hour before each actual occurrence’s due date/time. Daily, weekly, monthly, and custom recurrence intervals are respected; a weekly task does not generate daily alerts.
 - Paid bills and completed tasks are excluded; pending jobs are rebuilt when saved.
 - Existing repeating bill settings schedule the next 12 occurrences.
 - Existing bills without a due time default to 9:00 AM.

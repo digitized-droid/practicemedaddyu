@@ -63,7 +63,7 @@
     return {key:start,start,end,index};
   }
   function buildJobs(state) {
-    const prefs=state.notificationSettings||{notify24h:true,notify12h:true},now=Date.now(),jobs=[];
+    const prefs={notify24h:true,notify12h:true,notify1h:true,...(state.notificationSettings||{})},now=Date.now(),jobs=[];
     const add=(source,itemId,title,dueAt,offsetMs,label,occurrenceKey='')=>{
       const at=dueAt.getTime()-offsetMs;if(dueAt.getTime()<=now||at>dueAt.getTime())return;
       const scheduled=new Date(Math.max(at,now)).toISOString(),dueLabel=dueAt.toLocaleString(undefined,{dateStyle:'medium',timeStyle:'short'});
@@ -77,6 +77,7 @@
         add('bill',bill.id,bill.name||'Your reminder',dueAt,lead*DAY,lead===0?'Due date reminder':`${lead} day${lead===1?'':'s'} before`);
         if(prefs.notify24h!==false)add('bill',bill.id,bill.name||'Your reminder',dueAt,DAY,'24-hour reminder');
         if(prefs.notify12h!==false)add('bill',bill.id,bill.name||'Your reminder',dueAt,12*60*60*1000,'12-hour reminder');
+        if(prefs.notify1h!==false)add('bill',bill.id,bill.name||'Your reminder',dueAt,60*60*1000,'1-hour reminder');
       }
     }
     for(const task of(state.schedules||[])){
@@ -84,13 +85,19 @@
       const cfg=taskRepeatConfig(task.repeat);
       if(!cfg){const dueAt=dueDate(task.date,task.time||'09:00');if(!dueAt||task.done)continue;
         if(prefs.notify24h!==false)add('task',task.id,task.title||'Your task',dueAt,DAY,'24-hour task reminder');
-        if(prefs.notify12h!==false)add('task',task.id,task.title||'Your task',dueAt,12*60*60*1000,'12-hour task reminder');continue;}
+        if(prefs.notify12h!==false)add('task',task.id,task.title||'Your task',dueAt,12*60*60*1000,'12-hour task reminder');
+        if(prefs.notify1h!==false)add('task',task.id,task.title||'Your task',dueAt,60*60*1000,'1-hour task reminder');continue;}
       // Completion suppresses only its own occurrence; a missed occurrence never suppresses later cycles.
-      for(let i=0;i<400;i++){
+      // Start the rolling queue at the current/future cycle so long-lived repeating tasks
+      // continue receiving alerts even after more than 400 occurrences have elapsed.
+      const todayKey=localDate(new Date());let firstIndex=0;
+      while(firstIndex<100000&&taskCycleAtIndex(task,firstIndex,cfg).end<todayKey)firstIndex++;
+      for(let i=firstIndex;i<firstIndex+400;i++){
         const cycle=taskCycleAtIndex(task,i,cfg);if((task.occurrences||{})[cycle.key]==='done')continue;
         const dueAt=dueDate(cycle.start,task.time||'09:00');if(!dueAt)continue;
         if(prefs.notify24h!==false)add('task',task.id,task.title||'Your task',dueAt,DAY,'24-hour task reminder',cycle.key);
         if(prefs.notify12h!==false)add('task',task.id,task.title||'Your task',dueAt,12*60*60*1000,'12-hour task reminder',cycle.key);
+        if(prefs.notify1h!==false)add('task',task.id,task.title||'Your task',dueAt,60*60*1000,'1-hour task reminder',cycle.key);
       }
     }
     return [...new Map(jobs.map(job=>[job.dedupe_key,job])).values()];
